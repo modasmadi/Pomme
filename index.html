@@ -3,2072 +3,876 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CollabSync — منصة التعاون المتكاملة</title>
-    <meta name="description" content="منصة تعاون متكاملة تجمعك بصديقك — تحرير ملاحظات، مشاركة ملفات، تحرير بايثون، شات، وبث شاشة بجودة Full HD 60fps.">
+    <title>CollabSync - مساحة العمل المشتركة</title>
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        /* ============================================
-           CSS RESET & VARIABLES
-           ============================================ */
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    
+    <!-- CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
 
+    <style>
         :root {
             --navy-deep: #0a0e27;
             --navy-dark: #0d1333;
             --navy-mid: #111940;
-            --navy-light: #1a2255;
-            --navy-glow: #1e2a6e;
             --accent-blue: #4a6cf7;
             --accent-cyan: #00d4ff;
             --accent-purple: #7b5cff;
-            --accent-gradient: linear-gradient(135deg, #4a6cf7 0%, #00d4ff 50%, #7b5cff 100%);
             --white: #ffffff;
-            --white-soft: #e8eaf6;
             --white-muted: #b0b8d1;
-            --glass-bg: rgba(17, 25, 64, 0.6);
-            --glass-border: rgba(74, 108, 247, 0.2);
-            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             --font-main: 'Cairo', sans-serif;
-            --radius: 20px;
-            --radius-sm: 12px;
+            --radius: 16px;
+            --glass-bg: rgba(17, 25, 64, 0.7);
+            --glass-border: rgba(74, 108, 247, 0.3);
+            --accent-gradient: linear-gradient(135deg, #4a6cf7 0%, #00d4ff 50%, #7b5cff 100%);
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: var(--font-main);
             background: var(--navy-deep);
             color: var(--white);
-            overflow-x: hidden;
-            line-height: 1.8;
-            font-size: 18px;
-        }
-
-        /* ============================================
-           ANIMATED BACKGROUND
-           ============================================ */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
+            height: 100vh;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            font-size: 20px;
         }
 
-        .bg-animation .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.3;
-            animation: orbFloat 20s ease-in-out infinite;
-        }
-
-        .bg-animation .orb:nth-child(1) {
-            width: 500px;
-            height: 500px;
-            background: var(--accent-blue);
-            top: -10%;
-            right: -10%;
-            animation-delay: 0s;
-            animation-duration: 25s;
-        }
-
-        .bg-animation .orb:nth-child(2) {
-            width: 400px;
-            height: 400px;
-            background: var(--accent-purple);
-            bottom: -10%;
-            left: -10%;
-            animation-delay: -5s;
-            animation-duration: 30s;
-        }
-
-        .bg-animation .orb:nth-child(3) {
-            width: 300px;
-            height: 300px;
-            background: var(--accent-cyan);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation-delay: -10s;
-            animation-duration: 22s;
-        }
-
-        @keyframes orbFloat {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(60px, -80px) scale(1.1); }
-            50% { transform: translate(-40px, 60px) scale(0.9); }
-            75% { transform: translate(80px, 40px) scale(1.05); }
-        }
-
-        /* ============================================
-           PARTICLE STARS
-           ============================================ */
-        .stars {
-            position: fixed;
-            top: 0;
-            left: 0;
+        /* --- Screens --- */
+        #auth-screen, #app-screen {
             width: 100%;
             height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .star {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: var(--white);
-            border-radius: 50%;
-            animation: twinkle var(--duration) ease-in-out infinite;
-            opacity: 0;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0; transform: scale(0.5); }
-            50% { opacity: var(--max-opacity); transform: scale(1); }
-        }
-
-        /* ============================================
-           NAVIGATION
-           ============================================ */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            padding: 16px 24px;
-            transition: all 0.4s ease;
-        }
-
-        .navbar.scrolled {
-            background: rgba(10, 14, 39, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .nav-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: var(--white);
-        }
-
-        .logo-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--accent-gradient);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: 900;
-            box-shadow: 0 4px 20px rgba(74, 108, 247, 0.4);
-        }
-
-        .logo-text {
-            font-size: 26px;
-            font-weight: 900;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 8px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: var(--white-soft);
-            text-decoration: none;
-            padding: 10px 18px;
-            border-radius: var(--radius-sm);
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            background: rgba(74, 108, 247, 0.15);
-            color: var(--accent-cyan);
-        }
-
-        .mobile-menu-btn {
             display: none;
-            background: none;
-            border: none;
-            color: var(--white);
-            font-size: 28px;
-            cursor: pointer;
-            padding: 8px;
         }
 
-        /* ============================================
-           HERO SECTION
-           ============================================ */
-        .hero {
-            position: relative;
-            z-index: 1;
-            min-height: 100vh;
+        #auth-screen.active {
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            padding: 120px 24px 80px;
+            flex-direction: column;
+            background: radial-gradient(circle at center, var(--navy-mid), var(--navy-deep));
         }
 
-        .hero-content {
-            max-width: 900px;
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 24px;
-            background: rgba(74, 108, 247, 0.15);
-            border: 1px solid var(--glass-border);
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--accent-cyan);
-            margin-bottom: 32px;
-            animation: fadeInUp 0.8s ease forwards;
-            opacity: 0;
-        }
-
-        .hero-badge .pulse-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--accent-cyan);
-            border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.4); }
-            50% { opacity: 0.8; box-shadow: 0 0 0 10px rgba(0, 212, 255, 0); }
-        }
-
-        .hero h1 {
-            font-size: clamp(36px, 7vw, 72px);
-            font-weight: 900;
-            line-height: 1.2;
-            margin-bottom: 24px;
-            animation: fadeInUp 0.8s ease 0.2s forwards;
-            opacity: 0;
-        }
-
-        .hero h1 .gradient-text {
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero p {
-            font-size: clamp(18px, 3vw, 24px);
-            color: var(--white-muted);
-            max-width: 700px;
-            margin: 0 auto 40px;
-            line-height: 1.9;
-            animation: fadeInUp 0.8s ease 0.4s forwards;
-            opacity: 0;
-        }
-
-        .hero-buttons {
+        #app-screen.active {
             display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-            animation: fadeInUp 0.8s ease 0.6s forwards;
-            opacity: 0;
+            flex-direction: column;
         }
 
-        .btn-primary {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 18px 40px;
-            background: var(--accent-gradient);
-            color: var(--white);
-            text-decoration: none;
-            border-radius: 16px;
-            font-size: 20px;
-            font-weight: 700;
-            font-family: var(--font-main);
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 30px rgba(74, 108, 247, 0.4);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 40px rgba(74, 108, 247, 0.6);
-        }
-
-        .btn-secondary {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 18px 40px;
-            background: transparent;
-            color: var(--white);
-            text-decoration: none;
-            border-radius: 16px;
-            font-size: 20px;
-            font-weight: 700;
-            border: 2px solid var(--glass-border);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: var(--font-main);
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--accent-blue);
-            background: rgba(74, 108, 247, 0.1);
-            transform: translateY(-3px);
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ============================================
-           FLOATING MOCKUP
-           ============================================ */
-        .hero-mockup {
-            margin-top: 60px;
-            animation: fadeInUp 0.8s ease 0.8s forwards, float 6s ease-in-out infinite 1.6s;
-            opacity: 0;
-        }
-
-        .mockup-container {
-            max-width: 800px;
-            margin: 0 auto;
+        /* --- Auth Screen --- */
+        .auth-card {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
+            padding: 40px;
             border-radius: var(--radius);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            overflow: hidden;
-            box-shadow: var(--glass-shadow), 0 0 60px rgba(74, 108, 247, 0.15);
-        }
-
-        .mockup-topbar {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 14px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .mockup-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-
-        .mockup-dot.red { background: #ff5f57; }
-        .mockup-dot.yellow { background: #ffbd2e; }
-        .mockup-dot.green { background: #28ca42; }
-
-        .mockup-body {
-            padding: 30px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            min-height: 280px;
-        }
-
-        .mockup-panel {
-            background: rgba(26, 34, 85, 0.5);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-sm);
-            padding: 20px;
-        }
-
-        .mockup-panel-title {
-            font-size: 14px;
-            color: var(--accent-cyan);
-            font-weight: 700;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .mockup-line {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 4px;
-            margin-bottom: 8px;
-        }
-
-        .mockup-line:nth-child(2) { width: 85%; }
-        .mockup-line:nth-child(3) { width: 70%; }
-        .mockup-line:nth-child(4) { width: 90%; }
-        .mockup-line:nth-child(5) { width: 60%; }
-
-        .mockup-line.accent {
-            background: rgba(74, 108, 247, 0.3);
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        /* ============================================
-           SECTION STYLES
-           ============================================ */
-        section {
-            position: relative;
-            z-index: 1;
-            padding: 100px 24px;
-        }
-
-        .section-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .section-header {
+            backdrop-filter: blur(10px);
             text-align: center;
-            margin-bottom: 70px;
+            max-width: 500px;
+            width: 90%;
         }
-
-        .section-label {
-            display: inline-block;
-            padding: 8px 20px;
-            background: rgba(74, 108, 247, 0.12);
-            border: 1px solid var(--glass-border);
-            border-radius: 50px;
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--accent-cyan);
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-        }
-
-        .section-header h2 {
-            font-size: clamp(30px, 5vw, 52px);
-            font-weight: 900;
-            margin-bottom: 16px;
-            line-height: 1.3;
-        }
-
-        .section-header p {
-            font-size: clamp(17px, 2.5vw, 22px);
-            color: var(--white-muted);
-            max-width: 650px;
-            margin: 0 auto;
-            line-height: 1.8;
-        }
-
-        /* ============================================
-           FEATURES GRID
-           ============================================ */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: 24px;
-        }
-
-        .feature-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
+        .auth-card h1 { font-size: 36px; margin-bottom: 10px; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .auth-card p { color: var(--white-muted); margin-bottom: 30px; font-size: 22px; }
+        
+        .auth-buttons button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
             border-radius: var(--radius);
-            padding: 40px 32px;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
+            border: none;
+            font-size: 22px;
+            font-weight: bold;
+            font-family: var(--font-main);
+            cursor: pointer;
+            transition: 0.3s;
         }
+        
+        .btn-primary { background: var(--accent-gradient); color: white; }
+        .btn-primary:hover { transform: scale(1.02); }
+        .btn-secondary { background: transparent; border: 2px solid var(--accent-blue) !important; color: white; }
+        .btn-secondary:hover { background: rgba(74, 108, 247, 0.2); }
 
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--accent-gradient);
-            transform: scaleX(0);
-            transform-origin: right;
-            transition: transform 0.4s ease;
-        }
-
-        .feature-card:hover::before {
-            transform: scaleX(1);
-            transform-origin: left;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(74, 108, 247, 0.4);
-            box-shadow: 0 20px 60px rgba(74, 108, 247, 0.15);
-        }
-
-        .feature-icon {
-            width: 72px;
-            height: 72px;
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 34px;
-            margin-bottom: 24px;
-            position: relative;
-        }
-
-        .feature-icon.notes {
-            background: linear-gradient(135deg, rgba(74, 108, 247, 0.2), rgba(74, 108, 247, 0.05));
-            border: 1px solid rgba(74, 108, 247, 0.3);
-        }
-
-        .feature-icon.files {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.05));
-            border: 1px solid rgba(0, 212, 255, 0.3);
-        }
-
-        .feature-icon.python {
-            background: linear-gradient(135deg, rgba(123, 92, 255, 0.2), rgba(123, 92, 255, 0.05));
-            border: 1px solid rgba(123, 92, 255, 0.3);
-        }
-
-        .feature-icon.chat {
-            background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(255, 107, 107, 0.05));
-            border: 1px solid rgba(255, 107, 107, 0.3);
-        }
-
-        .feature-icon.screen {
-            background: linear-gradient(135deg, rgba(0, 230, 118, 0.2), rgba(0, 230, 118, 0.05));
-            border: 1px solid rgba(0, 230, 118, 0.3);
-        }
-
-        .feature-icon.permissions {
-            background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.05));
-            border: 1px solid rgba(255, 193, 7, 0.3);
-        }
-
-        .feature-card h3 {
-            font-size: 26px;
-            font-weight: 800;
-            margin-bottom: 14px;
-            color: var(--white);
-        }
-
-        .feature-card p {
-            font-size: 18px;
-            color: var(--white-muted);
-            line-height: 1.9;
-        }
-
-        .feature-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 20px;
-        }
-
-        .feature-tag {
-            padding: 6px 14px;
-            background: rgba(74, 108, 247, 0.1);
-            border: 1px solid rgba(74, 108, 247, 0.2);
+        .input-group { margin-top: 20px; display: none; }
+        .input-group.active { display: block; }
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            font-size: 20px;
             border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--accent-cyan);
-        }
-
-        /* ============================================
-           SCREEN SHARE SHOWCASE
-           ============================================ */
-        .showcase-section {
-            background: linear-gradient(180deg, transparent 0%, rgba(74, 108, 247, 0.03) 50%, transparent 100%);
-        }
-
-        .showcase-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: center;
-        }
-
-        .showcase-visual {
-            position: relative;
-        }
-
-        .showcase-screen {
-            background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            border-radius: var(--radius);
-            padding: 4px;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            box-shadow: var(--glass-shadow), 0 0 80px rgba(74, 108, 247, 0.1);
-            overflow: hidden;
+            background: var(--navy-dark);
+            color: white;
+            font-family: var(--font-main);
+            margin-bottom: 15px;
+            text-align: center;
         }
 
-        .screen-header {
+        #status-msg { margin-top: 20px; color: var(--accent-cyan); font-weight: bold; font-size: 18px; }
+
+        /* --- App Topbar --- */
+        .topbar {
+            height: 70px;
+            background: var(--navy-dark);
+            border-bottom: 1px solid var(--glass-border);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 16px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 16px 16px 0 0;
+            padding: 0 20px;
         }
-
-        .screen-status {
+        .logo { font-size: 28px; font-weight: 900; color: var(--accent-cyan); }
+        
+        .nav-tabs {
             display: flex;
+            gap: 10px;
+            height: 100%;
             align-items: center;
-            gap: 8px;
         }
+        .nav-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.2s;
+            font-weight: bold;
+            font-size: 20px;
+            color: var(--white-muted);
+        }
+        .nav-tab:hover { background: rgba(74, 108, 247, 0.1); color: white; }
+        .nav-tab.active { background: rgba(74, 108, 247, 0.2); color: var(--accent-cyan); border: 1px solid var(--glass-border); }
 
-        .live-indicator {
+        .connection-info { font-size: 18px; display: flex; align-items: center; gap: 10px; }
+        .status-dot { width: 12px; height: 12px; border-radius: 50%; background: red; }
+        .status-dot.connected { background: #00e676; box-shadow: 0 0 10px #00e676; }
+
+        /* --- App Workspace --- */
+        .workspace {
+            flex: 1;
             display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
-            background: rgba(255, 59, 48, 0.2);
-            border: 1px solid rgba(255, 59, 48, 0.3);
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            color: #ff3b30;
+            overflow: hidden;
         }
-
-        .live-indicator .dot {
-            width: 6px;
-            height: 6px;
-            background: #ff3b30;
-            border-radius: 50%;
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        .quality-badge {
-            padding: 4px 12px;
-            background: rgba(0, 230, 118, 0.15);
-            border: 1px solid rgba(0, 230, 118, 0.3);
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            color: #00e676;
-        }
-
-        .screen-body {
-            aspect-ratio: 16/9;
-            background: linear-gradient(135deg, var(--navy-mid) 0%, var(--navy-dark) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
             position: relative;
-            overflow: hidden;
         }
 
-        .screen-body-content {
-            text-align: center;
-        }
+        .tab-content { display: none; height: 100%; flex-direction: column; }
+        .tab-content.active { display: flex; }
 
-        .screen-body-content .play-icon {
-            width: 80px;
-            height: 80px;
-            background: rgba(74, 108, 247, 0.2);
-            border: 2px solid rgba(74, 108, 247, 0.4);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            margin: 0 auto 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .screen-body-content .play-icon:hover {
-            background: rgba(74, 108, 247, 0.35);
-            transform: scale(1.1);
-        }
-
-        .screen-body-content p {
-            color: var(--white-muted);
-            font-size: 15px;
-        }
-
-        .screen-wave {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            overflow: hidden;
-        }
-
-        .screen-wave svg {
-            position: absolute;
-            bottom: 0;
-            width: 200%;
-            animation: waveScroll 8s linear infinite;
-        }
-
-        @keyframes waveScroll {
-            from { transform: translateX(0); }
-            to { transform: translateX(-50%); }
-        }
-
-        .screen-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 16px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 0 0 16px 16px;
-        }
-
-        .control-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
+        /* --- Notes Tab --- */
+        #notes-area {
+            flex: 1;
+            width: 100%;
+            background: var(--navy-dark);
+            color: white;
             border: 1px solid var(--glass-border);
-            background: rgba(26, 34, 85, 0.5);
-            color: var(--white);
+            border-radius: var(--radius);
+            padding: 20px;
+            font-family: var(--font-main);
+            font-size: 22px;
+            resize: none;
+            outline: none;
+        }
+
+        /* --- Python Tab --- */
+        .CodeMirror {
+            flex: 1;
+            font-size: 22px;
+            border-radius: var(--radius);
+            border: 1px solid var(--glass-border);
+            font-family: monospace;
+        }
+
+        /* --- Files Tab --- */
+        .files-container {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .file-upload-box {
+            border: 2px dashed var(--glass-border);
+            border-radius: var(--radius);
+            padding: 40px;
+            text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            background: rgba(74, 108, 247, 0.05);
+            transition: 0.3s;
         }
-
-        .control-btn:hover {
-            background: rgba(74, 108, 247, 0.3);
-            border-color: var(--accent-blue);
-        }
-
-        .control-btn.mic-on {
-            background: rgba(0, 230, 118, 0.2);
-            border-color: rgba(0, 230, 118, 0.4);
-            color: #00e676;
-        }
-
-        .control-btn.mic-off {
-            background: rgba(255, 59, 48, 0.2);
-            border-color: rgba(255, 59, 48, 0.4);
-            color: #ff3b30;
-        }
-
-        .control-btn.end-call {
-            background: rgba(255, 59, 48, 0.3);
-            border-color: rgba(255, 59, 48, 0.5);
-            color: #ff3b30;
-            width: 64px;
-        }
-
-        .showcase-info h3 {
-            font-size: clamp(28px, 4vw, 40px);
-            font-weight: 900;
-            margin-bottom: 20px;
-            line-height: 1.3;
-        }
-
-        .showcase-info p {
-            font-size: 20px;
-            color: var(--white-muted);
-            line-height: 1.9;
-            margin-bottom: 32px;
-        }
-
-        .specs-list {
+        .file-upload-box:hover { background: rgba(74, 108, 247, 0.1); }
+        .file-upload-box h3 { font-size: 24px; color: var(--accent-cyan); }
+        
+        .file-list {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 10px;
         }
-
-        .specs-list li {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            font-size: 19px;
-            font-weight: 600;
-        }
-
-        .spec-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            background: rgba(74, 108, 247, 0.15);
-            border: 1px solid rgba(74, 108, 247, 0.25);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            flex-shrink: 0;
-        }
-
-        /* ============================================
-           CHAT PREVIEW SECTION
-           ============================================ */
-        .chat-section {
-            background: linear-gradient(180deg, transparent 0%, rgba(123, 92, 255, 0.03) 50%, transparent 100%);
-        }
-
-        .chat-preview-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: center;
-        }
-
-        .chat-window {
-            background: var(--glass-bg);
+        .file-item {
+            background: var(--navy-dark);
+            padding: 15px 20px;
+            border-radius: 8px;
             border: 1px solid var(--glass-border);
-            border-radius: var(--radius);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            box-shadow: var(--glass-shadow);
-            overflow: hidden;
-        }
-
-        .chat-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding: 18px 24px;
-            background: rgba(0, 0, 0, 0.3);
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .chat-user-info {
-            display: flex;
             align-items: center;
-            gap: 12px;
         }
+        .file-item a { color: var(--accent-cyan); text-decoration: none; font-weight: bold; font-size: 20px; }
 
-        .chat-avatar {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
+        /* --- Screen Share Tab --- */
+        .screen-share-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        .screen-share-controls button {
+            padding: 12px 25px;
+            border-radius: 8px;
+            border: none;
+            font-size: 20px;
+            font-family: var(--font-main);
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .video-container {
+            flex: 1;
+            background: black;
+            border-radius: var(--radius);
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
-            font-weight: 800;
         }
+        video { width: 100%; height: 100%; object-fit: contain; }
 
-        .chat-avatar.user-a {
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
-        }
-
-        .chat-avatar.user-b {
-            background: linear-gradient(135deg, var(--accent-purple), #ff6b9d);
-        }
-
-        .chat-username {
-            font-weight: 700;
-            font-size: 17px;
-        }
-
-        .chat-online {
-            font-size: 13px;
-            color: #00e676;
+        /* --- Permissions Tab --- */
+        .perm-list { display: flex; flex-direction: column; gap: 15px; max-width: 600px; margin: 0 auto; }
+        .perm-item {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 6px;
+            background: var(--navy-dark);
+            padding: 20px;
+            border-radius: var(--radius);
+            border: 1px solid var(--glass-border);
+            font-size: 22px;
         }
+        
+        /* Toggle Switch */
+        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #00e676; }
+        input:checked + .slider:before { transform: translateX(26px); }
 
-        .chat-online .dot {
-            width: 6px;
-            height: 6px;
-            background: #00e676;
-            border-radius: 50%;
-        }
-
-        .chat-messages {
-            padding: 24px;
+        /* --- Chat Sidebar --- */
+        .chat-sidebar {
+            width: 350px;
+            background: var(--navy-dark);
+            border-right: 1px solid var(--glass-border);
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            min-height: 300px;
         }
-
+        .chat-header {
+            padding: 15px;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            color: var(--accent-cyan);
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
         .chat-msg {
-            max-width: 80%;
-            padding: 14px 20px;
-            border-radius: 16px;
-            font-size: 16px;
-            line-height: 1.7;
-            animation: msgAppear 0.5s ease forwards;
-            opacity: 0;
+            max-width: 85%;
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-size: 18px;
+            line-height: 1.5;
         }
-
-        .chat-msg.sent {
-            align-self: flex-start;
-            background: rgba(74, 108, 247, 0.2);
-            border: 1px solid rgba(74, 108, 247, 0.3);
-            border-bottom-right: 6px;
-        }
-
-        .chat-msg.received {
-            align-self: flex-end;
-            background: rgba(123, 92, 255, 0.2);
-            border: 1px solid rgba(123, 92, 255, 0.3);
-            border-bottom-left: 6px;
-        }
-
-        .chat-msg .msg-time {
-            font-size: 12px;
-            color: var(--white-muted);
-            margin-top: 6px;
-            display: block;
-        }
-
-        @keyframes msgAppear {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .chat-msg:nth-child(1) { animation-delay: 0.2s; }
-        .chat-msg:nth-child(2) { animation-delay: 0.6s; }
-        .chat-msg:nth-child(3) { animation-delay: 1s; }
-        .chat-msg:nth-child(4) { animation-delay: 1.4s; }
-
+        .chat-msg.sent { align-self: flex-start; background: rgba(74, 108, 247, 0.2); border-bottom-right-radius: 2px; }
+        .chat-msg.received { align-self: flex-end; background: rgba(123, 92, 255, 0.2); border-bottom-left-radius: 2px; }
+        
         .chat-input-area {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 20px;
-            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
             border-top: 1px solid var(--glass-border);
         }
-
-        .chat-input {
+        .chat-input-area input {
             flex: 1;
-            padding: 12px 18px;
-            background: rgba(26, 34, 85, 0.5);
+            padding: 10px;
+            border-radius: 8px;
             border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            color: var(--white);
-            font-size: 16px;
+            background: var(--navy-deep);
+            color: white;
             font-family: var(--font-main);
+            font-size: 18px;
             outline: none;
-            transition: border-color 0.3s ease;
         }
-
-        .chat-input:focus {
-            border-color: var(--accent-blue);
-        }
-
-        .chat-input::placeholder {
-            color: var(--white-muted);
-        }
-
-        .chat-send-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
+        .chat-input-area button {
             background: var(--accent-gradient);
             border: none;
-            color: var(--white);
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(74, 108, 247, 0.3);
-        }
-
-        .chat-send-btn:hover {
-            transform: scale(1.08);
-            box-shadow: 0 6px 20px rgba(74, 108, 247, 0.5);
-        }
-
-        .chat-info h3 {
-            font-size: clamp(28px, 4vw, 40px);
-            font-weight: 900;
-            margin-bottom: 20px;
-            line-height: 1.3;
-        }
-
-        .chat-info p {
-            font-size: 20px;
-            color: var(--white-muted);
-            line-height: 1.9;
-            margin-bottom: 24px;
-        }
-
-        .chat-features-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .chat-features-list li {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .check-icon {
-            width: 28px;
-            height: 28px;
+            color: white;
+            padding: 0 20px;
+            margin-right: 10px;
             border-radius: 8px;
-            background: rgba(0, 230, 118, 0.15);
-            border: 1px solid rgba(0, 230, 118, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            color: #00e676;
-            flex-shrink: 0;
+            cursor: pointer;
+            font-size: 18px;
+            font-family: var(--font-main);
+            font-weight: bold;
         }
-
-        /* ============================================
-           PERMISSIONS SECTION
-           ============================================ */
-        .permissions-section {
-            background: linear-gradient(180deg, transparent 0%, rgba(255, 193, 7, 0.03) 50%, transparent 100%);
-        }
-
-        .permissions-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .perm-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius);
-            padding: 32px;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            text-align: center;
-            transition: all 0.4s ease;
-        }
-
-        .perm-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 50px rgba(74, 108, 247, 0.12);
-        }
-
-        .perm-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-        }
-
-        .perm-avatar.owner {
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
-            box-shadow: 0 8px 25px rgba(74, 108, 247, 0.4);
-        }
-
-        .perm-avatar.friend {
-            background: linear-gradient(135deg, var(--accent-purple), #ff6b9d);
-            box-shadow: 0 8px 25px rgba(123, 92, 255, 0.4);
-        }
-
-        .perm-card h4 {
-            font-size: 24px;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .perm-role {
-            font-size: 15px;
-            color: var(--accent-cyan);
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        .perm-list {
-            list-style: none;
-            text-align: right;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .perm-list li {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 16px;
-            color: var(--white-soft);
-        }
-
-        .perm-list li .perm-check {
-            color: #00e676;
-            font-size: 16px;
-        }
-
-        /* ============================================
-           STATS SECTION
-           ============================================ */
-        .stats-bar {
-            position: relative;
-            z-index: 1;
-            padding: 60px 24px;
-            background: linear-gradient(135deg, rgba(74, 108, 247, 0.08) 0%, rgba(123, 92, 255, 0.08) 100%);
-            border-top: 1px solid var(--glass-border);
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .stats-grid {
-            max-width: 1000px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 32px;
-            text-align: center;
-        }
-
-        .stat-item .stat-number {
-            font-size: clamp(32px, 5vw, 48px);
-            font-weight: 900;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            display: block;
-        }
-
-        .stat-item .stat-label {
-            font-size: 17px;
-            color: var(--white-muted);
-            font-weight: 600;
-            margin-top: 6px;
-        }
-
-        /* ============================================
-           HOW IT WORKS
-           ============================================ */
-        .steps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 32px;
-            position: relative;
-        }
-
-        .step-card {
-            text-align: center;
-            padding: 40px 28px;
-            position: relative;
-        }
-
-        .step-number {
-            width: 64px;
-            height: 64px;
-            border-radius: 18px;
-            background: var(--accent-gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: 900;
-            margin: 0 auto 24px;
-            box-shadow: 0 8px 25px rgba(74, 108, 247, 0.35);
-        }
-
-        .step-card h4 {
-            font-size: 24px;
-            font-weight: 800;
-            margin-bottom: 12px;
-        }
-
-        .step-card p {
-            font-size: 17px;
-            color: var(--white-muted);
-            line-height: 1.8;
-        }
-
-        /* ============================================
-           CTA SECTION
-           ============================================ */
-        .cta-section {
-            text-align: center;
-            padding: 120px 24px;
-        }
-
-        .cta-card {
-            max-width: 800px;
-            margin: 0 auto;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 28px;
-            padding: 60px 40px;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            box-shadow: var(--glass-shadow), 0 0 100px rgba(74, 108, 247, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(74, 108, 247, 0.06) 0%, transparent 70%);
-            animation: ctaGlow 8s ease-in-out infinite;
-        }
-
-        @keyframes ctaGlow {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-20px, 20px); }
-        }
-
-        .cta-card h2 {
-            font-size: clamp(28px, 4vw, 44px);
-            font-weight: 900;
-            margin-bottom: 16px;
-            position: relative;
-        }
-
-        .cta-card p {
-            font-size: 20px;
-            color: var(--white-muted);
-            margin-bottom: 36px;
-            position: relative;
-            line-height: 1.8;
-        }
-
-        .cta-card .btn-primary {
-            position: relative;
-        }
-
-        /* ============================================
-           FOOTER
-           ============================================ */
-        footer {
-            position: relative;
-            z-index: 1;
-            padding: 40px 24px;
-            border-top: 1px solid var(--glass-border);
-            text-align: center;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-logo {
-            font-size: 28px;
-            font-weight: 900;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 12px;
-        }
-
-        footer p {
-            color: var(--white-muted);
-            font-size: 16px;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            margin-top: 20px;
-            list-style: none;
-        }
-
-        .footer-links a {
-            color: var(--white-muted);
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        .footer-links a:hover {
-            color: var(--accent-cyan);
-        }
-
-        /* ============================================
-           SCROLL ANIMATIONS
-           ============================================ */
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .reveal.delay-1 { transition-delay: 0.1s; }
-        .reveal.delay-2 { transition-delay: 0.2s; }
-        .reveal.delay-3 { transition-delay: 0.3s; }
-        .reveal.delay-4 { transition-delay: 0.4s; }
-        .reveal.delay-5 { transition-delay: 0.5s; }
-
-        /* ============================================
-           MOBILE RESPONSIVE
-           ============================================ */
-        @media (max-width: 900px) {
-            .showcase-grid,
-            .chat-preview-container {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-
-            .showcase-info,
-            .chat-info {
-                order: -1;
-            }
-
-            .permissions-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 24px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            body {
-                font-size: 16px;
-            }
-
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: rgba(10, 14, 39, 0.98);
-                backdrop-filter: blur(20px);
-                -webkit-backdrop-filter: blur(20px);
-                flex-direction: column;
-                padding: 20px;
-                border-bottom: 1px solid var(--glass-border);
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .mockup-body {
-                grid-template-columns: 1fr;
-            }
-
-            section {
-                padding: 60px 16px;
-            }
-
-            .hero {
-                padding: 100px 16px 60px;
-            }
-
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .btn-primary, .btn-secondary {
-                width: 100%;
-                justify-content: center;
-                font-size: 18px;
-                padding: 16px 32px;
-            }
-
-            .cta-card {
-                padding: 40px 24px;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .chat-messages {
-                min-height: 250px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero h1 {
-                font-size: 28px;
-            }
-
-            .section-header h2 {
-                font-size: 26px;
-            }
-
-            .feature-card {
-                padding: 28px 20px;
-            }
-
-            .feature-card h3 {
-                font-size: 22px;
-            }
-
-            .feature-card p {
-                font-size: 16px;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 16px;
-            }
-
-            .stat-item .stat-number {
-                font-size: 28px;
-            }
-
-            .stat-item .stat-label {
-                font-size: 14px;
-            }
-        }
-
-        /* ============================================
-           SCROLLBAR
-           ============================================ */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--navy-deep);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--navy-glow);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-blue);
-        }
+        
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <!-- ========== ANIMATED BACKGROUND ========== -->
-    <div class="bg-animation">
-        <div class="orb"></div>
-        <div class="orb"></div>
-        <div class="orb"></div>
-    </div>
-    <div class="stars" id="stars"></div>
-
-    <!-- ========== NAVIGATION ========== -->
-    <nav class="navbar" id="navbar">
-        <div class="nav-content">
-            <a href="#" class="logo">
-                <div class="logo-icon">CS</div>
-                <span class="logo-text">CollabSync</span>
-            </a>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#features">المميزات</a></li>
-                <li><a href="#screenshare">البث المباشر</a></li>
-                <li><a href="#chat">الشات</a></li>
-                <li><a href="#permissions">الصلاحيات</a></li>
-                <li><a href="#howto">كيف يعمل</a></li>
-            </ul>
-            <button class="mobile-menu-btn" id="menuBtn" aria-label="القائمة">☰</button>
-        </div>
-    </nav>
-
-    <!-- ========== HERO SECTION ========== -->
-    <section class="hero" id="hero">
-        <div class="hero-content">
-            <div class="hero-badge">
-                <span class="pulse-dot"></span>
-                قيد التطوير — قريباً جداً
-            </div>
-            <h1>
-                تعاون بلا حدود
-                <br>
-                <span class="gradient-text">أنت وصديقك في مكان واحد</span>
-            </h1>
-            <p>
-                منصة تعاون متكاملة تتيح لك ولصديقتك تحرير الملاحظات، مشاركة الملفات، 
-                البرمجة بلغة بايثون معاً، الدردشة، وبث الشاشة بجودة Full HD بسلاسة تامة
-            </p>
-            <div class="hero-buttons">
-                <a href="#features" class="btn-primary">
-                    🚀 استكشف المميزات
-                </a>
-                <a href="#howto" class="btn-secondary">
-                    📖 كيف يعمل؟
-                </a>
+    <!-- ================== AUTH SCREEN ================== -->
+    <div id="auth-screen" class="active">
+        <div class="auth-card">
+            <h1>CollabSync</h1>
+            <p>اختر دورك للبدء</p>
+            
+            <div class="auth-buttons" id="role-selection">
+                <button class="btn-primary" onclick="initHost()">👑 أنا المالك (إنشاء غرفة)</button>
+                <button class="btn-secondary" onclick="showJoinInput()">💜 أنا الصديقة (الانضمام لغرفة)</button>
             </div>
 
-            <!-- Floating Mockup -->
-            <div class="hero-mockup">
-                <div class="mockup-container">
-                    <div class="mockup-topbar">
-                        <div style="display:flex;gap:6px;">
-                            <div class="mockup-dot red"></div>
-                            <div class="mockup-dot yellow"></div>
-                            <div class="mockup-dot green"></div>
-                        </div>
-                        <span style="font-size:13px;color:var(--white-muted);font-weight:600;">CollabSync — مساحة العمل</span>
-                    </div>
-                    <div class="mockup-body">
-                        <div class="mockup-panel">
-                            <div class="mockup-panel-title">📝 الملاحظات المشتركة</div>
-                            <div class="mockup-line" style="width:90%"></div>
-                            <div class="mockup-line accent" style="width:75%"></div>
-                            <div class="mockup-line" style="width:85%"></div>
-                            <div class="mockup-line accent" style="width:60%"></div>
-                            <div class="mockup-line" style="width:70%"></div>
-                        </div>
-                        <div class="mockup-panel">
-                            <div class="mockup-panel-title">🐍 محرر بايثون</div>
-                            <div class="mockup-line accent" style="width:95%"></div>
-                            <div class="mockup-line" style="width:80%"></div>
-                            <div class="mockup-line accent" style="width:70%"></div>
-                            <div class="mockup-line" style="width:88%"></div>
-                            <div class="mockup-line accent" style="width:55%"></div>
-                        </div>
-                    </div>
-                </div>
+            <div class="input-group" id="join-group">
+                <input type="text" id="room-code-input" placeholder="أدخل كود الغرفة هنا...">
+                <button class="btn-primary" onclick="joinRoom()">دخول الغرفة</button>
+                <button class="btn-secondary" style="margin-top: 10px;" onclick="hideJoinInput()">رجوع</button>
             </div>
-        </div>
-    </section>
 
-    <!-- ========== STATS BAR ========== -->
-    <div class="stats-bar">
-        <div class="stats-grid">
-            <div class="stat-item reveal">
-                <span class="stat-number" data-target="1080">1080p</span>
-                <span class="stat-label">جودة البث</span>
-            </div>
-            <div class="stat-item reveal delay-1">
-                <span class="stat-number">60fps</span>
-                <span class="stat-label">معدل الإطارات</span>
-            </div>
-            <div class="stat-item reveal delay-2">
-                <span class="stat-number">0ms</span>
-                <span class="stat-label">تأخير البث</span>
-            </div>
-            <div class="stat-item reveal delay-3">
-                <span class="stat-number">∞</span>
-                <span class="stat-label">ملفات مشتركة</span>
+            <div id="status-msg"></div>
+            
+            <div id="host-code-display" class="hidden" style="margin-top: 20px;">
+                <p>أرسل هذا الكود لصديقتك:</p>
+                <h2 style="color: var(--accent-cyan); background: var(--navy-dark); padding: 10px; border-radius: 8px; user-select: all;" id="room-code-text"></h2>
+                <p style="font-size:16px; margin-top:10px;">بانتظار انضمام الصديقة...</p>
             </div>
         </div>
     </div>
 
-    <!-- ========== FEATURES SECTION ========== -->
-    <section id="features">
-        <div class="section-container">
-            <div class="section-header reveal">
-                <span class="section-label">✨ المميزات</span>
-                <h2>كل ما تحتاجه للتعاون في مكان واحد</h2>
-                <p>ست مميزات أساسية مصممة لتجربة تعاون سلسة وقوية</p>
+    <!-- ================== APP SCREEN ================== -->
+    <div id="app-screen">
+        <div class="topbar">
+            <div class="logo">CollabSync</div>
+            <div class="nav-tabs">
+                <div class="nav-tab active" data-tab="notes" onclick="switchTab('notes')">📝 الملاحظات</div>
+                <div class="nav-tab" data-tab="python" onclick="switchTab('python')">🐍 بايثون</div>
+                <div class="nav-tab" data-tab="files" onclick="switchTab('files')">📁 الملفات</div>
+                <div class="nav-tab" data-tab="screen" onclick="switchTab('screen')">🖥️ البث</div>
+                <div class="nav-tab hidden" id="perm-tab-btn" data-tab="permissions" onclick="switchTab('permissions')">🔐 الصلاحيات</div>
             </div>
-            <div class="features-grid">
-                <!-- Feature 1: Notes -->
-                <div class="feature-card reveal">
-                    <div class="feature-icon notes">📝</div>
-                    <h3>تحرير الملاحظات المشتركة</h3>
-                    <p>أنشئ ملاحظات وعدّل عليها مع صديقتك في الوقت الحقيقي. كل تعديل يظهر فوراً مع تتبع التغييرات وحفظ تلقائي.</p>
-                    <div class="feature-tags">
-                        <span class="feature-tag">تعديل مباشر</span>
-                        <span class="feature-tag">حفظ تلقائي</span>
-                        <span class="feature-tag">تتبع التغييرات</span>
+            <div class="connection-info">
+                <span id="role-badge">المالك</span>
+                <div class="status-dot connected"></div>
+            </div>
+        </div>
+
+        <div class="workspace">
+            <!-- Chat Sidebar (Right side in RTL) -->
+            <div class="chat-sidebar">
+                <div class="chat-header">💬 الشات</div>
+                <div class="chat-messages" id="chat-messages">
+                    <div style="text-align:center; color: var(--white-muted); font-size: 16px; margin-bottom:10px;">بدأت المحادثة المباشرة</div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="اكتب رسالتك..." onkeypress="handleChatEnter(event)">
+                    <button onclick="sendChat()">إرسال</button>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <!-- Tab: Notes -->
+                <div id="tab-notes" class="tab-content active">
+                    <textarea id="notes-area" placeholder="اكتب ملاحظاتك هنا... سيتم مزامنتها فوراً"></textarea>
+                </div>
+
+                <!-- Tab: Python -->
+                <div id="tab-python" class="tab-content">
+                    <div id="python-editor-container" style="flex:1; display:flex; flex-direction:column; overflow:hidden;"></div>
+                </div>
+
+                <!-- Tab: Files -->
+                <div id="tab-files" class="tab-content">
+                    <div class="files-container">
+                        <div class="file-upload-box" onclick="document.getElementById('file-input').click()">
+                            <h3>📥 اضغط هنا لرفع ومشاركة ملف</h3>
+                            <p style="color:var(--white-muted); margin-top:10px;">سيتم إرسال الملف مباشرة للطرف الآخر</p>
+                        </div>
+                        <input type="file" id="file-input" style="display:none" onchange="handleFileUpload(event)">
+                        
+                        <h3 style="margin-top: 20px;">الملفات المشتركة:</h3>
+                        <ul class="file-list" id="file-list">
+                            <!-- Files will appear here -->
+                        </ul>
                     </div>
                 </div>
 
-                <!-- Feature 2: Files -->
-                <div class="feature-card reveal delay-1">
-                    <div class="feature-icon files">📁</div>
-                    <h3>مشاركة وتعديل الملفات</h3>
-                    <p>ارسل ملفات بأي صيغة وعدّل عليها مباشرة. نظام إدارة ملفات متقدم مع خيارات التنظيم والبحث السريع.</p>
-                    <div class="feature-tags">
-                        <span class="feature-tag">جميع الصيغ</span>
-                        <span class="feature-tag">تعديل مباشر</span>
-                        <span class="feature-tag">بحث سريع</span>
+                <!-- Tab: Screen Share -->
+                <div id="tab-screen" class="tab-content">
+                    <div class="screen-share-controls">
+                        <button class="btn-primary" id="start-screen-btn" onclick="startScreenShare()">▶️ بدء بث الشاشة</button>
+                        <button class="btn-secondary hidden" id="stop-screen-btn" onclick="stopScreenShare()">⏹️ إيقاف البث</button>
+                        <button class="btn-secondary" id="toggle-mic-btn" onclick="toggleMic()" style="background: rgba(255, 59, 48, 0.2); border-color: #ff3b30!important; color: #ff3b30;">🔇 المايك معطل</button>
+                    </div>
+                    <div class="video-container">
+                        <video id="remote-video" autoplay playsinline></video>
                     </div>
                 </div>
 
-                <!-- Feature 3: Python -->
-                <div class="feature-card reveal delay-2">
-                    <div class="feature-icon python">🐍</div>
-                    <h3>محرر بايثون تعاوني</h3>
-                    <p>حرّر ملفات بايثون مع صديقتك في نفس اللحظة. محرر كود متقدم مع تلوين الأكواد وإكمال تلقائي وتنفيذ فوري.</p>
-                    <div class="feature-tags">
-                        <span class="feature-tag">تلوين الأكواد</span>
-                        <span class="feature-tag">إكمال تلقائي</span>
-                        <span class="feature-tag">تنفيذ فوري</span>
-                    </div>
-                </div>
-
-                <!-- Feature 4: Chat -->
-                <div class="feature-card reveal delay-3">
-                    <div class="feature-icon chat">💬</div>
-                    <h3>شات وملاحظات فورية</h3>
-                    <p>تواصل مع صديقتك عبر شات مدمج. اترك ملاحظات، شارك روابط، وأرسل رسائل نصية بسلاسة تامة.</p>
-                    <div class="feature-tags">
-                        <span class="feature-tag">رسائل فورية</span>
-                        <span class="feature-tag">ملاحظات</span>
-                        <span class="feature-tag">مشاركة روابط</span>
-                    </div>
-                </div>
-
-                <!-- Feature 5: Screen Share -->
-                <div class="feature-card reveal delay-4">
-                    <div class="feature-icon screen">🖥️</div>
-                    <h3>بث الشاشة بجودة عالية</h3>
-                    <p>شارك شاشتك بجودة Full HD و 60 إطار بالثانية بدون أي تقطيع أو غباش. مع خيار تفعيل المايك أو إيقافه.</p>
-                    <div class="feature-tags">
-                        <span class="feature-tag">Full HD</span>
-                        <span class="feature-tag">60 FPS</span>
-                        <span class="feature-tag">مايك اختياري</span>
-                    </div>
-                </div>
-
-                <!-- Feature 6: Permissions -->
-                <div class="feature-card reveal delay-5">
-                    <div class="feature-icon permissions">🔐</div>
-                    <h3>نظام الصلاحيات المتقدم</h3>
-                    <p>تحكّم كامل بالصلاحيات. حدد ما يمكن لكل شخص فعله — من التعديل والحذف إلى المشاهدة فقط.</p>
-                    <div class="feature-tags">
-                        <span class="feature-tag">تحكم كامل</span>
-                        <span class="feature-tag">أدوار مخصصة</span>
-                        <span class="feature-tag">حماية متقدمة</span>
+                <!-- Tab: Permissions (Owner Only) -->
+                <div id="tab-permissions" class="tab-content">
+                    <h2 style="text-align: center; margin-bottom: 30px;">تحكم بصلاحيات الصديقة</h2>
+                    <div class="perm-list">
+                        <div class="perm-item">
+                            <span>تعديل الملاحظات</span>
+                            <label class="switch">
+                                <input type="checkbox" id="perm-notes" checked onchange="updatePermissions()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="perm-item">
+                            <span>تعديل كود بايثون</span>
+                            <label class="switch">
+                                <input type="checkbox" id="perm-python" checked onchange="updatePermissions()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="perm-item">
+                            <span>مشاركة الملفات</span>
+                            <label class="switch">
+                                <input type="checkbox" id="perm-files" checked onchange="updatePermissions()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="perm-item">
+                            <span>بدء بث الشاشة</span>
+                            <label class="switch">
+                                <input type="checkbox" id="perm-screen" checked onchange="updatePermissions()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- ========== SCREEN SHARE SHOWCASE ========== -->
-    <section id="screenshare" class="showcase-section">
-        <div class="section-container">
-            <div class="section-header reveal">
-                <span class="section-label">🖥️ البث المباشر</span>
-                <h2>شاشتك بجودة سينمائية</h2>
-                <p>بث شاشة بأعلى جودة ممكنة بدون أي تنازلات</p>
-            </div>
-            <div class="showcase-grid">
-                <div class="showcase-visual reveal">
-                    <div class="showcase-screen">
-                        <div class="screen-header">
-                            <div class="screen-status">
-                                <div class="live-indicator">
-                                    <span class="dot"></span>
-                                    مباشر
-                                </div>
-                                <span class="quality-badge">1080p • 60fps</span>
-                            </div>
-                            <span style="font-size:13px;color:var(--white-muted);">02:34:17</span>
-                        </div>
-                        <div class="screen-body">
-                            <div class="screen-body-content">
-                                <div class="play-icon">▶</div>
-                                <p>بث الشاشة يعمل الآن...</p>
-                            </div>
-                            <div class="screen-wave">
-                                <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
-                                    <path d="M0,30 Q150,0 300,30 Q450,60 600,30 Q750,0 900,30 Q1050,60 1200,30 L1200,60 L0,60 Z" fill="rgba(74, 108, 247, 0.1)"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="screen-controls">
-                            <button class="control-btn mic-on" id="micToggle" title="المايكروفون">🎙️</button>
-                            <button class="control-btn" title="إيقاف مؤقت">⏸️</button>
-                            <button class="control-btn" title="ملء الشاشة">⛶</button>
-                            <button class="control-btn end-call" title="إيقاف البث">📵</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="showcase-info reveal delay-2">
-                    <h3>بث بلا حدود <br><span class="gradient-text">بجودة لا تُصدّق</span></h3>
-                    <p>
-                        شاشتك تُعرض لصديقتك بنفس الجودة الأصلية — Full HD 1080p 
-                        وبمعدل 60 إطار بالثانية مع صفر تقطيع وصفر غباش.
-                    </p>
-                    <ul class="specs-list">
-                        <li>
-                            <span class="spec-icon">📺</span>
-                            دقة Full HD 1920×1080
-                        </li>
-                        <li>
-                            <span class="spec-icon">⚡</span>
-                            60 إطار بالثانية — سلاسة تامة
-                        </li>
-                        <li>
-                            <span class="spec-icon">🎙️</span>
-                            مايكروفون اختياري — شغّل أو أطفئ
-                        </li>
-                        <li>
-                            <span class="spec-icon">🔒</span>
-                            اتصال مشفّر وآمن بالكامل
-                        </li>
-                        <li>
-                            <span class="spec-icon">🌐</span>
-                            بدون تأخير حتى مع إنترنت متوسط
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- ================== LIBRARIES ================== -->
+    <!-- PeerJS -->
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    
+    <!-- CodeMirror 5 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
 
-    <!-- ========== CHAT SECTION ========== -->
-    <section id="chat" class="chat-section">
-        <div class="section-container">
-            <div class="section-header reveal">
-                <span class="section-label">💬 الشات</span>
-                <h2>تواصل فوري بلا انقطاع</h2>
-                <p>شات مدمج لترك الملاحظات والتواصل في أي لحظة</p>
-            </div>
-            <div class="chat-preview-container">
-                <div class="chat-info reveal">
-                    <h3>شات ذكي <br><span class="gradient-text">مصمم للتعاون</span></h3>
-                    <p>
-                        ليس مجرد شات عادي — إنه نظام تواصل مدمج يتيح لك ولصديقتك 
-                        ترك ملاحظات، مشاركة أفكار، ومناقشة التعديلات مباشرة.
-                    </p>
-                    <ul class="chat-features-list">
-                        <li>
-                            <span class="check-icon">✓</span>
-                            رسائل نصية فورية بدون تأخير
-                        </li>
-                        <li>
-                            <span class="check-icon">✓</span>
-                            ملاحظات مثبتة لا تضيع
-                        </li>
-                        <li>
-                            <span class="check-icon">✓</span>
-                            إشعارات لحظية عند وصول رسالة
-                        </li>
-                        <li>
-                            <span class="check-icon">✓</span>
-                            مشاركة روابط وملفات عبر الشات
-                        </li>
-                        <li>
-                            <span class="check-icon">✓</span>
-                            أرشيف محفوظ لكل المحادثات
-                        </li>
-                    </ul>
-                </div>
-                <div class="chat-window reveal delay-2">
-                    <div class="chat-header">
-                        <div class="chat-user-info">
-                            <div class="chat-avatar user-b">S</div>
-                            <div>
-                                <div class="chat-username">صديقتي 💜</div>
-                                <div class="chat-online"><span class="dot"></span> متصلة الآن</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="chat-messages" id="chatMessages">
-                        <div class="chat-msg sent">
-                            هاي! عدّلت على ملف البايثون الجديد 🐍
-                            <span class="msg-time">4:02 م</span>
-                        </div>
-                        <div class="chat-msg received">
-                            حلو! شفت التعديلات، ممتازة 💫
-                            <span class="msg-time">4:03 م</span>
-                        </div>
-                        <div class="chat-msg sent">
-                            تعالي نفتح بث شاشة أوريكِ شي جديد 🖥️
-                            <span class="msg-time">4:05 م</span>
-                        </div>
-                        <div class="chat-msg received">
-                            يلا شغّل البث! ✨
-                            <span class="msg-time">4:05 م</span>
-                        </div>
-                    </div>
-                    <div class="chat-input-area">
-                        <input type="text" class="chat-input" placeholder="اكتب رسالتك..." id="chatInput">
-                        <button class="chat-send-btn" id="chatSendBtn">➤</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========== PERMISSIONS SECTION ========== -->
-    <section id="permissions" class="permissions-section">
-        <div class="section-container">
-            <div class="section-header reveal">
-                <span class="section-label">🔐 الصلاحيات</span>
-                <h2>تحكّم كامل بالصلاحيات</h2>
-                <p>كل شخص يملك صلاحيات مخصصة حسب دوره</p>
-            </div>
-            <div class="permissions-grid">
-                <div class="perm-card reveal">
-                    <div class="perm-avatar owner">👑</div>
-                    <h4>أنت (المالك)</h4>
-                    <div class="perm-role">صلاحيات كاملة</div>
-                    <ul class="perm-list">
-                        <li><span class="perm-check">✅</span> إنشاء وتعديل الملاحظات</li>
-                        <li><span class="perm-check">✅</span> رفع وتعديل الملفات</li>
-                        <li><span class="perm-check">✅</span> تحرير ملفات بايثون</li>
-                        <li><span class="perm-check">✅</span> إدارة الصلاحيات</li>
-                        <li><span class="perm-check">✅</span> بث الشاشة والمايك</li>
-                        <li><span class="perm-check">✅</span> حذف المحتوى</li>
-                        <li><span class="perm-check">✅</span> الشات والملاحظات</li>
-                    </ul>
-                </div>
-                <div class="perm-card reveal delay-2">
-                    <div class="perm-avatar friend">💜</div>
-                    <h4>صديقتك</h4>
-                    <div class="perm-role">صلاحيات مخصصة</div>
-                    <ul class="perm-list">
-                        <li><span class="perm-check">✅</span> تعديل الملاحظات المشتركة</li>
-                        <li><span class="perm-check">✅</span> رفع وتعديل الملفات</li>
-                        <li><span class="perm-check">✅</span> تحرير ملفات بايثون معاً</li>
-                        <li><span class="perm-check">✅</span> مشاهدة بث الشاشة</li>
-                        <li><span class="perm-check">✅</span> الشات والملاحظات</li>
-                        <li><span class="perm-check">✅</span> بدء بث شاشة خاص</li>
-                        <li><span class="perm-check">✅</span> تفعيل المايكروفون</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========== HOW IT WORKS ========== -->
-    <section id="howto">
-        <div class="section-container">
-            <div class="section-header reveal">
-                <span class="section-label">📖 كيف يعمل</span>
-                <h2>ثلاث خطوات فقط للبدء</h2>
-                <p>سهل وسريع — ابدأ التعاون في دقائق</p>
-            </div>
-            <div class="steps-grid">
-                <div class="step-card reveal">
-                    <div class="step-number">1</div>
-                    <h4>سجّل حسابك</h4>
-                    <p>أنشئ حسابك في ثوانٍ واحصل على مساحة عمل خاصة بك</p>
-                </div>
-                <div class="step-card reveal delay-1">
-                    <div class="step-number">2</div>
-                    <h4>ادعُ صديقتك</h4>
-                    <p>أرسل دعوة لصديقتك وحدد الصلاحيات المناسبة لها</p>
-                </div>
-                <div class="step-card reveal delay-2">
-                    <div class="step-number">3</div>
-                    <h4>ابدأ التعاون</h4>
-                    <p>عدّلوا الملفات، شاركوا الشاشة، وتواصلوا عبر الشات</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========== CTA SECTION ========== -->
-    <section class="cta-section">
-        <div class="cta-card reveal">
-            <h2>جاهز للتعاون بلا حدود؟ 🚀</h2>
-            <p>انضم الآن وابدأ تجربة تعاون لم تعشها من قبل</p>
-            <a href="#hero" class="btn-primary">
-                ✨ ابدأ الآن مجاناً
-            </a>
-        </div>
-    </section>
-
-    <!-- ========== FOOTER ========== -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-logo">CollabSync</div>
-            <p>منصة التعاون المتكاملة — صُنعت بـ 💜</p>
-            <ul class="footer-links">
-                <li><a href="#features">المميزات</a></li>
-                <li><a href="#screenshare">البث المباشر</a></li>
-                <li><a href="#chat">الشات</a></li>
-                <li><a href="#permissions">الصلاحيات</a></li>
-            </ul>
-            <p style="margin-top:20px;font-size:14px;color:rgba(176,184,209,0.5);">© 2026 CollabSync. جميع الحقوق محفوظة.</p>
-        </div>
-    </footer>
-
-    <!-- ========== JAVASCRIPT ========== -->
+    <!-- ================== LOGIC ================== -->
     <script>
-        // ============================================
-        // STARS GENERATOR
-        // ============================================
-        (function generateStars() {
-            const container = document.getElementById('stars');
-            const count = 80;
-            for (let i = 0; i < count; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.setProperty('--duration', (2 + Math.random() * 5) + 's');
-                star.style.setProperty('--max-opacity', (0.3 + Math.random() * 0.7));
-                star.style.animationDelay = Math.random() * 5 + 's';
-                star.style.width = (1 + Math.random() * 2) + 'px';
-                star.style.height = star.style.width;
-                container.appendChild(star);
+        // --- State Variables ---
+        let peer = null;
+        let dataConn = null;
+        let mediaConn = null;
+        let isOwner = false;
+        let myStream = null;
+        let includeMic = false;
+        
+        let editor = null;
+        let isCodeUpdatingProgrammatically = false;
+        let isNotesUpdatingProgrammatically = false;
+
+        let permissions = {
+            notes: true,
+            python: true,
+            files: true,
+            screen: true
+        };
+
+        const statusMsg = document.getElementById('status-msg');
+        
+        // --- UI Initialization ---
+        function initCodeMirror() {
+            if(!editor) {
+                editor = CodeMirror(document.getElementById('python-editor-container'), {
+                    mode: "python",
+                    theme: "dracula",
+                    lineNumbers: true,
+                    value: "# اكتب كود بايثون هنا...\nprint('مرحباً في CollabSync!')",
+                    viewportMargin: Infinity
+                });
+                editor.setSize("100%", "100%");
+
+                // Listen for changes
+                editor.on('change', (cm, changeObj) => {
+                    if(!isCodeUpdatingProgrammatically && hasPermission('python')) {
+                        sendData({ type: 'code_update', content: cm.getValue() });
+                    }
+                });
             }
-        })();
-
-        // ============================================
-        // NAVBAR SCROLL EFFECT
-        // ============================================
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            navbar.classList.toggle('scrolled', window.scrollY > 50);
-        });
-
-        // ============================================
-        // MOBILE MENU TOGGLE
-        // ============================================
-        const menuBtn = document.getElementById('menuBtn');
-        const navLinks = document.getElementById('navLinks');
-
-        menuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            menuBtn.textContent = navLinks.classList.contains('active') ? '✕' : '☰';
-        });
-
-        // Close menu on link click
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-                menuBtn.textContent = '☰';
-            });
-        });
-
-        // ============================================
-        // SCROLL REVEAL ANIMATION
-        // ============================================
-        const revealElements = document.querySelectorAll('.reveal');
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
-
-        revealElements.forEach(el => revealObserver.observe(el));
-
-        // ============================================
-        // MIC TOGGLE BUTTON
-        // ============================================
-        const micToggle = document.getElementById('micToggle');
-        let micOn = true;
-
-        micToggle.addEventListener('click', () => {
-            micOn = !micOn;
-            micToggle.className = micOn ? 'control-btn mic-on' : 'control-btn mic-off';
-            micToggle.textContent = micOn ? '🎙️' : '🔇';
-            micToggle.title = micOn ? 'المايكروفون مفعّل' : 'المايكروفون مغلق';
-        });
-
-        // ============================================
-        // CHAT DEMO
-        // ============================================
-        const chatInput = document.getElementById('chatInput');
-        const chatSendBtn = document.getElementById('chatSendBtn');
-        const chatMessages = document.getElementById('chatMessages');
-
-        function sendMessage() {
-            const text = chatInput.value.trim();
-            if (!text) return;
-
-            const msg = document.createElement('div');
-            msg.className = 'chat-msg sent';
-            msg.innerHTML = `${text}<span class="msg-time">${new Date().toLocaleTimeString('ar-SA', {hour: '2-digit', minute:'2-digit'})}</span>`;
-            msg.style.animation = 'msgAppear 0.4s ease forwards';
-            chatMessages.appendChild(msg);
-            chatInput.value = '';
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            // Auto reply
-            setTimeout(() => {
-                const replies = [
-                    'تمام! 👍',
-                    'حلو! شكراً 💜',
-                    'أوكي، فهمت عليك ✨',
-                    'يلا نكمل! 🚀',
-                    'ممتاز! 🎉',
-                    'شفتها، حلوة كثير! 💫',
-                ];
-                const reply = document.createElement('div');
-                reply.className = 'chat-msg received';
-                reply.innerHTML = `${replies[Math.floor(Math.random() * replies.length)]}<span class="msg-time">${new Date().toLocaleTimeString('ar-SA', {hour: '2-digit', minute:'2-digit'})}</span>`;
-                reply.style.animation = 'msgAppear 0.4s ease forwards';
-                chatMessages.appendChild(reply);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 800 + Math.random() * 700);
         }
 
-        chatSendBtn.addEventListener('click', sendMessage);
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
+        // Listen for Notes changes
+        const notesArea = document.getElementById('notes-area');
+        notesArea.addEventListener('input', () => {
+            if(!isNotesUpdatingProgrammatically && hasPermission('notes')) {
+                sendData({ type: 'note_update', content: notesArea.value });
+            }
         });
 
-        // ============================================
-        // SMOOTH SCROLL FOR ANCHOR LINKS
-        // ============================================
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            document.querySelector(`.nav-tab[data-tab="${tabId}"]`).classList.add('active');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            
+            if(tabId === 'python' && editor) {
+                setTimeout(() => editor.refresh(), 10);
+            }
+        }
+
+        function showJoinInput() {
+            document.getElementById('role-selection').classList.add('hidden');
+            document.getElementById('join-group').classList.add('active');
+        }
+
+        function hideJoinInput() {
+            document.getElementById('role-selection').classList.remove('hidden');
+            document.getElementById('join-group').classList.remove('active');
+        }
+
+        function showAppScreen() {
+            document.getElementById('auth-screen').classList.remove('active');
+            document.getElementById('app-screen').classList.add('active');
+            initCodeMirror();
+            
+            if(isOwner) {
+                document.getElementById('role-badge').innerText = 'المالك 👑';
+                document.getElementById('perm-tab-btn').classList.remove('hidden');
+            } else {
+                document.getElementById('role-badge').innerText = 'الصديقة 💜';
+                applyPermissionsUI();
+            }
+        }
+
+        function updateStatus(msg, isError = false) {
+            statusMsg.innerText = msg;
+            statusMsg.style.color = isError ? '#ff3b30' : 'var(--accent-cyan)';
+        }
+
+        // --- Network Logic (PeerJS) ---
+        
+        function initPeer(id = null) {
+            peer = id ? new Peer(id) : new Peer();
+            
+            peer.on('open', (peerId) => {
+                if(isOwner) {
+                    document.getElementById('role-selection').classList.add('hidden');
+                    document.getElementById('host-code-display').classList.remove('hidden');
+                    document.getElementById('room-code-text').innerText = peerId;
+                    updateStatus('الغرفة جاهزة، شارك الكود.');
                 }
             });
-        });
+
+            peer.on('connection', (conn) => {
+                if(isOwner && !dataConn) { // Accept connection
+                    setupDataConnection(conn);
+                } else if(isOwner && dataConn) {
+                    // Only 1 friend allowed
+                    conn.close();
+                }
+            });
+
+            peer.on('call', (call) => {
+                // Receive media call (screen share)
+                call.answer();
+                call.on('stream', (remoteStream) => {
+                    const videoElement = document.getElementById('remote-video');
+                    videoElement.srcObject = remoteStream;
+                    videoElement.play();
+                });
+                mediaConn = call;
+            });
+
+            peer.on('error', (err) => {
+                console.error(err);
+                updateStatus('حدث خطأ: ' + err.type, true);
+            });
+        }
+
+        function initHost() {
+            isOwner = true;
+            updateStatus('جاري إنشاء الغرفة...');
+            // Generate a random 6-digit code for simplicity
+            const roomCode = Math.floor(100000 + Math.random() * 900000).toString();
+            initPeer('collabsync-' + roomCode);
+        }
+
+        function joinRoom() {
+            const code = document.getElementById('room-code-input').value.trim();
+            if(!code) return updateStatus('يرجى إدخال كود الغرفة', true);
+            
+            isOwner = false;
+            updateStatus('جاري الاتصال بالمالك...');
+            initPeer();
+            
+            peer.on('open', () => {
+                const conn = peer.connect('collabsync-' + code, { reliable: true });
+                setupDataConnection(conn);
+            });
+        }
+
+        function setupDataConnection(conn) {
+            dataConn = conn;
+            dataConn.on('open', () => {
+                showAppScreen();
+                if(isOwner) {
+                    // Send initial state and permissions
+                    sendData({ type: 'permissions_update', permissions: permissions });
+                    sendData({ type: 'note_update', content: notesArea.value });
+                    if(editor) sendData({ type: 'code_update', content: editor.getValue() });
+                }
+            });
+
+            dataConn.on('data', (data) => {
+                handleIncomingData(data);
+            });
+
+            dataConn.on('close', () => {
+                alert("تم قطع الاتصال.");
+                location.reload();
+            });
+        }
+
+        function sendData(data) {
+            if(dataConn && dataConn.open) {
+                dataConn.send(data);
+            }
+        }
+
+        // --- Data Handling ---
+        
+        function handleIncomingData(data) {
+            if(data.type === 'note_update') {
+                isNotesUpdatingProgrammatically = true;
+                notesArea.value = data.content;
+                isNotesUpdatingProgrammatically = false;
+            } 
+            else if(data.type === 'code_update') {
+                if(editor) {
+                    isCodeUpdatingProgrammatically = true;
+                    const cursor = editor.getCursor();
+                    editor.setValue(data.content);
+                    editor.setCursor(cursor);
+                    isCodeUpdatingProgrammatically = false;
+                }
+            }
+            else if(data.type === 'chat_msg') {
+                appendChatMsg(data.text, 'received');
+            }
+            else if(data.type === 'file_transfer') {
+                receiveFile(data.name, data.file, data.typeStr);
+            }
+            else if(data.type === 'permissions_update') {
+                if(!isOwner) {
+                    permissions = data.permissions;
+                    applyPermissionsUI();
+                }
+            }
+        }
+
+        // --- Permissions Logic ---
+        
+        function hasPermission(feature) {
+            return isOwner || permissions[feature];
+        }
+
+        function updatePermissions() {
+            if(!isOwner) return;
+            permissions = {
+                notes: document.getElementById('perm-notes').checked,
+                python: document.getElementById('perm-python').checked,
+                files: document.getElementById('perm-files').checked,
+                screen: document.getElementById('perm-screen').checked
+            };
+            sendData({ type: 'permissions_update', permissions: permissions });
+        }
+
+        function applyPermissionsUI() {
+            // Notes
+            notesArea.readOnly = !permissions.notes;
+            notesArea.placeholder = permissions.notes ? "اكتب ملاحظاتك هنا..." : "ليس لديك صلاحية لتعديل الملاحظات.";
+            
+            // Python
+            if(editor) editor.setOption("readOnly", !permissions.python);
+
+            // Files
+            const fileUploadBox = document.querySelector('.file-upload-box');
+            if(permissions.files) {
+                fileUploadBox.style.pointerEvents = 'auto';
+                fileUploadBox.style.opacity = '1';
+                fileUploadBox.querySelector('h3').innerText = '📥 اضغط هنا لرفع ومشاركة ملف';
+            } else {
+                fileUploadBox.style.pointerEvents = 'none';
+                fileUploadBox.style.opacity = '0.5';
+                fileUploadBox.querySelector('h3').innerText = '🚫 ليس لديك صلاحية لرفع الملفات';
+            }
+
+            // Screen
+            const screenBtn = document.getElementById('start-screen-btn');
+            if(permissions.screen) {
+                screenBtn.disabled = false;
+                screenBtn.innerText = '▶️ بدء بث الشاشة';
+                screenBtn.style.opacity = '1';
+            } else {
+                screenBtn.disabled = true;
+                screenBtn.innerText = '🚫 البث غير متاح لك';
+                screenBtn.style.opacity = '0.5';
+            }
+        }
+
+        // --- Chat Logic ---
+        function sendChat() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if(!text) return;
+
+            appendChatMsg(text, 'sent');
+            sendData({ type: 'chat_msg', text: text });
+            input.value = '';
+        }
+
+        function handleChatEnter(e) {
+            if(e.key === 'Enter') sendChat();
+        }
+
+        function appendChatMsg(text, type) {
+            const container = document.getElementById('chat-messages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-msg ${type}`;
+            msgDiv.innerText = text;
+            container.appendChild(msgDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // --- File Sharing Logic ---
+        function handleFileUpload(e) {
+            if(!hasPermission('files')) return;
+            const file = e.target.files[0];
+            if(!file) return;
+
+            // Add to UI as sent
+            addFileToList(file.name, file, true);
+
+            // Send via WebRTC DataChannel (PeerJS supports Blobs/ArrayBuffers natively)
+            sendData({
+                type: 'file_transfer',
+                name: file.name,
+                typeStr: file.type,
+                file: file
+            });
+            
+            // Reset input
+            e.target.value = '';
+        }
+
+        function receiveFile(name, blob, typeStr) {
+            const file = new Blob([blob], { type: typeStr });
+            addFileToList(name, file, false);
+        }
+
+        function addFileToList(name, blob, isSent) {
+            const list = document.getElementById('file-list');
+            const url = URL.createObjectURL(blob);
+            const li = document.createElement('li');
+            li.className = 'file-item';
+            
+            const direction = isSent ? '📤 (أنت)' : '📥 (صديقتك)';
+            li.innerHTML = `
+                <span>${direction} ${name}</span>
+                <a href="${url}" download="${name}">تحميل</a>
+            `;
+            list.appendChild(li);
+        }
+
+        // --- Screen Sharing Logic ---
+        function toggleMic() {
+            includeMic = !includeMic;
+            const btn = document.getElementById('toggle-mic-btn');
+            if(includeMic) {
+                btn.style.background = 'rgba(0, 230, 118, 0.2)';
+                btn.style.borderColor = '#00e676';
+                btn.style.color = '#00e676';
+                btn.innerText = '🎙️ المايك مفعل';
+            } else {
+                btn.style.background = 'rgba(255, 59, 48, 0.2)';
+                btn.style.borderColor = '#ff3b30';
+                btn.style.color = '#ff3b30';
+                btn.innerText = '🔇 المايك معطل';
+            }
+        }
+
+        async function startScreenShare() {
+            if(!hasPermission('screen')) return;
+            try {
+                const stream = await navigator.mediaDevices.getDisplayMedia({ 
+                    video: { frameRate: { ideal: 60 } }, 
+                    audio: includeMic
+                });
+                
+                myStream = stream;
+                
+                // Show my stream locally
+                document.getElementById('remote-video').srcObject = stream;
+                document.getElementById('start-screen-btn').classList.add('hidden');
+                document.getElementById('stop-screen-btn').classList.remove('hidden');
+
+                // Call remote peer
+                if(dataConn && dataConn.peer) {
+                    mediaConn = peer.call(dataConn.peer, stream);
+                }
+
+                // Handle stop from browser UI
+                stream.getVideoTracks()[0].onended = function () {
+                    stopScreenShare();
+                };
+
+            } catch(err) {
+                console.error("Error sharing screen: ", err);
+                alert("تعذر مشاركة الشاشة.");
+            }
+        }
+
+        function stopScreenShare() {
+            if(myStream) {
+                myStream.getTracks().forEach(track => track.stop());
+                myStream = null;
+            }
+            if(mediaConn) {
+                mediaConn.close();
+                mediaConn = null;
+            }
+            document.getElementById('remote-video').srcObject = null;
+            document.getElementById('start-screen-btn').classList.remove('hidden');
+            document.getElementById('stop-screen-btn').classList.add('hidden');
+        }
+
     </script>
 </body>
 </html>
