@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CollabSync - مساحة العمل المشتركة</title>
+    <title>Pomme - مساحة العمل المشتركة</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -280,6 +280,7 @@
             border-right: 1px solid var(--glass-border);
             display: flex;
             flex-direction: column;
+            order: 2; /* Move chat to the right in LTR, or bottom in column */
         }
         .chat-header {
             padding: 15px;
@@ -340,6 +341,20 @@
 
         /* --- Mobile Responsiveness --- */
         @media (max-width: 768px) {
+            body {
+                height: auto;
+                overflow-y: auto;
+                display: block;
+            }
+            #app-screen.active {
+                display: block;
+                height: auto;
+            }
+            .workspace {
+                display: flex;
+                flex-direction: column;
+                height: auto;
+            }
             .topbar {
                 height: auto;
                 flex-wrap: wrap;
@@ -356,24 +371,27 @@
             }
             .nav-tab { font-size: 16px; padding: 5px 12px; white-space: nowrap; }
             
-            .workspace {
-                flex-direction: column;
+            .main-content {
+                min-height: 55vh;
+                flex: none;
+                overflow: visible;
             }
             .chat-sidebar {
                 width: 100%;
-                flex: 0 0 40%;
+                height: 400px;
+                flex: none;
                 border-right: none;
                 border-top: 2px solid var(--accent-blue);
-            }
-            .main-content {
-                flex: 1;
+                order: 2;
             }
             .screen-share-controls {
                 flex-wrap: wrap;
             }
             .screen-share-controls button {
                 width: 100%;
+                margin-bottom: 10px;
             }
+            .zoom-controls { display: none !important; } /* Hide manual zoom on mobile, use native fullscreen pinch-to-zoom */
         }
     </style>
 </head>
@@ -382,7 +400,7 @@
     <!-- ================== AUTH SCREEN ================== -->
     <div id="auth-screen" class="active">
         <div class="auth-card">
-            <h1>CollabSync</h1>
+            <h1>Pomme</h1>
             <p>اختر دورك للبدء</p>
             
             <div class="auth-buttons" id="role-selection">
@@ -402,7 +420,7 @@
     <!-- ================== APP SCREEN ================== -->
     <div id="app-screen">
         <div class="topbar">
-            <div class="logo">CollabSync</div>
+            <div class="logo">Pomme</div>
             <div class="nav-tabs">
                 <div class="nav-tab active" data-tab="notes" onclick="switchTab('notes')">📝 الملاحظات</div>
                 <div class="nav-tab" data-tab="python" onclick="switchTab('python')">🐍 بايثون</div>
@@ -465,9 +483,16 @@
                     </div>
                     
                     <div class="zoom-controls" style="display: flex; gap: 10px; align-items: center; justify-content: center; margin-bottom: 15px; background: var(--navy-dark); padding: 10px; border-radius: 8px;">
-                        <span>🔍 زوم:</span>
+                        <span>🔍 زوم للكمبيوتر:</span>
                         <input type="range" id="video-zoom" min="1" max="5" step="0.5" value="1" oninput="updateZoom()" style="flex: 1; max-width: 200px;">
                         <button onclick="resetZoom()" style="background: var(--accent-gradient); color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; font-family: var(--font-main); font-weight: bold;">إرجاع</button>
+                    </div>
+
+                    <div style="text-align: center; margin-bottom: 10px;">
+                        <button onclick="toggleFullScreen()" style="background: var(--accent-cyan); color: var(--navy-deep); border: none; padding: 10px 20px; border-radius: 8px; font-size: 18px; font-family: var(--font-main); font-weight: bold; cursor: pointer; width: 100%; max-width: 300px;">
+                            📱 تكبير الشاشة بالكامل (للهاتف)
+                        </button>
+                        <p style="font-size: 14px; color: var(--white-muted); margin-top: 5px;">عند التكبير، يمكنك عمل زوم بإصبعين ✌️</p>
                     </div>
 
                     <div class="video-container" style="overflow: auto; position: relative;">
@@ -551,7 +576,7 @@
                     mode: "python",
                     theme: "dracula",
                     lineNumbers: true,
-                    value: "# اكتب كود بايثون هنا...\nprint('مرحباً في CollabSync!')",
+                    value: "# اكتب كود بايثون هنا...\nprint('مرحباً في Pomme!')",
                     viewportMargin: Infinity
                 });
                 editor.setSize("100%", "100%");
@@ -586,7 +611,7 @@
         }
 
         // Fixed ID for the application so no codes are needed
-        const FIXED_ROOM_ID = 'collabsync-app-modasmadi-2026';
+        const FIXED_ROOM_ID = 'pomme-app-modasmadi-2026';
 
         function showJoinInput() {
             // Not needed anymore, kept empty just in case
@@ -863,6 +888,27 @@
         function resetZoom() {
             document.getElementById('video-zoom').value = 1;
             updateZoom();
+        }
+
+        function toggleFullScreen() {
+            const video = document.getElementById('remote-video');
+            if (!document.fullscreenElement) {
+                if (video.requestFullscreen) {
+                    video.requestFullscreen();
+                } else if (video.webkitRequestFullscreen) { /* Safari */
+                    video.webkitRequestFullscreen();
+                } else if (video.msRequestFullscreen) { /* IE11 */
+                    video.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) { /* Safari */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE11 */
+                    document.msExitFullscreen();
+                }
+            }
         }
 
         function toggleMic() {
