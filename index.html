@@ -348,22 +348,15 @@
             <p>اختر دورك للبدء</p>
             
             <div class="auth-buttons" id="role-selection">
-                <button class="btn-primary" onclick="initHost()">👑 أنا المالك (إنشاء غرفة)</button>
-                <button class="btn-secondary" onclick="showJoinInput()">💜 أنا الصديقة (الانضمام لغرفة)</button>
-            </div>
-
-            <div class="input-group" id="join-group">
-                <input type="text" id="room-code-input" placeholder="أدخل كود الغرفة هنا...">
-                <button class="btn-primary" onclick="joinRoom()">دخول الغرفة</button>
-                <button class="btn-secondary" style="margin-top: 10px;" onclick="hideJoinInput()">رجوع</button>
+                <button class="btn-primary" onclick="initHost()">👑 أنا المالك (بدء الغرفة)</button>
+                <button class="btn-secondary" onclick="joinRoom()">💜 أنا الصديقة (دخول مباشر)</button>
             </div>
 
             <div id="status-msg"></div>
             
             <div id="host-code-display" class="hidden" style="margin-top: 20px;">
-                <p>أرسل هذا الكود لصديقتك:</p>
-                <h2 style="color: var(--accent-cyan); background: var(--navy-dark); padding: 10px; border-radius: 8px; user-select: all;" id="room-code-text"></h2>
-                <p style="font-size:16px; margin-top:10px;">بانتظار انضمام الصديقة...</p>
+                <h2 style="color: var(--accent-cyan);">الغرفة جاهزة 🚀</h2>
+                <p style="font-size:18px; margin-top:10px;">بانتظار دخول الصديقة الآن...</p>
             </div>
         </div>
     </div>
@@ -547,14 +540,15 @@
             }
         }
 
+        // Fixed ID for the application so no codes are needed
+        const FIXED_ROOM_ID = 'collabsync-app-modasmadi-2026';
+
         function showJoinInput() {
-            document.getElementById('role-selection').classList.add('hidden');
-            document.getElementById('join-group').classList.add('active');
+            // Not needed anymore, kept empty just in case
         }
 
         function hideJoinInput() {
-            document.getElementById('role-selection').classList.remove('hidden');
-            document.getElementById('join-group').classList.remove('active');
+            // Not needed anymore
         }
 
         function showAppScreen() {
@@ -585,8 +579,7 @@
                 if(isOwner) {
                     document.getElementById('role-selection').classList.add('hidden');
                     document.getElementById('host-code-display').classList.remove('hidden');
-                    document.getElementById('room-code-text').innerText = peerId;
-                    updateStatus('الغرفة جاهزة، شارك الكود.');
+                    updateStatus('تم فتح الغرفة. اطلبي من صديقتك الدخول الآن.');
                 }
             });
 
@@ -618,22 +611,17 @@
 
         function initHost() {
             isOwner = true;
-            updateStatus('جاري إنشاء الغرفة...');
-            // Generate a random 6-digit code for simplicity
-            const roomCode = Math.floor(100000 + Math.random() * 900000).toString();
-            initPeer('collabsync-' + roomCode);
+            updateStatus('جاري فتح الغرفة...');
+            initPeer(FIXED_ROOM_ID);
         }
 
         function joinRoom() {
-            const code = document.getElementById('room-code-input').value.trim();
-            if(!code) return updateStatus('يرجى إدخال كود الغرفة', true);
-            
             isOwner = false;
-            updateStatus('جاري الاتصال بالمالك...');
+            updateStatus('جاري الدخول للغرفة...');
             initPeer();
             
             peer.on('open', () => {
-                const conn = peer.connect('collabsync-' + code, { reliable: true });
+                const conn = peer.connect(FIXED_ROOM_ID, { reliable: true });
                 setupDataConnection(conn);
             });
         }
