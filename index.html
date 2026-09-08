@@ -931,61 +931,75 @@
         async function startScreenShare() {
             if(!hasPermission('screen')) return;
             try {
-                // Request Screen + System Audio with 2K 60fps constraints
+                // Request Screen + System Audio with 120fps for maximum smoothness
                 const displayStream = await navigator.mediaDevices.getDisplayMedia({ 
                     video: { 
-                        width: { ideal: 2560 }, 
-                        height: { ideal: 1440 },
-                        frameRate: { ideal: 60, max: 60 } 
+                        width: { ideal: 1920 }, // 1080p is better for 120fps zero-latency over network
+                        height: { ideal: 1080 },
+                        frameRate: { ideal: 120, max: 144 } 
                     }, 
                     audio: {
                         echoCancellation: false,
                         noiseSuppression: false,
+                        autoGainControl: false, // Prevents browser from lowering game volume!
                         sampleRate: 48000
                     }
                 });
                 
-                // Prioritize smoothness for games
+                // Prioritize smoothness for games (zero latency)
                 const videoTrack = displayStream.getVideoTracks()[0];
                 if ('contentHint' in videoTrack) {
                     videoTrack.contentHint = 'motion';
                 }
 
                 let finalStream = displayStream;
+                let audioContext = null;
 
-                // Mix Microphone and System Audio if mic is enabled
-                if (includeMic) {
-                    try {
-                        const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                        
-                        // Use Web Audio API to mix the tracks
-                        const audioContext = new AudioContext();
-                        const dest = audioContext.createMediaStreamDestination();
-                        
-                        // Add System Audio
-                        if (displayStream.getAudioTracks().length > 0) {
-                            const systemSource = audioContext.createMediaStreamSource(displayStream);
-                            systemSource.connect(dest);
+                try {
+                    audioContext = new AudioContext();
+                    const dest = audioContext.createMediaStreamDestination();
+                    
+                    // Boost volume by 300%
+                    const gainNode = audioContext.createGain();
+                    gainNode.gain.value = 3.0; 
+                    gainNode.connect(dest);
+
+                    let hasAudio = false;
+
+                    // 1. Add System Audio (Always, if available)
+                    if (displayStream.getAudioTracks().length > 0) {
+                        const systemSource = audioContext.createMediaStreamSource(displayStream);
+                        systemSource.connect(gainNode);
+                        hasAudio = true;
+                    }
+                    
+                    // 2. Add Mic Audio (Only if enabled)
+                    let micStream = null;
+                    if (includeMic) {
+                        try {
+                            micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                            const micSource = audioContext.createMediaStreamSource(micStream);
+                            micSource.connect(gainNode);
+                            hasAudio = true;
+                        } catch(err) {
+                            console.warn("لم نتمكن من التقاط المايكروفون", err);
                         }
-                        
-                        // Add Mic Audio
-                        const micSource = audioContext.createMediaStreamSource(micStream);
-                        micSource.connect(dest);
-                        
+                    }
+
+                    if (hasAudio) {
                         const mixedAudioTrack = dest.stream.getAudioTracks()[0];
                         finalStream = new MediaStream([videoTrack, mixedAudioTrack]);
-
-                        // Cleanup when sharing stops
-                        videoTrack.onended = () => {
-                            micStream.getTracks().forEach(t => t.stop());
-                            audioContext.close();
-                            stopScreenShare();
-                        };
-                    } catch(err) {
-                        console.warn("لم نتمكن من التقاط المايكروفون، سيتم بث صوت النظام فقط", err);
-                        videoTrack.onended = () => stopScreenShare();
                     }
-                } else {
+
+                    // Cleanup when sharing stops
+                    videoTrack.onended = () => {
+                        if (micStream) micStream.getTracks().forEach(t => t.stop());
+                        if (audioContext) audioContext.close();
+                        stopScreenShare();
+                    };
+
+                } catch (e) {
+                    console.error("Audio mixing failed:", e);
                     videoTrack.onended = () => stopScreenShare();
                 }
                 
