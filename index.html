@@ -668,6 +668,7 @@
                 call.on('stream', (remoteStream) => {
                     const videoElement = document.getElementById('remote-video');
                     videoElement.srcObject = remoteStream;
+                    videoElement.muted = false; // Ensure friend hears the sound
                     videoElement.play();
                 });
                 mediaConn = call;
@@ -930,31 +931,82 @@
         async function startScreenShare() {
             if(!hasPermission('screen')) return;
             try {
-                const stream = await navigator.mediaDevices.getDisplayMedia({ 
-                    video: { frameRate: { ideal: 60 } }, 
-                    audio: includeMic
+                // Request Screen + System Audio with 2K 60fps constraints
+                const displayStream = await navigator.mediaDevices.getDisplayMedia({ 
+                    video: { 
+                        width: { ideal: 2560 }, 
+                        height: { ideal: 1440 },
+                        frameRate: { ideal: 60, max: 60 } 
+                    }, 
+                    audio: {
+                        echoCancellation: false,
+                        noiseSuppression: false,
+                        sampleRate: 48000
+                    }
                 });
                 
-                myStream = stream;
+                // Prioritize smoothness for games
+                const videoTrack = displayStream.getVideoTracks()[0];
+                if ('contentHint' in videoTrack) {
+                    videoTrack.contentHint = 'motion';
+                }
+
+                let finalStream = displayStream;
+
+                // Mix Microphone and System Audio if mic is enabled
+                if (includeMic) {
+                    try {
+                        const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        
+                        // Use Web Audio API to mix the tracks
+                        const audioContext = new AudioContext();
+                        const dest = audioContext.createMediaStreamDestination();
+                        
+                        // Add System Audio
+                        if (displayStream.getAudioTracks().length > 0) {
+                            const systemSource = audioContext.createMediaStreamSource(displayStream);
+                            systemSource.connect(dest);
+                        }
+                        
+                        // Add Mic Audio
+                        const micSource = audioContext.createMediaStreamSource(micStream);
+                        micSource.connect(dest);
+                        
+                        const mixedAudioTrack = dest.stream.getAudioTracks()[0];
+                        finalStream = new MediaStream([videoTrack, mixedAudioTrack]);
+
+                        // Cleanup when sharing stops
+                        videoTrack.onended = () => {
+                            micStream.getTracks().forEach(t => t.stop());
+                            audioContext.close();
+                            stopScreenShare();
+                        };
+                    } catch(err) {
+                        console.warn("لم نتمكن من التقاط المايكروفون، سيتم بث صوت النظام فقط", err);
+                        videoTrack.onended = () => stopScreenShare();
+                    }
+                } else {
+                    videoTrack.onended = () => stopScreenShare();
+                }
                 
-                // Show my stream locally
-                document.getElementById('remote-video').srcObject = stream;
+                myStream = finalStream;
+                
+                // Show my stream locally but MUTED so it doesn't echo for the host
+                const localVideo = document.getElementById('remote-video');
+                localVideo.srcObject = finalStream;
+                localVideo.muted = true;
+                
                 document.getElementById('start-screen-btn').classList.add('hidden');
                 document.getElementById('stop-screen-btn').classList.remove('hidden');
 
                 // Call remote peer
                 if(dataConn && dataConn.peer) {
-                    mediaConn = peer.call(dataConn.peer, stream);
+                    mediaConn = peer.call(dataConn.peer, finalStream);
                 }
-
-                // Handle stop from browser UI
-                stream.getVideoTracks()[0].onended = function () {
-                    stopScreenShare();
-                };
 
             } catch(err) {
                 console.error("Error sharing screen: ", err);
-                alert("تعذر مشاركة الشاشة.");
+                alert("تعذر مشاركة الشاشة. تأكد من تحديد خيار 'مشاركة صوت النظام' عند اختيار الشاشة.");
             }
         }
 
