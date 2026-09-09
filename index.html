@@ -684,9 +684,23 @@ button:focus-visible, input:focus-visible, textarea:focus-visible{
 .stream-diagnostics strong.good{color:#b8ffd9}.stream-diagnostics strong.warn{color:#ffe2a8}.stream-diagnostics strong.bad{color:#ffc2cc}
 body.game-mode .sidebar,body.game-mode .topbar{opacity:.72;transition:opacity .2s;}
 body.game-mode .main-content{padding:6px;}
-body.game-mode .stream-controls,body.game-mode .stream-quality-bar,body.game-mode .stream-diagnostics,body.game-mode .zoom-controls{background:rgba(0,0,0,.72);backdrop-filter:blur(10px);}
+body.game-mode .stream-controls,body.game-mode .stream-quality-bar,body.game-mode .zoom-controls{background:rgba(0,0,0,.72);backdrop-filter:blur(10px);}
 body.game-mode #tab-stream .video-container{height:calc(100vh - 118px);border-radius:12px;}
-@media (max-width:768px){.stream-diagnostics{grid-template-columns:repeat(3,minmax(0,1fr));}.stream-diagnostics>div{padding:7px 8px;}.stream-diagnostics span{font-size:9px;}body.game-mode #tab-stream .video-container{height:calc(100dvh - 165px);}}
+@media (max-width:768px){body.game-mode #tab-stream .video-container{height:calc(100dvh - 165px);}}
+
+/* ===== V3 COLLAB / GAMES / WHITEBOARD ===== */
+.presence-card,.lobby-card,.whiteboard-card{background:linear-gradient(160deg,rgba(17,24,51,.88),rgba(11,16,35,.82));border:1px solid var(--border);border-radius:20px;box-shadow:0 18px 50px rgba(0,0,0,.18)}
+.presence-card{padding:14px 16px;margin-bottom:12px}
+.presence-row{display:flex;align-items:center;justify-content:space-between;gap:12px}.presence-person{display:flex;align-items:center;gap:10px;min-width:0}.avatar{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(99,102,241,.3),rgba(34,211,238,.18));font-weight:900}.presence-dot{width:10px;height:10px;border-radius:50%;background:#64748b;box-shadow:none}.presence-dot.online{background:var(--emerald);box-shadow:0 0 10px rgba(16,185,129,.65)}.presence-meta{display:flex;flex-direction:column;min-width:0}.presence-meta strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.presence-meta span{font-size:11px;color:var(--muted)}
+.notify-stack{position:fixed;top:74px;left:18px;z-index:500;display:flex;flex-direction:column;gap:8px;pointer-events:none;max-width:min(360px,calc(100vw - 36px))}.toast{pointer-events:auto;background:rgba(9,14,34,.94);backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:14px;padding:11px 13px;box-shadow:0 18px 50px rgba(0,0,0,.3);animation:toastIn .22s ease}.toast strong{display:block;font-size:13px}.toast span{display:block;font-size:11px;color:var(--muted);margin-top:3px}@keyframes toastIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+.chat-msg{position:relative}.chat-meta{display:flex;gap:7px;align-items:center;font-size:10px;color:var(--muted);margin-bottom:3px}.chat-msg.sent .chat-meta{justify-content:flex-start}.chat-msg.received .chat-meta{justify-content:flex-end}.chat-text{white-space:pre-wrap;word-break:break-word}.chat-reactions{display:flex;gap:5px;margin-top:5px}.reaction-btn{border:1px solid var(--border);background:rgba(255,255,255,.04);border-radius:999px;padding:2px 7px;color:var(--muted);cursor:pointer;font-size:11px}.chat-compose-tools{display:flex;gap:6px;align-items:center}.chat-tool{border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);border-radius:10px;padding:7px 9px;cursor:pointer}
+.file-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}.file-drop{border:2px dashed var(--border);border-radius:18px;padding:24px;text-align:center;background:rgba(99,102,241,.04)}.file-progress{height:6px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;margin-top:8px}.file-progress>i{display:block;height:100%;width:0;background:var(--gradient)}.file-item{gap:12px}.file-item .file-main{min-width:0;display:flex;flex-direction:column}.file-item .file-name{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.file-item .file-sub{font-size:10px;color:var(--muted)}
+.lobby-card{padding:15px;margin-bottom:12px}.lobby-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.lobby-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin-top:12px}.lobby-player{padding:12px;border:1px solid var(--border);border-radius:14px;background:rgba(255,255,255,.03)}.ready-badge{font-size:11px;padding:5px 8px;border-radius:999px;background:rgba(148,163,184,.1);color:var(--muted)}.ready-badge.ready{background:rgba(16,185,129,.12);color:#b8ffd9}.lobby-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.game-turnbar{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}.turn-pill{padding:6px 9px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.03);font-size:11px;color:var(--muted)}.turn-pill.active{color:var(--cyan);border-color:rgba(34,211,238,.35)}
+.mini-board{touch-action:manipulation}.chess-square{padding:0;border:none}.chess-square.target::after{content:'';width:18%;height:18%;border-radius:50%;background:rgba(16,185,129,.75)}.chess-square.capture{box-shadow:inset 0 0 0 4px rgba(244,63,94,.75)}.chess-last{box-shadow:inset 0 0 0 3px rgba(245,158,11,.78)}
+.board-labels{display:grid;grid-template-columns:repeat(8,1fr);width:min(92vw,560px);font-size:10px;color:var(--muted);user-select:none}.board-labels span{text-align:center}.chess-wrap{width:min(94vw,560px);display:flex;flex-direction:column;align-items:center;gap:6px}.chess-status{display:flex;justify-content:space-between;gap:8px;align-items:center;width:100%;flex-wrap:wrap}.chess-captured{font-size:12px;color:var(--muted)}
+.touch-dir{display:grid;grid-template-columns:repeat(3,52px);grid-template-rows:repeat(2,52px);gap:6px;justify-content:center}.touch-dir button{border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--white);border-radius:12px;font-size:19px}
+.whiteboard-wrap{height:100%;min-height:0;display:flex;flex-direction:column;gap:10px}.whiteboard-tools{display:flex;gap:7px;flex-wrap:wrap;padding:10px;border:1px solid var(--border);border-radius:16px;background:rgba(17,24,51,.7)}.whiteboard-tools button{border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--white);border-radius:10px;padding:8px 11px;cursor:pointer}.whiteboard-tools button.active{border-color:rgba(34,211,238,.5);color:var(--cyan)}.whiteboard-canvas-wrap{flex:1;min-height:300px;background:#fff;border-radius:18px;overflow:hidden;border:1px solid var(--border)}#whiteboard-canvas{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
+@media(max-width:768px){.notify-stack{top:64px;left:12px}.lobby-grid{grid-template-columns:1fr}.lobby-grid .vs{text-align:center}.whiteboard-canvas-wrap{min-height:55vh}.presence-card{padding:12px}.chat-tool{padding:6px 8px}}
 </style>
 </head>
 <body>
@@ -755,6 +769,9 @@ body.game-mode #tab-stream .video-container{height:calc(100vh - 118px);border-ra
             <button class="sidebar-item" data-tab="chat" onclick="switchTab('chat')">
                 <span class="icon">💬</span><span>Chat</span>
             </button>
+            <button class="sidebar-item" data-tab="whiteboard" onclick="switchTab('whiteboard')">
+                <span class="icon">✏️</span><span>لوحة</span>
+            </button>
 
             <div class="sidebar-divider"></div>
             <button class="sidebar-item hidden" id="perm-tab-btn" data-tab="permissions" onclick="switchTab('permissions')">
@@ -765,9 +782,17 @@ body.game-mode #tab-stream .video-container{height:calc(100vh - 118px);border-ra
             </div>
         </nav>
 
+        <div id="notify-stack" class="notify-stack"></div>
+
         <!-- Content Area -->
         <div class="content-area">
             <div class="main-content">
+                <div class="presence-card" id="presence-card">
+                    <div class="presence-row">
+                        <div class="presence-person"><div class="avatar" id="my-avatar">T</div><div class="presence-meta"><strong id="my-presence-name">أنت</strong><span id="my-presence-state">متصل</span></div></div>
+                        <div class="presence-person"><div class="avatar" id="friend-avatar">👤</div><div class="presence-meta"><strong id="friend-presence-name">صديقتك</strong><span id="friend-presence-state">بانتظار الاتصال</span></div><div class="presence-dot" id="friend-presence-dot"></div></div>
+                    </div>
+                </div>
 
                 <!-- TAB: Notes -->
                 <div id="tab-notes" class="tab-content active">
@@ -784,7 +809,7 @@ body.game-mode #tab-stream .video-container{height:calc(100vh - 118px);border-ra
                         <button class="btn-secondary" id="game-mode-btn" onclick="toggleGameMode()" style="background:rgba(245,158,11,0.11);color:#ffe2a8;border-color:rgba(245,158,11,.32)!important;">🎮 Game Mode</button>
                     </div>
                     <div class="stream-quality-bar">
-                        <small>2K / 60 هدف أساسي • المحرك يضبط الـbitrate فقط للحفاظ على السلاسة ولا يخفض الدقة تلقائيًا.</small>
+                        <small>بث ألعاب عالي الوضوح • 1440p / 60FPS</small>
                         <select class="quality-select" id="stream-quality" onchange="applyPreferredQuality()">
                             <option value="1440p60">2K • 60 FPS</option>
                             <option value="1080p60">1080p • 60 FPS</option>
@@ -796,29 +821,16 @@ body.game-mode #tab-stream .video-container{height:calc(100vh - 118px);border-ra
                             <option value="20000000">20 Mbps</option>
                             <option value="16000000">16 Mbps</option>
                             <option value="12000000">12 Mbps</option>
+                            <option value="10000000">10 Mbps</option>
                         </select>
-                        <div class="stream-pill good" id="stream-quality-pill">Ready</div>
                     </div>
                     <div class="video-container">
-                        <div class="stream-hud">
-                            <div class="stream-pill" id="stream-res-pill">—</div>
-                            <div class="stream-pill" id="stream-fps-pill">— FPS</div>
-                            <div class="stream-pill" id="stream-bitrate-pill">— Mbps</div>
-                        </div>
                         <div class="stream-placeholder" id="stream-placeholder">
                             <div class="big">🖥️</div>
                             <strong>Waiting for a screen stream</strong>
                             <span>Start the stream from the other device, then keep this page open.</span>
                         </div>
                         <video id="remote-video" autoplay playsinline></video>
-                    </div>
-                    <div class="stream-diagnostics" id="stream-diagnostics">
-                        <div><span>Connection</span><strong id="diag-connection">WAITING</strong></div>
-                        <div><span>Latency</span><strong id="diag-rtt">— ms</strong></div>
-                        <div><span>Jitter</span><strong id="diag-jitter">— ms</strong></div>
-                        <div><span>Loss</span><strong id="diag-loss">— %</strong></div>
-                        <div><span>Frames</span><strong id="diag-dropped">—</strong></div>
-                        <div><span>Codec</span><strong id="diag-codec">—</strong></div>
                     </div>
                     <div class="zoom-controls" style="display:flex;gap:10px;align-items:center;justify-content:center;background:var(--bg-card);padding:9px;border-radius:12px;">
                         <span style="font-size:12px;color:var(--muted);">Zoom</span>
@@ -999,15 +1011,12 @@ body.game-mode #tab-stream .video-container{height:calc(100vh - 118px);border-ra
                 <div id="tab-chat" class="tab-content">
                     <div class="chat-workspace">
                         <div class="chat-big">
-                            <div class="chat-header">
-                                <span>💬 Chat</span>
-                                <span style="font-size:11px;color:var(--muted);">Direct P2P when connected</span>
-                            </div>
-                            <div class="chat-messages" id="chat-messages-large">
-                                <div style="text-align:center;color:var(--muted);font-size:13px;padding:12px;">ابدأ المحادثة من هنا.</div>
-                            </div>
+                            <div class="chat-header"><span>💬 Chat</span><span id="typing-indicator" style="font-size:11px;color:var(--muted);"></span></div>
+                            <div class="chat-messages" id="chat-messages-large"></div>
                             <div class="chat-input-area">
-                                <input type="text" id="chat-input-large" placeholder="Type a message…" onkeypress="handleChatEnterLarge(event)">
+                                <div class="chat-compose-tools"><button class="chat-tool" onclick="document.getElementById('chat-file-input').click()">📎</button></div>
+                                <input type="file" id="chat-file-input" hidden onchange="shareChatFile(event)">
+                                <input type="text" id="chat-input-large" placeholder="اكتب رسالة..." oninput="sendTypingState()" onkeypress="handleChatEnterLarge(event)">
                                 <button onclick="sendChatLarge()">إرسال</button>
                             </div>
                         </div>
@@ -1024,6 +1033,15 @@ body.game-mode #tab-stream .video-container{height:calc(100vh - 118px);border-ra
                             </div>
                             <div class="game-stat">P2P: <span id="games-connection-state">Local</span></div>
                         </div>
+                        <div class="lobby-card">
+                            <div class="lobby-head"><strong>🎲 Game Lobby</strong><span class="ready-badge" id="lobby-state">Waiting</span></div>
+                            <div class="lobby-grid">
+                                <div class="lobby-player"><strong id="lobby-me">أنت</strong><div id="lobby-me-status" class="ready-badge" style="display:inline-block;margin-top:6px">غير جاهز</div></div>
+                                <div class="vs">VS</div>
+                                <div class="lobby-player"><strong id="lobby-friend">صديقتك</strong><div id="lobby-friend-status" class="ready-badge" style="display:inline-block;margin-top:6px">غير جاهز</div></div>
+                            </div>
+                            <div class="lobby-actions"><button class="game-action" onclick="toggleGameReady()" id="ready-game-btn">✅ جاهز</button><button class="game-action" onclick="requestGameRematch()">↻ Rematch</button></div>
+                        </div>
                         <div class="game-grid">
                             <div class="game-card active" id="game-card-xo" onclick="selectMiniGame('xo')"><span class="gicon">❌⭕</span><strong>Tic-Tac-Toe</strong><span>Classic XO</span></div>
                             <div class="game-card" id="game-card-chess" onclick="selectMiniGame('chess')"><span class="gicon">♟️</span><strong>Chess</strong><span>2-player board</span></div>
@@ -1032,6 +1050,19 @@ body.game-mode #tab-stream .video-container{height:calc(100vh - 118px);border-ra
                             <div class="game-card" id="game-card-memory" onclick="selectMiniGame('memory')"><span class="gicon">🧠</span><strong>Memory</strong><span>Find the pairs</span></div>
                         </div>
                         <div class="game-stage" id="game-stage"></div>
+                    </div>
+                </div>
+
+                <!-- TAB: Whiteboard -->
+                <div id="tab-whiteboard" class="tab-content">
+                    <div class="whiteboard-wrap">
+                        <div class="whiteboard-tools">
+                            <button id="wb-pen" class="active" onclick="setWhiteboardTool('pen')">✏️ قلم</button>
+                            <button onclick="setWhiteboardTool('eraser')">🧽 ممحاة</button>
+                            <button onclick="clearWhiteboard()">🗑️ مسح</button>
+                            <button onclick="undoWhiteboard()">↶ تراجع</button>
+                        </div>
+                        <div class="whiteboard-canvas-wrap"><canvas id="whiteboard-canvas"></canvas></div>
                     </div>
                 </div>
 
@@ -1111,6 +1142,12 @@ let qualityEngineTimer = null;
 let peerReady = false;
 let lastNetworkState = 'waiting';
 let gameMode = false;
+let peerPresence={online:false,name:'',lastSeen:0};
+let typingTimer=null, localTyping=false;
+let lobbyReady=false, remoteLobbyReady=false;
+let fileTransfers=new Map();
+let chatHistory=[];
+let whiteboardReady=false, wbTool='pen', wbColor='#111827', wbSize=4, wbDrawing=false, wbLast=null, wbUndo=[];
 let isNotesUpdatingProgrammatically = false;
 let permissions = { notes: true, files: true, screen: true };
 const statusMsg = document.getElementById('status-msg');
@@ -1121,7 +1158,7 @@ window.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementByI
 const TAB_NAMES = {
     notes: 'الملاحظات', stream: 'البث المباشر', files: 'الملفات',
     timer: 'التايمر', calc: 'الآلة الحاسبة', goals: 'الأهداف اليومية',
-    'mini-games': 'Mini Games', chat: 'Chat', permissions: 'الصلاحيات'
+    'mini-games': 'Mini Games', chat: 'Chat', whiteboard: 'اللوحة البيضاء', permissions: 'الصلاحيات'
 };
 
 // ===========================
@@ -1134,6 +1171,7 @@ function switchTab(tabId) {
     if (btn) btn.classList.add('active');
     const tab = document.getElementById(`tab-${tabId}`);
     if (tab) tab.classList.add('active');
+    if(tabId==='whiteboard')setTimeout(initWhiteboard,30);
     document.getElementById('current-tab-name').textContent = TAB_NAMES[tabId] || tabId;
 }
 
@@ -1161,6 +1199,8 @@ function showAppScreen() {
         document.getElementById('start-screen-btn').classList.add('hidden');
     }
     updateConnectionUI();
+    updatePresenceUI();
+    setLobbyUI();
     loadGoals();
     renderMiniGame();
 }
@@ -1258,7 +1298,8 @@ function setupDataConnection(conn){
     dataConn=conn;
     dataConn.on('open',()=>{
         clearTimeout(dataReconnectTimer);isSoloMode=false;showAppScreen();
-        sendData({type:'hello',name:myDisplayName,role:isOwner?'host':'guest',protocol:2});
+        sendData({type:'hello',name:myDisplayName,role:isOwner?'host':'guest',protocol:3});
+        sendPresence(true);
         sendData({type:'sync_request'});
         if(isOwner){sendData({type:'permissions_update',permissions});sendData({type:'note_update',content:notesArea.value});sendGameState();}
         updateConnectionUI();setNetworkState('good');
@@ -1270,12 +1311,23 @@ function setupDataConnection(conn){
 function sendData(data){if(dataConn&&dataConn.open)try{dataConn.send(data);}catch(_){} }
 function handleIncomingData(data){
     if(!data||typeof data!=='object')return;
-    if(data.type==='hello'){const rb=document.getElementById('role-badge');if(rb&&data.name){rb.textContent=(isOwner?'Host 👑':'Guest')+' • '+data.name;}return;}
-    if(data.type==='viewer_bitrate'){if(isOwner){viewerMaxBitrate=Math.max(12000000,Math.min(28000000,Number(data.bitrate)||viewerMaxBitrate));preferredBitrate=Math.min(preferredBitrate,viewerMaxBitrate);applySenderBitrate(preferredBitrate);}return;}
+    if(data.type==='hello'){const rb=document.getElementById('role-badge');if(rb&&data.name){rb.textContent=(isOwner?'Host 👑':'Guest')+' • '+data.name;}peerPresence={online:true,name:data.name||friendDisplayName,lastSeen:Date.now()};updatePresenceUI();notifyPeer((data.name||friendDisplayName)+' دخل الغرفة');return;}
+    if(data.type==='presence'){peerPresence={online:data.online!==false,name:data.name||friendDisplayName,lastSeen:data.at||Date.now()};updatePresenceUI();return;}
+    if(data.type==='typing'){const ti=document.getElementById('typing-indicator');if(ti)ti.textContent=data.active?(data.name||friendDisplayName)+' يكتب...':'';clearTimeout(typingTimer);if(data.active)typingTimer=setTimeout(()=>{if(ti)ti.textContent='';},1600);return;}
+    if(data.type==='viewer_bitrate'){if(isOwner){viewerMaxBitrate=Math.max(10000000,Math.min(28000000,Number(data.bitrate)||viewerMaxBitrate));preferredBitrate=Math.min(preferredBitrate,viewerMaxBitrate);applySenderBitrate(preferredBitrate);}return;}
     if(data.type==='quality_feedback'){if(isOwner)latestViewerFeedback=data;return;}
+    if(data.type==='chat_msg'){appendChatMsgAll(data.text,'received',data.name||friendDisplayName,data.at||Date.now());notifyPeer('رسالة جديدة');return;}
+    if(data.type==='file_start'){beginIncomingFile(data);return;}
+    if(data.type==='file_chunk'){receiveFileChunk(data);return;}
+    if(data.type==='file_end'){finishIncomingFile(data);return;}
+    if(data.type==='lobby'){remoteLobbyReady=!!data.ready;setLobbyUI();return;}
+    if(data.type==='game_request'){selectMiniGame(data.game||gameState.type,false);notifyPeer((data.name||friendDisplayName)+' اختار '+(data.game||gameState.type));return;}
+    if(data.type==='game_rematch'){remoteLobbyReady=false;lobbyReady=false;setLobbyUI();resetCurrentGame();return;}
+    if(data.type==='whiteboard_snapshot'){restoreWhiteboard(data.data);return;}
+    if(data.type==='whiteboard_stroke'){drawRemoteStroke(data.points||[],data.tool||'pen');return;}
+    if(data.type==='whiteboard_clear'){clearWhiteboard(false);return;}
+    if(data.type==='whiteboard_undo'){if(wbUndo.length)wbUndo.pop();renderWhiteboardFromHistory();return;}
     if(data.type==='note_update'){isNotesUpdatingProgrammatically=true;notesArea.value=data.content||'';isNotesUpdatingProgrammatically=false;}
-    else if(data.type==='chat_msg'){appendChatMsgAll(data.text,'received');}
-    else if(data.type==='file_transfer'){receiveFile(data.name,data.file,data.typeStr);}
     else if(data.type==='permissions_update'){if(!isOwner){permissions=data.permissions||permissions;applyPermissionsUI();}}
     else if(data.type==='game_state'){if(!gameState.localEditLock){gameState=data.state;renderMiniGame();}}
     else if(data.type==='sync_request'&&isOwner){sendData({type:'permissions_update',permissions});sendData({type:'note_update',content:notesArea.value});sendGameState();}
@@ -1322,81 +1374,66 @@ function applyPermissionsUI() {
 }
 
 // ===========================
-// CHAT
+// CHAT + NOTIFICATIONS
 // ===========================
-function appendChatTo(containerId, text, type){
-    const c = document.getElementById(containerId);
-    if(!c) return;
-    const m = document.createElement('div');
-    m.className = `chat-msg ${type}`;
-    m.textContent = text;
-    c.appendChild(m);
-    c.scrollTop = c.scrollHeight;
+function appendChatTo(containerId,text,type,name=myDisplayName,at=Date.now()){
+    const c=document.getElementById(containerId);if(!c)return;
+    const m=document.createElement('div');m.className=`chat-msg ${type}`;
+    const time=new Date(at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    m.innerHTML=`<div class="chat-meta"><span>${escapeHTML(name||'')}</span><span>${time}</span></div><div class="chat-text">${escapeHTML(text)}</div><div class="chat-reactions"><button class="reaction-btn" onclick="reactToMessage(this,'❤️')">❤️</button><button class="reaction-btn" onclick="reactToMessage(this,'👍')">👍</button></div>`;
+    c.appendChild(m);c.scrollTop=c.scrollHeight;
 }
-function appendChatMsgAll(text, type){
-    appendChatTo('chat-messages-large', text, type);
-    appendChatTo('chat-messages', text, type);
-    appendChatTo('chat-messages-mobile', text, type);
+function appendChatMsgAll(text,type,name=type==='sent'?myDisplayName:friendDisplayName,at=Date.now()){
+    if(document.getElementById('chat-messages-large')?.children.length===1 && document.getElementById('chat-messages-large').firstElementChild?.textContent.includes('ابدأ'))document.getElementById('chat-messages-large').innerHTML='';
+    ['chat-messages-large','chat-messages','chat-messages-mobile'].forEach(id=>appendChatTo(id,text,type,name,at));
+    chatHistory.push({text,type,name,at});if(chatHistory.length>200)chatHistory.shift();
 }
-function sendChat(){
-    const input = document.getElementById('chat-input');
-    if(!input) return;
-    const text = input.value.trim(); if(!text) return;
-    appendChatMsgAll(text,'sent'); sendData({type:'chat_msg',text}); input.value='';
-}
-function sendChatLarge(){
-    const input = document.getElementById('chat-input-large');
-    const text = input.value.trim(); if(!text) return;
-    appendChatMsgAll(text,'sent'); sendData({type:'chat_msg',text}); input.value='';
-}
-function handleChatEnter(e){ if(e.key==='Enter') sendChat(); }
-function handleChatEnterLarge(e){ if(e.key==='Enter') sendChatLarge(); }
-function sendChatMobile(){
-    const input = document.getElementById('chat-input-mobile');
-    if(!input) return;
-    const text = input.value.trim(); if(!text) return;
-    appendChatMsgAll(text,'sent'); sendData({type:'chat_msg',text}); input.value='';
-}
-function handleChatEnterMobile(e){ if(e.key==='Enter') sendChatMobile(); }
-function appendChatMsg(text,type){ appendChatMsgAll(text,type); }
-function openMobileChat(){ switchTab('chat'); }
-function closeMobileChat(){ switchTab('notes'); }
+function sendChatText(text){text=(text||'').trim();if(!text)return;appendChatMsgAll(text,'sent',myDisplayName,Date.now());sendData({type:'chat_msg',text,name:myDisplayName,at:Date.now()});localTyping=false;sendData({type:'typing',active:false,name:myDisplayName});}
+function sendChat(){const i=document.getElementById('chat-input');if(i){sendChatText(i.value);i.value='';}}
+function sendChatLarge(){const i=document.getElementById('chat-input-large');if(i){sendChatText(i.value);i.value='';}}
+function handleChatEnter(e){if(e.key==='Enter')sendChat();}
+function handleChatEnterLarge(e){if(e.key==='Enter'){e.preventDefault();sendChatLarge();}}
+function sendChatMobile(){const i=document.getElementById('chat-input-mobile');if(i){sendChatText(i.value);i.value='';}}
+function handleChatEnterMobile(e){if(e.key==='Enter'){e.preventDefault();sendChatMobile();}}
+function sendTypingState(){const i=document.getElementById('chat-input-large');if(!i)return;const active=!!i.value.trim();if(active===localTyping)return;localTyping=active;sendData({type:'typing',active,name:myDisplayName});clearTimeout(typingTimer);if(active)typingTimer=setTimeout(()=>{localTyping=false;sendData({type:'typing',active:false,name:myDisplayName});},1300);}
+function reactToMessage(btn,emoji){btn.textContent=(btn.textContent===emoji?emoji+' ✓':emoji);}
+function appendChatMsg(text,type){appendChatMsgAll(text,type);}
+function openMobileChat(){switchTab('chat');}
+function closeMobileChat(){switchTab('notes');}
+function notifyPeer(message){const stack=document.getElementById('notify-stack');if(!stack)return;const t=document.createElement('div');t.className='toast';t.innerHTML=`<strong>🔔 Pomme</strong><span>${escapeHTML(message)}</span>`;stack.appendChild(t);setTimeout(()=>t.remove(),3600);if('Notification'in window&&Notification.permission==='granted')try{new Notification('Pomme',{body:message})}catch(_){} }
+async function enableNotifications(){if(!('Notification'in window))return;try{if(Notification.permission==='default')await Notification.requestPermission();}catch(_){} }
 
 // ===========================
-// FILE SHARING
+// FILE SHARING — CHUNKED
 // ===========================
-function handleFileUpload(e) {
-    if (!hasPermission('files')) return;
-    const file = e.target.files[0];
-    if (!file) return;
-    addFileToList(file.name, file, true);
-    sendData({ type: 'file_transfer', name: file.name, typeStr: file.type, file });
-    e.target.value = '';
-}
+const FILE_CHUNK_SIZE=64*1024;
+async function handleFileUpload(e){if(!hasPermission('files'))return;const file=e.target.files[0];if(!file)return;await sendFileChunked(file,true);e.target.value='';}
+async function waitForDataChannelCapacity(){const dc=dataConn?.dataChannel;if(!dc||!('bufferedAmount' in dc))return;const LIMIT=4*1024*1024;while(dc.bufferedAmount>LIMIT){await new Promise(resolve=>{const prev=dc.onbufferedamountlow;dc.bufferedAmountLowThreshold=512*1024;dc.onbufferedamountlow=()=>{dc.onbufferedamountlow=prev;resolve();};setTimeout(()=>{dc.onbufferedamountlow=prev;resolve();},250);});}}
+async function sendFileChunked(file,notify=true){if(!dataConn||!dataConn.open){addFileToList(file.name,file,true);return;}const id=crypto.randomUUID?crypto.randomUUID():'f'+Date.now()+Math.random();const total=Math.ceil(file.size/FILE_CHUNK_SIZE);sendData({type:'file_start',id,name:file.name,typeStr:file.type||'application/octet-stream',size:file.size,total,from:myDisplayName});for(let i=0;i<total;i++){await waitForDataChannelCapacity();const buf=await file.slice(i*FILE_CHUNK_SIZE,(i+1)*FILE_CHUNK_SIZE).arrayBuffer();const bytes=new Uint8Array(buf);let bin='';for(let j=0;j<bytes.length;j+=0x8000)bin+=String.fromCharCode(...bytes.subarray(j,j+0x8000));sendData({type:'file_chunk',id,index:i,data:btoa(bin)});}sendData({type:'file_end',id});addFileToList(file.name,file,true);if(notify)notifyPeer('تم إرسال '+file.name);}
 
-function receiveFile(name, blob, typeStr) {
-    const file = new Blob([blob], { type: typeStr });
-    addFileToList(name, file, false);
-}
-
-function addFileToList(name, blob, isSent) {
-    const list = document.getElementById('file-list');
-    const url = URL.createObjectURL(blob);
-    const li = document.createElement('li');
-    li.className = 'file-item';
-    li.innerHTML = `<span>${isSent ? '📤' : '📥'} ${name}</span><a href="${url}" download="${name}">تحميل</a>`;
-    list.appendChild(li);
-}
+function beginIncomingFile(d){fileTransfers.set(d.id,{name:d.name,type:d.typeStr||'application/octet-stream',size:d.size,total:d.total,chunks:new Array(d.total),received:0});}
+function receiveFileChunk(d){const f=fileTransfers.get(d.id);if(!f||f.chunks[d.index])return;f.chunks[d.index]=d.data;f.received++;}
+function finishIncomingFile(d){const f=fileTransfers.get(d.id);if(!f)return;try{const parts=f.chunks.map(x=>{const bin=atob(x||'');const arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return arr;});const blob=new Blob(parts,{type:f.type});addFileToList(f.name,blob,false);notifyPeer('استلمت '+f.name);}catch(e){console.warn('file receive',e)}fileTransfers.delete(d.id);}
+function receiveFile(name,blob,typeStr){addFileToList(name,new Blob([blob],{type:typeStr}),false);}
+function addFileToList(name,blob,isSent){const list=document.getElementById('file-list');if(!list)return;const url=URL.createObjectURL(blob);const li=document.createElement('li');li.className='file-item';li.innerHTML=`<div class="file-main"><span class="file-name">${isSent?'📤':'📥'} ${escapeHTML(name)}</span><span class="file-sub">${formatBytes(blob.size||0)}</span></div><a href="${url}" download="${escapeHTML(name)}">تحميل</a>`;list.appendChild(li);}
+function formatBytes(n){if(!n)return '0 B';const u=['B','KB','MB','GB'];const i=Math.min(Math.floor(Math.log(n)/Math.log(1024)),3);return `${(n/Math.pow(1024,i)).toFixed(i?1:0)} ${u[i]}`;}
+function shareChatFile(e){const f=e.target.files[0];if(f)sendFileChunked(f,false);e.target.value='';}
 
 // ===========================
-// SCREEN SHARE (FIXED AUDIO & QUALITY)
+// PRESENCE / LOBBY
 // ===========================
-function updateZoom() {
-    const z = document.getElementById('video-zoom').value;
-    const v = document.getElementById('remote-video');
-    if (z == 1) { v.style.width = '100%'; v.style.height = '100%'; v.style.maxWidth = '100%'; }
-    else { v.style.width = `${z * 100}%`; v.style.height = 'auto'; v.style.maxWidth = 'none'; }
-}
+function sendPresence(online=true){sendData({type:'presence',name:myDisplayName,at:Date.now(),online});}
+function updatePresenceUI(){const n=document.getElementById('friend-presence-name'),st=document.getElementById('friend-presence-state'),dot=document.getElementById('friend-presence-dot');if(n)n.textContent=peerPresence.name||friendDisplayName||'صديقتك';if(dot)dot.classList.toggle('online',!!peerPresence.online);if(st)st.textContent=peerPresence.online?'متصلة الآن':`آخر ظهور ${peerPresence.lastSeen?new Date(peerPresence.lastSeen).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'—'}`;const mn=document.getElementById('my-presence-name');if(mn)mn.textContent=myDisplayName||'أنت';const ma=document.getElementById('my-avatar');if(ma)ma.textContent=(myDisplayName||'T').charAt(0).toUpperCase();}
+function setLobbyUI(){const a=document.getElementById('lobby-me-status'),b=document.getElementById('lobby-friend-status'),state=document.getElementById('lobby-state');if(a){a.textContent=lobbyReady?'جاهز':'غير جاهز';a.classList.toggle('ready',lobbyReady)}if(b){b.textContent=remoteLobbyReady?'جاهز':'غير جاهز';b.classList.toggle('ready',remoteLobbyReady)}if(state)state.textContent=(lobbyReady&&remoteLobbyReady)?'Ready — Start!':'Waiting';}
+function toggleGameReady(){lobbyReady=!lobbyReady;sendData({type:'lobby',ready:lobbyReady,name:myDisplayName,game:gameState.type});setLobbyUI();if(lobbyReady&&remoteLobbyReady)notifyPeer('كلاكما جاهز — ابدأوا اللعب');}
+function requestGameRematch(){lobbyReady=false;remoteLobbyReady=false;sendData({type:'game_rematch',game:gameState.type});setLobbyUI();resetCurrentGame();}
+function resetCurrentGame(){if(gameState.type==='xo')resetXO(false);else if(gameState.type==='chess')resetChess(false);else if(gameState.type==='monopoly')resetMonopoly(false);else if(gameState.type==='2048')reset2048(false);else resetMemory(false);}
+
+// ===========================
+// SCREEN SHARE HELPERS
+// ===========================
+function updateZoom(){const z=Number(document.getElementById('video-zoom')?.value||1),v=document.getElementById('remote-video');if(!v)return;if(z===1){v.style.width='100%';v.style.height='100%';v.style.maxWidth='100%';v.style.objectFit='contain';}else{v.style.width=`${z*100}%`;v.style.height='auto';v.style.maxWidth='none';v.style.objectFit='contain';}}
+
 function resetZoom() { document.getElementById('video-zoom').value = 1; updateZoom(); }
 
 function toggleFullScreen() {
@@ -1412,7 +1449,7 @@ async function applySenderBitrate(bitrate=preferredBitrate){
     try{
         const pc=mediaConn&&mediaConn.peerConnection;if(!pc)return;
         const sender=pc.getSenders().find(x=>x.track&&x.track.kind==='video');if(!sender)return;
-        const target=Math.max(12000000,Math.min(28000000,Number(bitrate)||preferredBitrate));
+        const target=Math.max(10000000,Math.min(28000000,Number(bitrate)||preferredBitrate));
         const p=sender.getParameters();
         if(!p.encodings||!p.encodings.length)p.encodings=[{}];
         const enc=p.encodings[0];
@@ -1440,7 +1477,7 @@ function applyPreferredQuality(){
     requestKeyframeNow();
 }
 function requestViewerBitrate(){
-    viewerMaxBitrate=Math.max(12000000,Math.min(28000000,Number(document.getElementById('viewer-bitrate')?.value)||28000000));
+    viewerMaxBitrate=Math.max(10000000,Math.min(28000000,Number(document.getElementById('viewer-bitrate')?.value)||28000000));
     preferredBitrate=Math.min(preferredBitrate,viewerMaxBitrate);
     localStorage.setItem('pomme-bitrate',String(viewerMaxBitrate));
     sendData({type:'viewer_bitrate',bitrate:viewerMaxBitrate});
@@ -1519,8 +1556,8 @@ function startQualityEngine(){
             const loss=fb&&Number.isFinite(fb.loss)?fb.loss:localLoss;
             const fps=fb&&Number.isFinite(fb.fps)?fb.fps:localFps;
             let target=preferredBitrate;
-            if(loss>4||fps<52)target=Math.max(12000000,Math.floor(target*.82));
-            else if(loss>2||fps<56)target=Math.max(12000000,Math.floor(target*.90));
+            if(loss>4||fps<52)target=Math.max(10000000,Math.floor(target*.82));
+            else if(loss>2||fps<56)target=Math.max(10000000,Math.floor(target*.90));
             else if(loss<.5&&fps>=59)target=Math.min(viewerMaxBitrate,Math.floor(target*1.04));
             target=Math.min(target,viewerMaxBitrate);
             if(Math.abs(target-preferredBitrate)>=500000){preferredBitrate=target;applySenderBitrate(preferredBitrate);}
@@ -1912,6 +1949,22 @@ function escapeHTML(str) {
 }
 
 // ===========================
+// WHITEBOARD
+// ===========================
+function initWhiteboard(){if(whiteboardReady)return;const c=document.getElementById('whiteboard-canvas');if(!c)return;whiteboardReady=true;const resize=()=>{const r=c.getBoundingClientRect(),dpr=window.devicePixelRatio||1;c.width=Math.max(1,Math.floor(r.width*dpr));c.height=Math.max(1,Math.floor(r.height*dpr));c.getContext('2d').setTransform(dpr,0,0,dpr,0,0);renderWhiteboardFromHistory();};window.addEventListener('resize',resize);resize();c.addEventListener('pointerdown',wbPointerDown);c.addEventListener('pointermove',wbPointerMove);c.addEventListener('pointerup',wbPointerUp);c.addEventListener('pointercancel',wbPointerUp);}
+function wbPos(e){const c=document.getElementById('whiteboard-canvas'),r=c.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};}
+function wbPointerDown(e){if(!hasPermission('notes'))return;wbDrawing=true;wbLast=wbPos(e);const stroke={points:[wbLast],tool:wbTool};wbUndo.push(stroke);e.target.setPointerCapture?.(e.pointerId);}
+function wbPointerMove(e){if(!wbDrawing)return;const p=wbPos(e),stroke=wbUndo[wbUndo.length-1];stroke.points.push(p);drawStroke(stroke.points,stroke.tool);wbLast=p;}
+function wbPointerUp(e){if(!wbDrawing)return;wbDrawing=false;const stroke=wbUndo[wbUndo.length-1];if(stroke&&stroke.points.length>1){sendData({type:'whiteboard_stroke',points:stroke.points,tool:stroke.tool});sendData({type:'whiteboard_snapshot',data:wbUndo});}}
+function drawStroke(points,tool='pen',ctx){ctx=ctx||document.getElementById('whiteboard-canvas')?.getContext('2d');if(!ctx||!points.length)return;ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=wbSize;ctx.strokeStyle=tool==='eraser'?'#ffffff':wbColor;ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);for(const p of points.slice(1))ctx.lineTo(p.x,p.y);ctx.stroke();ctx.restore();}
+function drawRemoteStroke(points,tool){wbUndo.push({points:points.map(p=>({x:p.x,y:p.y})),tool});drawStroke(points,tool);}
+function setWhiteboardTool(tool){wbTool=tool;document.querySelectorAll('.whiteboard-tools button').forEach(b=>b.classList.remove('active'));if(tool==='pen')document.getElementById('wb-pen')?.classList.add('active');}
+function clearWhiteboard(send=true){const c=document.getElementById('whiteboard-canvas');if(!c)return;const ctx=c.getContext('2d');const r=c.getBoundingClientRect();ctx.clearRect(0,0,r.width,r.height);wbUndo=[];if(send)sendData({type:'whiteboard_clear'});}
+function undoWhiteboard(){if(wbUndo.length)wbUndo.pop();renderWhiteboardFromHistory();sendData({type:'whiteboard_snapshot',data:wbUndo});}
+function renderWhiteboardFromHistory(){const c=document.getElementById('whiteboard-canvas');if(!c)return;const ctx=c.getContext('2d'),r=c.getBoundingClientRect();ctx.clearRect(0,0,r.width,r.height);for(const st of wbUndo)drawStroke(st.points||st,st.tool||'pen',ctx);}
+function restoreWhiteboard(data){if(!Array.isArray(data))return;wbUndo=data.map(st=>st.points?{points:st.points.map(p=>({x:p.x,y:p.y})),tool:st.tool||'pen'}:{points:st,tool:'pen'});renderWhiteboardFromHistory();}
+
+// ===========================
 // INIT
 // ===========================
 document.addEventListener('DOMContentLoaded', () => {
@@ -1922,10 +1975,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const ai=document.getElementById('my-name-input'),bi=document.getElementById('friend-name-input'),ri=document.getElementById('remember-names');
     if(ai)ai.value=a;if(bi)bi.value=b;if(ri)ri.checked=remember;
     const saved=Number(localStorage.getItem('pomme-bitrate')||28000000);
-    viewerMaxBitrate=Math.max(12000000,Math.min(28000000,saved));
+    viewerMaxBitrate=Math.max(10000000,Math.min(28000000,saved));
     preferredBitrate=viewerMaxBitrate;
     const vb=document.getElementById('viewer-bitrate');if(vb)vb.value=String(preferredBitrate);
     updateConnectionUI();
+    updatePresenceUI();
+    setLobbyUI();
+    setInterval(()=>{if(dataConn&&dataConn.open){sendPresence(true);}else if(!isSoloMode){peerPresence.online=false;updatePresenceUI();}},15000);
+    window.addEventListener('beforeunload',()=>{try{sendPresence(false)}catch(_){} });
 });
 
 // ===========================
@@ -1945,9 +2002,10 @@ function sendGameState(){
         dataConn.send({type:'game_state',state:gameState});
     }
 }
-function selectMiniGame(type){
+function selectMiniGame(type,broadcast=true){
     gameState.localEditLock=false;
     gameState.type=type;
+    if(broadcast&&!isSoloMode)sendData({type:'game_request',game:type,name:myDisplayName});
     document.querySelectorAll('.game-card').forEach(c=>c.classList.remove('active'));
     const card=document.getElementById('game-card-'+type);
     if(card) card.classList.add('active');
@@ -1990,27 +2048,28 @@ function renderXO(s){
       <div class="xo-board">${g.board.map((v,i)=>`<button class="xo-cell ${v.toLowerCase()}" onclick="xoMove(${i})">${v}</button>`).join('')}</div>
       <div class="game-actions"><button class="game-action" onclick="resetXO()">New Game</button></div>`;
 }
-// Chess: lightweight local 2-player board. Full legality is intentionally not claimed.
-function initialChess(){
-    const rows=[
-      ['♜','♞','♝','♛','♚','♝','♞','♜'],
-      ['♟','♟','♟','♟','♟','♟','♟','♟'],
-      ['','','','','','','',''],['','','','','','','',''],
-      ['','','','','','','',''],['','','','','','','',''],
-      ['♙','♙','♙','♙','♙','♙','♙','♙'],
-      ['♖','♘','♗','♕','♔','♗','♘','♖']
-    ];
-    return rows;
-}
-function resetChess(sync=true){
-    gameState.chess={board:initialChess(),turn:'w',selected:null,target:null};
-    if(sync)gameSync();else renderMiniGame();
-}
-function chessColorAt(piece){return !piece?null:'♙♖♗♘♕♔'.includes(piece)?'w':'b';}
+// ===========================
+// CHESS ENGINE — legal moves, check, mate, castling, en-passant, promotion
+// ===========================
+function initialChess(){const rows=[['♜','♞','♝','♛','♚','♝','♞','♜'],['♟','♟','♟','♟','♟','♟','♟','♟'],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['♙','♙','♙','♙','♙','♙','♙','♙'],['♖','♘','♗','♕','♔','♗','♘','♖']];return rows;}
+function resetChess(sync=true){gameState.chess={board:initialChess(),turn:'w',selected:null,castle:{wk:true,wq:true,bk:true,bq:true},enPassant:null,lastMove:null,history:[],captured:{w:[],b:[]},winner:null,draw:false};if(sync)gameSync();else renderMiniGame();}
+function chessColorAt(p){return !p?null:'♙♖♘♗♕♔'.includes(p)?'w':'b';}
+function chessType(p){return p&&'♙♟'.includes(p)?'p':p&&'♘♞'.includes(p)?'n':p&&'♗♝'.includes(p)?'b':p&&'♖♜'.includes(p)?'r':p&&'♕♛'.includes(p)?'q':p&&'♔♚'.includes(p)?'k':null;}
 function chessPathClear(b,r1,c1,r2,c2){const sr=Math.sign(r2-r1),sc=Math.sign(c2-c1);let r=r1+sr,c=c1+sc;while(r!==r2||c!==c2){if(b[r][c])return false;r+=sr;c+=sc;}return true;}
-function chessLegalMove(b,from,to,turn){const r1=Math.floor(from/8),c1=from%8,r2=Math.floor(to/8),c2=to%8,p=b[r1][c1],target=b[r2][c2];if(!p||chessColorAt(p)!==turn||from===to)return false;if(target&&chessColorAt(target)===turn)return false;const dr=r2-r1,dc=c2-c1,adr=Math.abs(dr),adc=Math.abs(dc);if('♙♟'.includes(p)){const dir=turn==='w'?-1:1,start=turn==='w'?6:1;if(dc===0&&!target&&dr===dir)return true;if(dc===0&&!target&&r1===start&&dr===2*dir&&!b[r1+dir][c1])return true;return adc===1&&dr===dir&&!!target;}if('♘♞'.includes(p))return(adr===2&&adc===1)||(adr===1&&adc===2);if('♗♝'.includes(p))return adr===adc&&chessPathClear(b,r1,c1,r2,c2);if('♖♜'.includes(p))return(dr===0||dc===0)&&chessPathClear(b,r1,c1,r2,c2);if('♕♛'.includes(p))return((adr===adc)||(dr===0||dc===0))&&chessPathClear(b,r1,c1,r2,c2);if('♔♚'.includes(p))return Math.max(adr,adc)===1;return false;}
-function chessClick(i){const g=gameState.chess,p=g.board[Math.floor(i/8)][i%8],color=chessColorAt(p);if(g.selected===null){if(p&&color===g.turn)g.selected=i;gameSync();return;}if(p&&color===g.turn){g.selected=i;gameSync();return;}if(chessLegalMove(g.board,g.selected,i,g.turn)){const a=Math.floor(g.selected/8),b=g.selected%8,c=Math.floor(i/8),d=i%8,moving=g.board[a][b];g.board[c][d]=moving;g.board[a][b]='';if((moving==='♙'&&c===0)||(moving==='♟'&&c===7))g.board[c][d]=g.turn==='w'?'♕':'♛';g.turn=g.turn==='w'?'b':'w';g.selected=null;}else g.selected=null;gameSync();}
-function renderChess(s){const g=gameState.chess,b=g.board;let squares='';for(let r=0;r<8;r++)for(let c=0;c<8;c++){const i=r*8+c,light=(r+c)%2===0,sel=i===g.selected;squares+=`<button type="button" class="chess-square ${light?'chess-light':'chess-dark'} ${sel?'selected':''}" onclick="chessClick(${i})">${b[r][c]||''}</button>`;}s.innerHTML=`<div class="game-topline"><div><strong>Chess</strong><div style="font-size:12px;color:var(--muted)">الدور: ${g.turn==='w'?'الأبيض':'الأسود'} · حركات أساسية قانونية · مناسب للهاتف</div></div><div class="game-status">♟️</div></div><div class="mini-board" role="grid">${squares}</div><div class="game-actions"><button class="game-action" onclick="resetChess()">إعادة اللعبة</button></div>`;}
+function cloneBoard(b){return b.map(r=>r.slice());}
+function findKing(b,color){const k=color==='w'?'♔':'♚';for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(b[r][c]===k)return r*8+c;return -1;}
+function squareAttacked(b,idx,by){const r=Math.floor(idx/8),c=idx%8;const pawn=by==='w'?'♙':'♟',kn=by==='w'?'♘':'♞',bi=by==='w'?'♗':'♝',ro=by==='w'?'♖':'♜',qu=by==='w'?'♕':'♛',ki=by==='w'?'♔':'♚';const dir=by==='w'?-1:1;for(const dc of [-1,1]){const rr=r-dir,cc=c-dc;if(rr>=0&&rr<8&&cc>=0&&cc<8&&b[rr][cc]===pawn)return true;}for(const [dr,dc] of [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]){const rr=r+dr,cc=c+dc;if(rr>=0&&rr<8&&cc>=0&&cc<8&&b[rr][cc]===kn)return true;}for(const [dr,dc,pieces] of [[1,0,[ro,qu]],[-1,0,[ro,qu]],[0,1,[ro,qu]],[0,-1,[ro,qu]],[1,1,[bi,qu]],[1,-1,[bi,qu]],[-1,1,[bi,qu]],[-1,-1,[bi,qu]]]){let rr=r+dr,cc=c+dc;while(rr>=0&&rr<8&&cc>=0&&cc<8){if(b[rr][cc]){if(pieces.includes(b[rr][cc]))return true;break;}rr+=dr;cc+=dc;}}for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(!dr&&!dc)continue;const rr=r+dr,cc=c+dc;if(rr>=0&&rr<8&&cc>=0&&cc<8&&b[rr][cc]===ki)return true;}return false;}
+function isInCheck(b,color){const k=findKing(b,color);return k>=0&&squareAttacked(b,k,color==='w'?'b':'w');}
+function pseudoMoves(state,from,attackOnly=false){const b=state.board,turn=state.turn,p=b[Math.floor(from/8)][from%8];if(!p||chessColorAt(p)!==turn)return [];const color=turn,r=Math.floor(from/8),c=from%8,t=chessType(p),out=[];const add=(rr,cc,meta={})=>{if(rr<0||rr>7||cc<0||cc>7)return;const target=b[rr][cc];if(target&&chessColorAt(target)===color)return;out.push({from,to:rr*8+cc,...meta,capture:!!target});};
+if(t==='p'){const dir=color==='w'?-1:1,start=color==='w'?6:1;for(const dc of [-1,1]){const rr=r+dir,cc=c+dc;if(rr>=0&&rr<8&&cc>=0&&cc<8){if(b[rr][cc]||state.enPassant===rr*8+cc||attackOnly)add(rr,cc,{enPassant:state.enPassant===rr*8+cc});}}if(!attackOnly&&b[r+dir]?.[c]===''&&r+dir>=0&&r+dir<8){add(r+dir,c);if(r===start&&b[r+2*dir][c]==='')add(r+2*dir,c,{doublePawn:true});}}else if(t==='n'){for(const [dr,dc] of [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]])add(r+dr,c+dc);}else if(t==='b'||t==='r'||t==='q'){const dirs=[];if(t==='b'||t==='q')dirs.push([1,1],[1,-1],[-1,1],[-1,-1]);if(t==='r'||t==='q')dirs.push([1,0],[-1,0],[0,1],[0,-1]);for(const [dr,dc] of dirs){let rr=r+dr,cc=c+dc;while(rr>=0&&rr<8&&cc>=0&&cc<8){const target=b[rr][cc];if(!target)add(rr,cc);else{if(chessColorAt(target)!==color)add(rr,cc);break;}rr+=dr;cc+=dc;}}}else if(t==='k'){for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(dr||dc)add(r+dr,c+dc);}if(!attackOnly){if(color==='w'&&from===60&&!isInCheck(b,'w')){if(state.castle.wk&&b[7][5]===''&&b[7][6]===''&&!squareAttacked(b,61,'b')&&!squareAttacked(b,62,'b'))add(7,6,{castle:'wk'});if(state.castle.wq&&b[7][1]===''&&b[7][2]===''&&b[7][3]===''&&!squareAttacked(b,59,'b')&&!squareAttacked(b,58,'b'))add(7,2,{castle:'wq'});}if(color==='b'&&from===4&&!isInCheck(b,'b')){if(state.castle.bk&&b[0][5]===''&&b[0][6]===''&&!squareAttacked(b,5,'w')&&!squareAttacked(b,6,'w'))add(0,6,{castle:'bk'});if(state.castle.bq&&b[0][1]===''&&b[0][2]===''&&b[0][3]===''&&!squareAttacked(b,3,'w')&&!squareAttacked(b,2,'w'))add(0,2,{castle:'bq'});}}}
+return out;}
+function legalMovesFrom(state,from){const p=state.board[Math.floor(from/8)][from%8];if(!p||chessColorAt(p)!==state.turn||state.winner)return[];const moves=pseudoMoves(state,from);return moves.filter(m=>{const sim={...state,board:cloneBoard(state.board),castle:{...state.castle},enPassant:state.enPassant};applyChessMove(sim,m,true);return !isInCheck(sim,state.turn);});}
+function allLegalMoves(state){const arr=[];for(let i=0;i<64;i++)arr.push(...legalMovesFrom(state,i));return arr;}
+function applyChessMove(state,m,simulation=false){const b=state.board,r1=Math.floor(m.from/8),c1=m.from%8,r2=Math.floor(m.to/8),c2=m.to%8,p=b[r1][c1],color=chessColorAt(p);b[r1][c1]='';if(m.enPassant&&!b[r2][c2]){const cr=color==='w'?r2+1:r2-1;const cap=b[cr][c2];b[cr][c2]='';if(!simulation&&cap)state.captured[color==='w'?'b':'w'].push(cap);}else if(b[r2][c2]&&!simulation)state.captured[color==='w'?'b':'w'].push(b[r2][c2]);b[r2][c2]=p;if(m.castle==='wk'){b[7][5]=b[7][7];b[7][7]='';}if(m.castle==='wq'){b[7][3]=b[7][0];b[7][0]='';}if(m.castle==='bk'){b[0][5]=b[0][7];b[0][7]='';}if(m.castle==='bq'){b[0][3]=b[0][0];b[0][0]='';}if(p==='♔'){state.castle.wk=false;state.castle.wq=false}if(p==='♚'){state.castle.bk=false;state.castle.bq=false}if(m.from===63||m.to===63)state.castle.wk=false;if(m.from===56||m.to===56)state.castle.wq=false;if(m.from===7||m.to===7)state.castle.bk=false;if(m.from===0||m.to===0)state.castle.bq=false;state.enPassant=(m.doublePawn?(color==='w'?m.to+8:m.to-8):null);if(!simulation){if((p==='♙'&&r2===0)||(p==='♟'&&r2===7))b[r2][c2]=color==='w'?'♕':'♛';state.history.push({from:m.from,to:m.to,piece:p,capture:m.capture||m.enPassant,notation:chessNotation(state,m,p)});state.lastMove=m;state.turn=color==='w'?'b':'w';const moves=allLegalMoves(state);state.winner=null;state.draw=false;if(!moves.length){if(isInCheck(state.board,state.turn))state.winner=color;else state.draw=true;}else if(state.history.length>=100)state.draw=true;}}
+function chessNotation(state,m,p){const piece=chessType(p);const file='abcdefgh'[m.to%8],rank=8-Math.floor(m.to/8);if(m.castle)return m.castle.endsWith('k')?'O-O':'O-O-O';return (piece==='p'?'':piece.toUpperCase())+(m.capture?(piece==='p'?'abcdefgh'[m.from%8]:''):'')+(m.capture?'x':'')+file+rank;}
+function chessClick(i){const g=gameState.chess;if(g.winner||g.draw)return;const p=g.board[Math.floor(i/8)][i%8];if(g.selected===null){if(p&&chessColorAt(p)===g.turn)g.selected=i;renderMiniGame();return;}if(p&&chessColorAt(p)===g.turn){g.selected=i;renderMiniGame();return;}const moves=legalMovesFrom(g,g.selected),m=moves.find(x=>x.to===i);if(m){applyChessMove(g,m,false);g.selected=null;}else g.selected=null;gameSync();}
+function renderChess(s){const g=gameState.chess;if(!g.board.length)resetChess(false);const b=g.board,moves=g.selected===null?[]:legalMovesFrom(g,g.selected);let squares='';const targetSet=new Set(moves.map(m=>m.to));const capSet=new Set(moves.filter(m=>m.capture||m.enPassant).map(m=>m.to));for(let r=0;r<8;r++)for(let c=0;c<8;c++){const i=r*8+c,light=(r+c)%2===0,sel=i===g.selected,last=g.lastMove&&(g.lastMove.from===i||g.lastMove.to===i);squares+=`<button type="button" class="chess-square ${light?'chess-light':'chess-dark'} ${sel?'selected':''} ${targetSet.has(i)?'target':''} ${capSet.has(i)?'capture':''} ${last?'chess-last':''}" onclick="chessClick(${i})">${b[r][c]||''}</button>`;}const status=g.winner?(g.winner==='w'?'الأبيض فاز ♔':'الأسود فاز ♚'):g.draw?'تعادل':(isInCheck(b,g.turn)?'كش — ':'')+(g.turn==='w'?'دور الأبيض':'دور الأسود');s.innerHTML=`<div class="game-topline"><div><strong>♟️ Chess</strong><div style="font-size:12px;color:var(--muted)">قواعد كاملة: كش، كش مات، تبييت، أخذ بالتجاوز، ترقية</div></div><div class="game-status">${status}</div></div><div class="game-turnbar"><span class="turn-pill ${g.turn==='w'?'active':''}">♔ الأبيض</span><span class="turn-pill ${g.turn==='b'?'active':''}">♚ الأسود</span><span class="turn-pill">${g.history.length} نقلة</span></div><div class="chess-wrap"><div class="chess-status"><span class="chess-captured">مأخوذ الأبيض: ${g.captured.w.join(' ')||'—'}</span><span class="chess-captured">مأخوذ الأسود: ${g.captured.b.join(' ')||'—'}</span></div><div class="board-labels">${['a','b','c','d','e','f','g','h'].map(x=>`<span>${x}</span>`).join('')}</div><div class="mini-board" role="grid">${squares}</div><div class="board-labels">${['1','2','3','4','5','6','7','8'].map(x=>`<span>${x}</span>`).join('')}</div></div><div class="game-actions"><button class="game-action" onclick="resetChess()">إعادة</button></div>`;}
+
 function resetMonopoly(sync=true){
     gameState.monopoly={p1:0,p2:0,turn:1,roll:0,winner:null};
     if(sync)gameSync();else renderMiniGame();
@@ -2085,6 +2144,7 @@ document.addEventListener('keydown',e=>{
     const map={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down'};
     if(map[e.key]){e.preventDefault();move2048(map[e.key]);}
 });
+let touchStart=null;document.addEventListener('touchstart',e=>{if(gameState.type!=='2048')return;touchStart=e.touches[0];},{passive:true});document.addEventListener('touchend',e=>{if(gameState.type!=='2048'||!touchStart)return;const t=e.changedTouches[0],dx=t.clientX-touchStart.clientX,dy=t.clientY-touchStart.clientY;touchStart=null;if(Math.max(Math.abs(dx),Math.abs(dy))<24)return;move2048(Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up'));},{passive:true});
 function render2048(s){
     const g=gameState.g2048;
     s.innerHTML=`<div class="game-topline"><div><strong>2048</strong><div style="font-size:12px;color:var(--muted)">Use arrow keys on desktop</div></div><div class="game-status">Score ${g.score}</div></div>
@@ -2115,3 +2175,4 @@ function renderMemory(s){
 </script>
 </body>
 </html>
+
