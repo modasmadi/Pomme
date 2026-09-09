@@ -677,14 +677,14 @@ button:focus-visible, input:focus-visible, textarea:focus-visible{
 @media (max-width:768px){#viewer-bitrate{min-width:0;width:100%;}}
 .remember-row{display:flex;align-items:center;justify-content:flex-start;gap:8px;color:var(--muted);font-size:12px;cursor:pointer;user-select:none;}
 .remember-row input{accent-color:var(--primary);width:16px;height:16px;}
-.stream-diagnostics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;}
+.stream-diagnostics{display:none;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;}
 .stream-diagnostics>div{background:rgba(17,24,51,.82);border:1px solid var(--border);border-radius:12px;padding:8px 10px;min-width:0;}
 .stream-diagnostics span{display:block;color:var(--muted);font-size:10px;margin-bottom:3px;}
 .stream-diagnostics strong{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .stream-diagnostics strong.good{color:#b8ffd9}.stream-diagnostics strong.warn{color:#ffe2a8}.stream-diagnostics strong.bad{color:#ffc2cc}
 body.game-mode .sidebar,body.game-mode .topbar{opacity:.72;transition:opacity .2s;}
 body.game-mode .main-content{padding:6px;}
-body.game-mode .stream-controls,body.game-mode .stream-quality-bar,body.game-mode .zoom-controls{background:rgba(0,0,0,.72);backdrop-filter:blur(10px);}
+body.game-mode .stream-controls,body.game-mode .stream-quality-bar{background:rgba(0,0,0,.72);backdrop-filter:blur(10px);}
 body.game-mode #tab-stream .video-container{height:calc(100vh - 118px);border-radius:12px;}
 @media (max-width:768px){body.game-mode #tab-stream .video-container{height:calc(100dvh - 165px);}}
 
@@ -701,6 +701,11 @@ body.game-mode #tab-stream .video-container{height:calc(100vh - 118px);border-ra
 .touch-dir{display:grid;grid-template-columns:repeat(3,52px);grid-template-rows:repeat(2,52px);gap:6px;justify-content:center}.touch-dir button{border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--white);border-radius:12px;font-size:19px}
 .whiteboard-wrap{height:100%;min-height:0;display:flex;flex-direction:column;gap:10px}.whiteboard-tools{display:flex;gap:7px;flex-wrap:wrap;padding:10px;border:1px solid var(--border);border-radius:16px;background:rgba(17,24,51,.7)}.whiteboard-tools button{border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--white);border-radius:10px;padding:8px 11px;cursor:pointer}.whiteboard-tools button.active{border-color:rgba(34,211,238,.5);color:var(--cyan)}.whiteboard-canvas-wrap{flex:1;min-height:300px;background:#fff;border-radius:18px;overflow:hidden;border:1px solid var(--border)}#whiteboard-canvas{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
 @media(max-width:768px){.notify-stack{top:64px;left:12px}.lobby-grid{grid-template-columns:1fr}.lobby-grid .vs{text-align:center}.whiteboard-canvas-wrap{min-height:55vh}.presence-card{padding:12px}.chat-tool{padding:6px 8px}}
+
+/* ===== V6 ACCOUNTS / DATABASE / SECURITY ===== */
+.account-card,.history-card,.security-card{background:linear-gradient(160deg,rgba(17,24,51,.88),rgba(11,16,35,.82));border:1px solid var(--border);border-radius:20px;box-shadow:0 18px 50px rgba(0,0,0,.18)}
+.account-card{padding:18px}.account-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.account-field{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:14px;padding:12px}.account-field span{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}.account-field strong{display:block;word-break:break-all}.security-list{display:flex;flex-direction:column;gap:8px}.security-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:11px 12px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.03)}.security-ok{color:#b8ffd9}.security-warn{color:#ffe2a8}.history-list{display:flex;flex-direction:column;gap:8px;max-height:360px;overflow:auto}.history-item{display:grid;grid-template-columns:1fr auto;gap:8px;padding:12px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.03)}.history-item strong{display:block}.history-item small{display:block;color:var(--muted);margin-top:3px}.danger-btn{background:rgba(244,63,94,.12)!important;color:#ffc2cc!important;border:1px solid rgba(244,63,94,.3)!important}.success-btn{background:rgba(16,185,129,.12)!important;color:#b8ffd9!important;border:1px solid rgba(16,185,129,.3)!important}.account-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.profile-pill{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border-radius:999px;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.18);font-size:11px}.profile-avatar-lg{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(99,102,241,.3),rgba(34,211,238,.18));font-weight:900;font-size:19px}.account-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}.account-head-copy{min-width:0}.account-head-copy strong{display:block;font-size:18px}.account-head-copy span{display:block;color:var(--muted);font-size:11px;margin-top:2px}.auth-saved{margin-bottom:10px;padding:9px 11px;border:1px solid rgba(16,185,129,.2);background:rgba(16,185,129,.06);border-radius:12px;font-size:12px;color:#b8ffd9}.auth-fast{margin-top:8px}.auth-fast button{width:100%;padding:11px;border-radius:11px;border:1px solid rgba(34,211,238,.25);background:rgba(34,211,238,.08);color:var(--white);font-family:var(--font);font-weight:800;cursor:pointer}.room-lock{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+@media(max-width:768px){.account-grid{grid-template-columns:1fr}.history-item{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -721,6 +726,7 @@ body.game-mode #tab-stream .video-container{height:calc(100vh - 118px);border-ra
             </div>
             <button class="btn-ghost" onclick="enterSolo()" style="width:100%;margin-top:10px;">⚡ استخدام محلي فقط</button>
             <div class="pair-note">لا يوجد كود ولا نسخ/لصق. الاسمان يولدان نفس الغرفة تلقائيًا، والضيف مشاهدة فقط.</div>
+            <div id="saved-account-box" class="auth-fast hidden"><button onclick="continueSavedAccount()">⚡ متابعة بالحساب المحفوظ</button></div>
         </div>
         <div id="status-msg"></div>
         <div id="host-code-display" class="hidden" style="margin-top:16px;">
@@ -771,6 +777,9 @@ body.game-mode #tab-stream .video-container{height:calc(100vh - 118px);border-ra
             </button>
             <button class="sidebar-item" data-tab="whiteboard" onclick="switchTab('whiteboard')">
                 <span class="icon">✏️</span><span>لوحة</span>
+            </button>
+            <button class="sidebar-item" data-tab="account" onclick="switchTab('account')">
+                <span class="icon">👤</span><span>الحساب</span>
             </button>
 
             <div class="sidebar-divider"></div>
@@ -831,11 +840,6 @@ body.game-mode #tab-stream .video-container{height:calc(100vh - 118px);border-ra
                             <span>Start the stream from the other device, then keep this page open.</span>
                         </div>
                         <video id="remote-video" autoplay playsinline></video>
-                    </div>
-                    <div class="zoom-controls" style="display:flex;gap:10px;align-items:center;justify-content:center;background:var(--bg-card);padding:9px;border-radius:12px;">
-                        <span style="font-size:12px;color:var(--muted);">Zoom</span>
-                        <input type="range" id="video-zoom" min="1" max="5" step="0.5" value="1" oninput="updateZoom()" style="flex:1;max-width:220px;accent-color:var(--primary);">
-                        <button onclick="resetZoom()" class="game-action">Reset</button>
                     </div>
                 </div>
 
@@ -1067,6 +1071,43 @@ body.game-mode #tab-stream .video-container{height:calc(100vh - 118px);border-ra
                 </div>
 
                 <!-- TAB: Permissions (Owner Only) -->
+                <div id="tab-account" class="tab-content">
+                    <div class="account-card">
+                        <div class="account-head">
+                            <div class="profile-avatar-lg" id="account-avatar">T</div>
+                            <div class="account-head-copy">
+                                <strong id="account-display-name">—</strong>
+                                <span id="account-status-line">الحساب المحلي جاهز</span>
+                            </div>
+                        </div>
+                        <div class="account-grid">
+                            <div class="account-field"><span>Account ID</span><strong id="account-id-value">—</strong></div>
+                            <div class="account-field"><span>Created</span><strong id="account-created-value">—</strong></div>
+                            <div class="account-field"><span>Database</span><strong>IndexedDB • Local</strong></div>
+                            <div class="account-field"><span>Session</span><strong id="account-session-value">—</strong></div>
+                        </div>
+                        <div class="account-actions">
+                            <button class="game-action success-btn" onclick="lockCurrentRoom()">🔒 قفل الغرفة</button>
+                            <button class="game-action" onclick="enableNotifications()">🔔 تفعيل الإشعارات</button>
+                            <button class="game-action danger-btn" onclick="secureLogout()">تسجيل خروج</button>
+                            <button class="game-action danger-btn" onclick="clearLocalDatabase()">مسح بيانات الجهاز</button>
+                        </div>
+                    </div>
+                    <div class="security-card" style="padding:16px;margin-top:12px;">
+                        <div class="section-head"><div><h2>الأمان</h2><p>حماية محلية للجلسة والغرفة</p></div><span class="profile-pill">🛡️ Protected</span></div>
+                        <div class="security-list">
+                            <div class="security-item"><span>تنظيف الرسائل والأسماء ضد HTML injection</span><strong class="security-ok">مفعل</strong></div>
+                            <div class="security-item"><span>اتصال واحد فقط للغرفة</span><strong class="security-ok">مفعل</strong></div>
+                            <div class="security-item"><span>Room lock</span><strong id="security-room-lock" class="security-warn">مفتوح</strong></div>
+                            <div class="security-item"><span>جلسة محلية</span><strong class="security-ok">IndexedDB</strong></div>
+                        </div>
+                    </div>
+                    <div class="history-card" style="padding:16px;margin-top:12px;">
+                        <div class="section-head"><div><h2>Session History</h2><p>آخر جلسات Pomme على هذا الجهاز</p></div><button class="game-action" onclick="clearSessionHistory()">مسح السجل</button></div>
+                        <div class="history-list" id="session-history-list"><div class="empty-note">لا توجد جلسات محفوظة بعد.</div></div>
+                    </div>
+                </div>
+
                 <div id="tab-permissions" class="tab-content">
                     <h2 style="text-align:center;margin-bottom:24px;font-size:20px;">🔐 تحكم بصلاحيات الصديقة</h2>
                     <div class="perm-list">
@@ -1150,15 +1191,76 @@ let chatHistory=[];
 let whiteboardReady=false, wbTool='pen', wbColor='#111827', wbSize=4, wbDrawing=false, wbLast=null, wbUndo=[];
 let isNotesUpdatingProgrammatically = false;
 let permissions = { notes: true, files: true, screen: true };
+// ===========================
+// PHASE 6 — LOCAL ACCOUNT / DATABASE / SECURITY
+// ===========================
+const APP_DB_NAME='pomme_v6_db', APP_DB_VERSION=1;
+let dbPromise=null, localAccount=null, currentSession=null, roomLocked=false;
+const SECURITY_MAX_CHAT=200, SECURITY_MAX_FILE_SIZE=2*1024*1024*1024;
+function openAppDB(){
+    if(dbPromise)return dbPromise;
+    dbPromise=new Promise((resolve,reject)=>{
+        const req=indexedDB.open(APP_DB_NAME,APP_DB_VERSION);
+        req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains('accounts'))db.createObjectStore('accounts',{keyPath:'id'});if(!db.objectStoreNames.contains('settings'))db.createObjectStore('settings',{keyPath:'key'});if(!db.objectStoreNames.contains('sessions')){const s=db.createObjectStore('sessions',{keyPath:'id'});s.createIndex('startedAt','startedAt');}if(!db.objectStoreNames.contains('messages')){const m=db.createObjectStore('messages',{keyPath:'id'});m.createIndex('sessionId','sessionId');}};
+        req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+    });
+    return dbPromise;
+}
+async function dbPut(store,value){const db=await openAppDB();return new Promise((resolve,reject)=>{const tx=db.transaction(store,'readwrite');tx.objectStore(store).put(value);tx.oncomplete=()=>resolve(true);tx.onerror=()=>reject(tx.error);});}
+async function dbGet(store,key){const db=await openAppDB();return new Promise((resolve,reject)=>{const tx=db.transaction(store,'readonly');const r=tx.objectStore(store).get(key);r.onsuccess=()=>resolve(r.result||null);r.onerror=()=>reject(r.error);});}
+async function dbAll(store){const db=await openAppDB();return new Promise((resolve,reject)=>{const tx=db.transaction(store,'readonly');const r=tx.objectStore(store).getAll();r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>reject(r.error);});}
+async function dbDelete(store,key){const db=await openAppDB();return new Promise((resolve,reject)=>{const tx=db.transaction(store,'readwrite');tx.objectStore(store).delete(key);tx.oncomplete=()=>resolve(true);tx.onerror=()=>reject(tx.error);});}
+async function sha256Hex(text){const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text));return [...new Uint8Array(buf)].map(x=>x.toString(16).padStart(2,'0')).join('');}
+function makeId(prefix='id'){return prefix+'_'+(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));}
+async function ensureLocalAccount(){
+    const savedId=localStorage.getItem('pomme-account-id');
+    if(savedId)localAccount=await dbGet('accounts',savedId);
+    if(localAccount) return localAccount;
+    const savedName=sanitizeName(localStorage.getItem('pomme-my-name')||'');
+    if(!savedName)return null;
+    localAccount={id:makeId('acct'),name:savedName,createdAt:Date.now(),deviceSecret:await sha256Hex(makeId('secret')+location.origin)};
+    await dbPut('accounts',localAccount);localStorage.setItem('pomme-account-id',localAccount.id);return localAccount;
+}
+async function ensureAccountForIdentity(){
+    readIdentity();
+    if(!myDisplayName)return null;
+    const savedId=localStorage.getItem('pomme-account-id');
+    if(savedId){const a=await dbGet('accounts',savedId);if(a&&a.name===myDisplayName){localAccount=a;return a;}}
+    localAccount={id:makeId('acct'),name:myDisplayName,createdAt:Date.now(),deviceSecret:await sha256Hex(makeId('secret')+Date.now()+location.origin)};
+    await dbPut('accounts',localAccount);localStorage.setItem('pomme-account-id',localAccount.id);return localAccount;
+}
+async function initPhase6(){try{await openAppDB();localAccount=await ensureLocalAccount();if(localAccount){const box=document.getElementById('saved-account-box');if(box)box.classList.remove('hidden');updateAccountUI();}renderSessionHistory();}catch(e){console.warn('Pomme DB unavailable',e);}}
+function updateAccountUI(){if(!localAccount)return;const name=localAccount.name||myDisplayName||'—';const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};set('account-display-name',name);set('account-id-value',localAccount.id);set('account-created-value',new Date(localAccount.createdAt).toLocaleString());set('account-session-value',currentSession?networkLabel(lastNetworkState):'غير متصل');const av=document.getElementById('account-avatar');if(av)av.textContent=name.charAt(0).toUpperCase();}
+function continueSavedAccount(){if(!localAccount)return;document.getElementById('my-name-input').value=localAccount.name;readIdentity();if(friendDisplayName){connectAsGuest();}else{updateStatus('أدخل اسم صديقتك مرة واحدة فقط.',false);document.getElementById('friend-name-input').focus();}}
+async function startLocalSession(){
+    if(!localAccount)return;
+    currentSession={id:makeId('sess'),startedAt:Date.now(),endedAt:null,durationMs:0,myName:myDisplayName,friendName:friendDisplayName,roomId,role:isOwner?'host':(isSoloMode?'solo':'guest'),network:'waiting',game:gameState?.type||'xo'};
+    await dbPut('sessions',currentSession);updateAccountUI();
+}
+async function finishLocalSession(reason='closed'){
+    if(!currentSession||currentSession.endedAt)return;
+    currentSession.endedAt=Date.now();currentSession.durationMs=Math.max(0,currentSession.endedAt-currentSession.startedAt);currentSession.network=lastNetworkState;currentSession.endReason=reason;
+    try{await dbPut('sessions',currentSession);}catch(_){}updateAccountUI();renderSessionHistory();
+}
+function formatDuration(ms){const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return h?`${h}س ${m}د`:m?`${m}د ${sec}ث`:`${sec}ث`;}
+async function renderSessionHistory(){const list=document.getElementById('session-history-list');if(!list)return;try{const rows=(await dbAll('sessions')).sort((a,b)=>b.startedAt-a.startedAt).slice(0,40);if(!rows.length){list.innerHTML='<div class="empty-note">لا توجد جلسات محفوظة بعد.</div>';return;}list.innerHTML=rows.map(x=>`<div class="history-item"><div><strong>${escapeHTML(x.myName||'User')} ↔ ${escapeHTML(x.friendName||'—')}</strong><small>${new Date(x.startedAt).toLocaleString()} • ${escapeHTML(x.role||'guest')} • ${escapeHTML(x.game||'—')}</small></div><strong>${formatDuration(x.durationMs||0)}</strong></div>`).join('');}catch(e){list.innerHTML='<div class="empty-note">تعذر قراءة سجل الجلسات.</div>';}}
+async function clearSessionHistory(){const rows=await dbAll('sessions');for(const x of rows)await dbDelete('sessions',x.id);renderSessionHistory();notifyPeer('تم مسح سجل الجلسات من هذا الجهاز.');}
+async function secureLogout(){await finishLocalSession('logout');localStorage.removeItem('pomme-account-id');localAccount=null;resetNetworkForNewSession();isSoloMode=false;isOwner=false;document.getElementById('app-screen').classList.remove('active');document.getElementById('auth-screen').classList.add('active');notifyPeer('تم تسجيل الخروج من الحساب المحلي.');}
+async function clearLocalDatabase(){if(!confirm('سيتم حذف الحساب المحلي وسجل الجلسات والرسائل المحفوظة على هذا الجهاز. هل تريد المتابعة؟'))return;try{const db=await openAppDB();db.close();await new Promise((res,rej)=>{const r=indexedDB.deleteDatabase(APP_DB_NAME);r.onsuccess=()=>res();r.onerror=()=>rej(r.error);});}catch(_){}localStorage.removeItem('pomme-account-id');localAccount=null;location.reload();}
+function applyRoomLockUI(){const e=document.getElementById('security-room-lock');if(e){e.textContent=roomLocked?'مغلق':'مفتوح';e.className=roomLocked?'security-ok':'security-warn';}}
+function lockCurrentRoom(){if(!isOwner){notifyPeer('قفل الغرفة متاح لصاحب الغرفة فقط.');return;}roomLocked=!roomLocked;sendData({type:'room_lock',locked:roomLocked});applyRoomLockUI();notifyPeer(roomLocked?'تم قفل الغرفة.':'تم فتح الغرفة.');}
+function securityValidateIncoming(data){if(!data||typeof data!=='object')return false;if(data.type==='chat_msg'&&String(data.text||'').length>4000)return false;if(data.type==='hello'&&String(data.name||'').length>24)return false;if(data.type&&String(data.type).length>80)return false;return true;}
+
 const statusMsg = document.getElementById('status-msg');
 const notesArea = document.getElementById('notes-area');
-window.addEventListener('DOMContentLoaded',()=>{const a=localStorage.getItem('pomme-my-name')||'';const b=localStorage.getItem('pomme-friend-name')||'';document.getElementById('my-name-input').value=a;document.getElementById('friend-name-input').value=b;});
+window.addEventListener('DOMContentLoaded',async()=>{const a=localStorage.getItem('pomme-my-name')||'';const b=localStorage.getItem('pomme-friend-name')||'';document.getElementById('my-name-input').value=a;document.getElementById('friend-name-input').value=b;await initPhase6();});
+window.addEventListener('beforeunload',()=>{try{if(currentSession&&!currentSession.endedAt){currentSession.endedAt=Date.now();currentSession.durationMs=Math.max(0,currentSession.endedAt-currentSession.startedAt);const req=indexedDB.open(APP_DB_NAME,APP_DB_VERSION);req.onsuccess=()=>{const db=req.result;const tx=db.transaction('sessions','readwrite');tx.objectStore('sessions').put(currentSession);};}}catch(_){} });
 window.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('auth-screen')?.classList.contains('active')){const ae=document.activeElement?.id; if(ae==='my-name-input'||ae==='friend-name-input')connectAsGuest();}});
 
 const TAB_NAMES = {
     notes: 'الملاحظات', stream: 'البث المباشر', files: 'الملفات',
     timer: 'التايمر', calc: 'الآلة الحاسبة', goals: 'الأهداف اليومية',
-    'mini-games': 'Mini Games', chat: 'Chat', whiteboard: 'اللوحة البيضاء', permissions: 'الصلاحيات'
+    'mini-games': 'Mini Games', chat: 'Chat', whiteboard: 'اللوحة البيضاء', account: 'الحساب', permissions: 'الصلاحيات'
 };
 
 // ===========================
@@ -1203,7 +1305,10 @@ function showAppScreen() {
     setLobbyUI();
     loadGoals();
     renderMiniGame();
+    updateAccountUI();
+    if(!currentSession && !isSoloMode) startLocalSession();
 }
+
 
 const PEER_CONFIG = {
     config: {
@@ -1298,7 +1403,8 @@ function setupDataConnection(conn){
     dataConn=conn;
     dataConn.on('open',()=>{
         clearTimeout(dataReconnectTimer);isSoloMode=false;showAppScreen();
-        sendData({type:'hello',name:myDisplayName,role:isOwner?'host':'guest',protocol:3});
+        if(!currentSession) startLocalSession();
+        sendData({type:'hello',name:myDisplayName,role:isOwner?'host':'guest',protocol:4,accountId:localAccount?.id||null});
         sendPresence(true);
         sendData({type:'sync_request'});
         if(isOwner){sendData({type:'permissions_update',permissions});sendData({type:'note_update',content:notesArea.value});sendGameState();}
@@ -1409,7 +1515,7 @@ async function enableNotifications(){if(!('Notification'in window))return;try{if
 const FILE_CHUNK_SIZE=64*1024;
 async function handleFileUpload(e){if(!hasPermission('files'))return;const file=e.target.files[0];if(!file)return;await sendFileChunked(file,true);e.target.value='';}
 async function waitForDataChannelCapacity(){const dc=dataConn?.dataChannel;if(!dc||!('bufferedAmount' in dc))return;const LIMIT=4*1024*1024;while(dc.bufferedAmount>LIMIT){await new Promise(resolve=>{const prev=dc.onbufferedamountlow;dc.bufferedAmountLowThreshold=512*1024;dc.onbufferedamountlow=()=>{dc.onbufferedamountlow=prev;resolve();};setTimeout(()=>{dc.onbufferedamountlow=prev;resolve();},250);});}}
-async function sendFileChunked(file,notify=true){if(!dataConn||!dataConn.open){addFileToList(file.name,file,true);return;}const id=crypto.randomUUID?crypto.randomUUID():'f'+Date.now()+Math.random();const total=Math.ceil(file.size/FILE_CHUNK_SIZE);sendData({type:'file_start',id,name:file.name,typeStr:file.type||'application/octet-stream',size:file.size,total,from:myDisplayName});for(let i=0;i<total;i++){await waitForDataChannelCapacity();const buf=await file.slice(i*FILE_CHUNK_SIZE,(i+1)*FILE_CHUNK_SIZE).arrayBuffer();const bytes=new Uint8Array(buf);let bin='';for(let j=0;j<bytes.length;j+=0x8000)bin+=String.fromCharCode(...bytes.subarray(j,j+0x8000));sendData({type:'file_chunk',id,index:i,data:btoa(bin)});}sendData({type:'file_end',id});addFileToList(file.name,file,true);if(notify)notifyPeer('تم إرسال '+file.name);}
+async function sendFileChunked(file,notify=true){if(file.size>SECURITY_MAX_FILE_SIZE){notifyPeer('الملف أكبر من الحد المسموح لهذا النقل.');return;}if(!dataConn||!dataConn.open){addFileToList(file.name,file,true);return;}const id=crypto.randomUUID?crypto.randomUUID():'f'+Date.now()+Math.random();const total=Math.ceil(file.size/FILE_CHUNK_SIZE);sendData({type:'file_start',id,name:file.name,typeStr:file.type||'application/octet-stream',size:file.size,total,from:myDisplayName});for(let i=0;i<total;i++){await waitForDataChannelCapacity();const buf=await file.slice(i*FILE_CHUNK_SIZE,(i+1)*FILE_CHUNK_SIZE).arrayBuffer();const bytes=new Uint8Array(buf);let bin='';for(let j=0;j<bytes.length;j+=0x8000)bin+=String.fromCharCode(...bytes.subarray(j,j+0x8000));sendData({type:'file_chunk',id,index:i,data:btoa(bin)});}sendData({type:'file_end',id});addFileToList(file.name,file,true);if(notify)notifyPeer('تم إرسال '+file.name);}
 
 function beginIncomingFile(d){fileTransfers.set(d.id,{name:d.name,type:d.typeStr||'application/octet-stream',size:d.size,total:d.total,chunks:new Array(d.total),received:0});}
 function receiveFileChunk(d){const f=fileTransfers.get(d.id);if(!f||f.chunks[d.index])return;f.chunks[d.index]=d.data;f.received++;}
@@ -1432,9 +1538,6 @@ function resetCurrentGame(){if(gameState.type==='xo')resetXO(false);else if(game
 // ===========================
 // SCREEN SHARE HELPERS
 // ===========================
-function updateZoom(){const z=Number(document.getElementById('video-zoom')?.value||1),v=document.getElementById('remote-video');if(!v)return;if(z===1){v.style.width='100%';v.style.height='100%';v.style.maxWidth='100%';v.style.objectFit='contain';}else{v.style.width=`${z*100}%`;v.style.height='auto';v.style.maxWidth='none';v.style.objectFit='contain';}}
-
-function resetZoom() { document.getElementById('video-zoom').value = 1; updateZoom(); }
 
 function toggleFullScreen() {
     const v = document.getElementById('remote-video');
