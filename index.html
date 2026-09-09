@@ -675,6 +675,18 @@ button:focus-visible, input:focus-visible, textarea:focus-visible{
 .pair-note{font-size:12px;line-height:1.7;color:var(--muted);margin-top:2px;}
 #viewer-bitrate{min-width:118px;}
 @media (max-width:768px){#viewer-bitrate{min-width:0;width:100%;}}
+.remember-row{display:flex;align-items:center;justify-content:flex-start;gap:8px;color:var(--muted);font-size:12px;cursor:pointer;user-select:none;}
+.remember-row input{accent-color:var(--primary);width:16px;height:16px;}
+.stream-diagnostics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;}
+.stream-diagnostics>div{background:rgba(17,24,51,.82);border:1px solid var(--border);border-radius:12px;padding:8px 10px;min-width:0;}
+.stream-diagnostics span{display:block;color:var(--muted);font-size:10px;margin-bottom:3px;}
+.stream-diagnostics strong{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.stream-diagnostics strong.good{color:#b8ffd9}.stream-diagnostics strong.warn{color:#ffe2a8}.stream-diagnostics strong.bad{color:#ffc2cc}
+body.game-mode .sidebar,body.game-mode .topbar{opacity:.72;transition:opacity .2s;}
+body.game-mode .main-content{padding:6px;}
+body.game-mode .stream-controls,body.game-mode .stream-quality-bar,body.game-mode .stream-diagnostics,body.game-mode .zoom-controls{background:rgba(0,0,0,.72);backdrop-filter:blur(10px);}
+body.game-mode #tab-stream .video-container{height:calc(100vh - 118px);border-radius:12px;}
+@media (max-width:768px){.stream-diagnostics{grid-template-columns:repeat(3,minmax(0,1fr));}.stream-diagnostics>div{padding:7px 8px;}.stream-diagnostics span{font-size:9px;}body.game-mode #tab-stream .video-container{height:calc(100dvh - 165px);}}
 </style>
 </head>
 <body>
@@ -684,16 +696,17 @@ button:focus-visible, input:focus-visible, textarea:focus-visible{
     <div class="auth-card">
         <div class="auth-logo-badge">PRIVATE • FAST • P2P</div>
         <h1>🍎 Pomme</h1>
-        <p class="auth-subtitle">مساحة مشتركة خفيفة وسلسة — ادخل وحدك أو افتح غرفة للاتصال بطرف آخر بدون إجبار الطرفين على الوجود.</p>
+        <p class="auth-subtitle">مساحة مشتركة لشخصين — ادخل باسمك واسم صديقتك فقط. الاتصال، إعادة الاتصال، والبث عالي الجودة يعملون تلقائيًا.</p>
         <div class="identity-entry">
             <input class="room-code-input" id="my-name-input" placeholder="اسمك" autocomplete="nickname" maxlength="24">
             <input class="room-code-input" id="friend-name-input" placeholder="اسم صديقتك" autocomplete="off" maxlength="24">
+            <label class="remember-row"><input type="checkbox" id="remember-names" checked> <span>تذكر الأسماء على هذا الجهاز</span></label>
             <div class="room-actions">
                 <button class="btn-primary" onclick="connectAsHost()">🚀 افتح الغرفة</button>
                 <button class="btn-secondary" onclick="connectAsGuest()">👀 ادخل عندها</button>
             </div>
             <button class="btn-ghost" onclick="enterSolo()" style="width:100%;margin-top:10px;">⚡ استخدام محلي فقط</button>
-            <div class="pair-note">لا يوجد كود. الاسمان يصنعان الغرفة تلقائيًا، والغرفة تقبل شخصين فقط.</div>
+            <div class="pair-note">لا يوجد كود ولا نسخ/لصق. الاسمان يولدان نفس الغرفة تلقائيًا، والضيف مشاهدة فقط.</div>
         </div>
         <div id="status-msg"></div>
         <div id="host-code-display" class="hidden" style="margin-top:16px;">
@@ -768,9 +781,10 @@ button:focus-visible, input:focus-visible, textarea:focus-visible{
                         <button class="btn-secondary hidden" id="stop-screen-btn" onclick="stopScreenShare()">⏹️ Stop</button>
                         <button class="btn-secondary" onclick="toggleFullScreen()" style="background:rgba(34,211,238,0.15); color:var(--cyan); border-color:var(--cyan)!important;">⛶ Fullscreen</button>
                         <button class="btn-secondary" onclick="requestKeyframeNow()" style="background:rgba(16,185,129,0.11);color:#9ff3cb;border-color:rgba(16,185,129,.35)!important;">↻ Refresh</button>
+                        <button class="btn-secondary" id="game-mode-btn" onclick="toggleGameMode()" style="background:rgba(245,158,11,0.11);color:#ffe2a8;border-color:rgba(245,158,11,.32)!important;">🎮 Game Mode</button>
                     </div>
                     <div class="stream-quality-bar">
-                        <small>2K / 60 افتراضيًا • الضيفة تشاهد فقط وتحدد سقف الـbitrate.</small>
+                        <small>2K / 60 هدف أساسي • المحرك يضبط الـbitrate فقط للحفاظ على السلاسة ولا يخفض الدقة تلقائيًا.</small>
                         <select class="quality-select" id="stream-quality" onchange="applyPreferredQuality()">
                             <option value="1440p60">2K • 60 FPS</option>
                             <option value="1080p60">1080p • 60 FPS</option>
@@ -797,6 +811,14 @@ button:focus-visible, input:focus-visible, textarea:focus-visible{
                             <span>Start the stream from the other device, then keep this page open.</span>
                         </div>
                         <video id="remote-video" autoplay playsinline></video>
+                    </div>
+                    <div class="stream-diagnostics" id="stream-diagnostics">
+                        <div><span>Connection</span><strong id="diag-connection">WAITING</strong></div>
+                        <div><span>Latency</span><strong id="diag-rtt">— ms</strong></div>
+                        <div><span>Jitter</span><strong id="diag-jitter">— ms</strong></div>
+                        <div><span>Loss</span><strong id="diag-loss">— %</strong></div>
+                        <div><span>Frames</span><strong id="diag-dropped">—</strong></div>
+                        <div><span>Codec</span><strong id="diag-codec">—</strong></div>
                     </div>
                     <div class="zoom-controls" style="display:flex;gap:10px;align-items:center;justify-content:center;background:var(--bg-card);padding:9px;border-radius:12px;">
                         <span style="font-size:12px;color:var(--muted);">Zoom</span>
@@ -1066,7 +1088,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible{
 </div>
 
 <!-- PeerJS -->
-<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
 
 <script>
 // ===========================
@@ -1078,16 +1100,23 @@ let roomId = 'pomme-app-modasmadi-2026';
 let statsTimer = null, qualityTimer = null;
 let preferredQuality = '1440p60';
 let preferredBitrate = 28000000;
+let viewerMaxBitrate = 28000000;
+let latestViewerFeedback = null;
 let myDisplayName = '';
 let friendDisplayName = '';
 let roomConnectTimer = null;
 let reconnectTimer = null;
+let dataReconnectTimer = null;
+let qualityEngineTimer = null;
+let peerReady = false;
+let lastNetworkState = 'waiting';
+let gameMode = false;
 let isNotesUpdatingProgrammatically = false;
 let permissions = { notes: true, files: true, screen: true };
-const FIXED_ROOM_ID = 'pomme-app-modasmadi-2026';
 const statusMsg = document.getElementById('status-msg');
 const notesArea = document.getElementById('notes-area');
 window.addEventListener('DOMContentLoaded',()=>{const a=localStorage.getItem('pomme-my-name')||'';const b=localStorage.getItem('pomme-friend-name')||'';document.getElementById('my-name-input').value=a;document.getElementById('friend-name-input').value=b;});
+window.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('auth-screen')?.classList.contains('active')){const ae=document.activeElement?.id; if(ae==='my-name-input'||ae==='friend-name-input')connectAsGuest();}});
 
 const TAB_NAMES = {
     notes: 'الملاحظات', stream: 'البث المباشر', files: 'الملفات',
@@ -1143,90 +1172,113 @@ const PEER_CONFIG = {
             { urls: 'stun:stun1.l.google.com:19302' },
             { urls: 'stun:stun2.l.google.com:19302' },
             { urls: 'stun:stun3.l.google.com:19302' }
+            // Production TURN: add your own server here, e.g.
+            // { urls: 'turn:turn.example.com:3478?transport=udp', username: 'USER', credential: 'PASS' },
+            // { urls: 'turns:turn.example.com:5349', username: 'USER', credential: 'PASS' }
         ],
         sdpSemantics: 'unified-plan',
         bundlePolicy: 'max-bundle',
-        rtcpMuxPolicy: 'require'
-    }
+        rtcpMuxPolicy: 'require',
+        iceCandidatePoolSize: 10
+    },
+    debug: 0,
+    pingInterval: 5000
 };
-
+function setDiag(id, value, cls=''){const e=document.getElementById(id);if(e){e.textContent=value;e.className=cls;}}
+function networkLabel(state){return ({excellent:'Excellent',good:'Good',degraded:'Degraded',reconnecting:'Reconnecting',waiting:'Waiting',local:'Local'})[state]||state;}
+function setNetworkState(state){lastNetworkState=state;const pill=document.getElementById('stream-quality-pill');if(pill){pill.textContent=networkLabel(state);pill.className='stream-pill '+(state==='excellent'||state==='good'?'good':state==='degraded'||state==='reconnecting'?'warn':'');}setDiag('diag-connection',networkLabel(state),state==='excellent'||state==='good'?'good':state==='degraded'||state==='reconnecting'?'warn':'');}
 function updateConnectionUI(){
-    const connected = !!(dataConn && dataConn.open);
-    const state = connected ? 'Connected' : (isSoloMode ? 'Local' : 'Waiting');
-    document.querySelectorAll('.status-dot').forEach(d => d.classList.toggle('connected', connected || isSoloMode));
-    const el = document.getElementById('games-connection-state');
-    if(el) el.textContent = state;
-    const pill = document.getElementById('stream-quality-pill');
-    if(pill) { pill.textContent = connected ? 'Connected' : 'Local'; pill.className = 'stream-pill ' + (connected ? 'good' : 'warn'); }
+    const connected=!!(dataConn&&dataConn.open);
+    const state=connected?'good':(isSoloMode?'local':'waiting');
+    document.querySelectorAll('.status-dot').forEach(d=>d.classList.toggle('connected',connected||isSoloMode));
+    const el=document.getElementById('games-connection-state'); if(el) el.textContent=connected?'Connected':(isSoloMode?'Local':'Waiting');
+    setNetworkState(state);
 }
-
 function sanitizeName(v){return (v||'').trim().replace(/\s+/g,' ').slice(0,24);}
 function pairRoomId(a,b){const pair=[a.toLowerCase(),b.toLowerCase()].sort().join('|');let h=2166136261;for(let i=0;i<pair.length;i++){h^=pair.charCodeAt(i);h=Math.imul(h,16777619);}return 'pomme-pair-'+(h>>>0).toString(36);}
-function readIdentity(){myDisplayName=sanitizeName(document.getElementById('my-name-input').value);friendDisplayName=sanitizeName(document.getElementById('friend-name-input').value);if(myDisplayName)localStorage.setItem('pomme-my-name',myDisplayName);if(friendDisplayName)localStorage.setItem('pomme-friend-name',friendDisplayName);return !!myDisplayName;}
-function enterSolo(){isOwner=false;isSoloMode=true;if(!myDisplayName)readIdentity();showAppScreen();}
-function connectAsHost(){if(!readIdentity()||!friendDisplayName){updateStatus('اكتب اسمك واسم صديقتك أولًا.',true);return;}isOwner=true;isSoloMode=false;roomId=pairRoomId(myDisplayName,friendDisplayName);updateStatus('جاري فتح الغرفة الخاصة…');if(peer){try{peer.destroy();}catch(_){}peer=null;}initPeer(roomId);}
-function connectAsGuest(){if(!readIdentity()||!friendDisplayName){updateStatus('اكتب اسمك واسم صديقتك أولًا.',true);return;}isOwner=false;isSoloMode=false;roomId=pairRoomId(myDisplayName,friendDisplayName);updateStatus('جاري الدخول مباشرة… بدون كود.');if(peer){try{peer.destroy();}catch(_){}peer=null;}initPeer();const waitOpen=setInterval(()=>{if(peer&&peer.open){clearInterval(waitOpen);setupDataConnection(peer.connect(roomId,{reliable:true,serialization:'json'}));}},100);setTimeout(()=>clearInterval(waitOpen),30000);roomConnectTimer=setTimeout(()=>{if(!dataConn||!dataConn.open)updateStatus('صديقتك لم تفتح الغرفة بعد. اتركي الصفحة مفتوحة وسيعاد الاتصال تلقائيًا.');},7000);}
-function generateRoomCode(){updateStatus('لا تحتاجين إلى كود. استخدمي الاسمين ثم افتحي أو ادخلي الغرفة.');}
+function readIdentity(){
+    myDisplayName=sanitizeName(document.getElementById('my-name-input').value);
+    friendDisplayName=sanitizeName(document.getElementById('friend-name-input').value);
+    const remember=document.getElementById('remember-names')?.checked!==false;
+    if(remember){if(myDisplayName)localStorage.setItem('pomme-my-name',myDisplayName);if(friendDisplayName)localStorage.setItem('pomme-friend-name',friendDisplayName);localStorage.setItem('pomme-remember-names','1');}
+    else {localStorage.removeItem('pomme-my-name');localStorage.removeItem('pomme-friend-name');localStorage.removeItem('pomme-remember-names');}
+    return !!myDisplayName;
+}
+function validateIdentity(){
+    if(!readIdentity()||!friendDisplayName){updateStatus('اكتب اسمك واسم صديقتك أولًا.',true);return false;}
+    if(myDisplayName.toLowerCase()===friendDisplayName.toLowerCase()){updateStatus('استخدم اسمين مختلفين حتى يتم تحديد الغرفة والهوية بشكل صحيح.',true);return false;}
+    return true;
+}
+function enterSolo(){isOwner=false;isSoloMode=true;readIdentity();showAppScreen();}
+function resetNetworkForNewSession(){
+    clearTimeout(roomConnectTimer);clearTimeout(reconnectTimer);clearTimeout(dataReconnectTimer);
+    if(peer){try{peer.destroy();}catch(_){}peer=null;} dataConn=null;mediaConn=null;peerReady=false;
+}
+function connectAsHost(){if(!validateIdentity())return;resetNetworkForNewSession();isOwner=true;isSoloMode=false;roomId=pairRoomId(myDisplayName,friendDisplayName);updateStatus('جاري فتح الغرفة الخاصة…');initPeer(roomId);}
+function connectAsGuest(){if(!validateIdentity())return;resetNetworkForNewSession();isOwner=false;isSoloMode=false;roomId=pairRoomId(myDisplayName,friendDisplayName);updateStatus('جاري الدخول مباشرة… بدون كود.');initPeer();}
+function generateRoomCode(){updateStatus('لا تحتاج إلى كود. اكتب الاسمين فقط.');}
 function initHost(){connectAsHost();}
 function joinRoom(){connectAsGuest();}
+function connectToHost(){
+    if(isOwner||isSoloMode||!peer||!peer.open||dataConn?.open)return;
+    try{const conn=peer.connect(roomId,{reliable:true,serialization:'json'});setupDataConnection(conn);}catch(e){scheduleDataReconnect();}
+}
+function scheduleDataReconnect(){
+    if(isOwner||isSoloMode)return;
+    clearTimeout(dataReconnectTimer);
+    dataReconnectTimer=setTimeout(()=>{
+        if(!dataConn||!dataConn.open) connectToHost();
+    },1800);
+}
 function initPeer(id=null){
- peer=id?new Peer(id,PEER_CONFIG):new Peer(PEER_CONFIG);
- peer.on('open',()=>{updateConnectionUI();if(isOwner){document.getElementById('host-code-display').classList.remove('hidden');document.getElementById('host-code-text').textContent='الغرفة جاهزة — '+myDisplayName+' بانتظار '+friendDisplayName+'.';showAppScreen();}});
- peer.on('connection',conn=>{if(!dataConn||!dataConn.open)setupDataConnection(conn);else conn.close();});
- peer.on('call',call=>{call.answer();call.on('stream',attachRemoteStream);call.on('close',()=>{mediaConn=null;});mediaConn=call;setTimeout(optimizeReceiver,250);});
- peer.on('disconnected',()=>{updateConnectionUI();clearTimeout(reconnectTimer);reconnectTimer=setTimeout(()=>{try{peer.reconnect();}catch(_){}},1200);});
- peer.on('error',err=>{console.error(err);updateConnectionUI();if(err.type==='peer-unavailable'&&!isOwner)updateStatus('صديقتك لم تفتح الغرفة بعد. سيعاد الاتصال تلقائيًا.');else if(err.type==='unavailable-id'&&isOwner)updateStatus('الغرفة مستخدمة حاليًا. أغلق الجلسة القديمة ثم أعد الفتح.',true);else updateStatus('تعذر الاتصال مؤقتًا: '+err.type,true);});
-}
-
-function setupDataConnection(conn) {
-    dataConn = conn;
-    dataConn.on('open', () => {
-        isSoloMode = false;
-        showAppScreen();
-        sendData({ type: 'sync_request' });
-        sendData({type:'presence',name:myDisplayName,role:isOwner?'host':'guest'});
-        if (isOwner) {
-            sendData({ type: 'permissions_update', permissions });
-            sendData({ type: 'note_update', content: notesArea.value });
-            sendGameState();
-        }
-        updateConnectionUI();
+    peer=id?new Peer(id,PEER_CONFIG):new Peer(PEER_CONFIG);
+    peer.on('open',()=>{peerReady=true;updateConnectionUI();if(isOwner){
+        document.getElementById('host-code-display').classList.remove('hidden');
+        document.getElementById('host-code-text').textContent='الغرفة جاهزة — '+myDisplayName+' بانتظار '+friendDisplayName+'.';
+        showAppScreen();setNetworkState('waiting');
+    }else{connectToHost();}});
+    peer.on('connection',conn=>{
+        if(isOwner && (!dataConn||!dataConn.open)) setupDataConnection(conn); else if(dataConn&&dataConn.open) {try{conn.close();}catch(_){}}
     });
-    dataConn.on('data', handleIncomingData);
-    dataConn.on('close', () => {
-        updateConnectionUI();
-        if (isOwner) return;
+    peer.on('call',call=>{
+        if(!isOwner&&!isSoloMode){call.answer();mediaConn=call;call.on('stream',attachRemoteStream);call.on('close',()=>{mediaConn=null;setNetworkState('waiting');});call.on('error',()=>{setNetworkState('degraded');});setTimeout(optimizeReceiver,250);}
     });
-    dataConn.on('error', () => updateConnectionUI());
+    peer.on('disconnected',()=>{peerReady=false;updateConnectionUI();clearTimeout(reconnectTimer);reconnectTimer=setTimeout(()=>{try{peer.reconnect();}catch(_){}},1200);setNetworkState('reconnecting');});
+    peer.on('close',()=>{peerReady=false;updateConnectionUI();});
+    peer.on('error',err=>{
+        console.error(err);updateConnectionUI();
+        if(err.type==='peer-unavailable'&&!isOwner){setNetworkState('waiting');scheduleDataReconnect();updateStatus('صديقتك لم تفتح الغرفة بعد — أعيد المحاولة تلقائيًا…');}
+        else if(err.type==='unavailable-id'&&isOwner){setNetworkState('degraded');updateStatus('معرّف الغرفة مستخدم حاليًا. أغلق الصفحة القديمة ثم أعد المحاولة.',true);}
+        else if(err.type==='network'||err.type==='socket-error'||err.type==='socket-closed'){setNetworkState('reconnecting');}
+        else updateStatus('تعذر الاتصال مؤقتًا: '+err.type,true);
+    });
 }
-
-function sendData(data) {
-    if (dataConn && dataConn.open) dataConn.send(data);
+function setupDataConnection(conn){
+    if(dataConn&&dataConn!==conn){try{dataConn.close();}catch(_){}}
+    dataConn=conn;
+    dataConn.on('open',()=>{
+        clearTimeout(dataReconnectTimer);isSoloMode=false;showAppScreen();
+        sendData({type:'hello',name:myDisplayName,role:isOwner?'host':'guest',protocol:2});
+        sendData({type:'sync_request'});
+        if(isOwner){sendData({type:'permissions_update',permissions});sendData({type:'note_update',content:notesArea.value});sendGameState();}
+        updateConnectionUI();setNetworkState('good');
+    });
+    dataConn.on('data',handleIncomingData);
+    dataConn.on('close',()=>{updateConnectionUI();setNetworkState('reconnecting');dataConn=null;if(!isOwner&&!isSoloMode)scheduleDataReconnect();});
+    dataConn.on('error',()=>{updateConnectionUI();if(!isOwner&&!isSoloMode)scheduleDataReconnect();});
 }
-
-function handleIncomingData(data) {
-    if(data.type==='presence'){const rb=document.getElementById('role-badge');if(rb&&data.name)rb.title='متصل مع: '+data.name;return;}
-    if(data.type==='viewer_bitrate'){if(isOwner){preferredBitrate=Number(data.bitrate)||preferredBitrate;applySenderBitrate(preferredBitrate);}return;}
-    if (data.type === 'note_update') {
-        isNotesUpdatingProgrammatically = true;
-        notesArea.value = data.content;
-        isNotesUpdatingProgrammatically = false;
-    } else if (data.type === 'chat_msg') {
-        appendChatMsgAll(data.text, 'received');
-    } else if (data.type === 'file_transfer') {
-        receiveFile(data.name, data.file, data.typeStr);
-    } else if (data.type === 'permissions_update') {
-        if (!isOwner) { permissions = data.permissions; applyPermissionsUI(); }
-    } else if (data.type === 'game_state') {
-        if (!gameState.localEditLock) {
-            gameState = data.state;
-            renderMiniGame();
-        }
-    } else if (data.type === 'sync_request' && isOwner) {
-        sendData({ type: 'permissions_update', permissions });
-        sendData({ type: 'note_update', content: notesArea.value });
-        sendGameState();
-    }
+function sendData(data){if(dataConn&&dataConn.open)try{dataConn.send(data);}catch(_){} }
+function handleIncomingData(data){
+    if(!data||typeof data!=='object')return;
+    if(data.type==='hello'){const rb=document.getElementById('role-badge');if(rb&&data.name){rb.textContent=(isOwner?'Host 👑':'Guest')+' • '+data.name;}return;}
+    if(data.type==='viewer_bitrate'){if(isOwner){viewerMaxBitrate=Math.max(12000000,Math.min(28000000,Number(data.bitrate)||viewerMaxBitrate));preferredBitrate=Math.min(preferredBitrate,viewerMaxBitrate);applySenderBitrate(preferredBitrate);}return;}
+    if(data.type==='quality_feedback'){if(isOwner)latestViewerFeedback=data;return;}
+    if(data.type==='note_update'){isNotesUpdatingProgrammatically=true;notesArea.value=data.content||'';isNotesUpdatingProgrammatically=false;}
+    else if(data.type==='chat_msg'){appendChatMsgAll(data.text,'received');}
+    else if(data.type==='file_transfer'){receiveFile(data.name,data.file,data.typeStr);}
+    else if(data.type==='permissions_update'){if(!isOwner){permissions=data.permissions||permissions;applyPermissionsUI();}}
+    else if(data.type==='game_state'){if(!gameState.localEditLock){gameState=data.state;renderMiniGame();}}
+    else if(data.type==='sync_request'&&isOwner){sendData({type:'permissions_update',permissions});sendData({type:'note_update',content:notesArea.value});sendGameState();}
 }
 
 // ===========================
@@ -1356,17 +1408,128 @@ function toggleFullScreen() {
     }
 }
 
-async function applySenderBitrate(bitrate=preferredBitrate){try{const pc=mediaConn&&mediaConn.peerConnection;if(!pc)return;const sender=pc.getSenders().find(x=>x.track&&x.track.kind==='video');if(!sender)return;const p=sender.getParameters();if(!p.encodings||!p.encodings.length)p.encodings=[{}];p.encodings[0].maxBitrate=Math.max(8000000,Number(bitrate)||preferredBitrate);p.encodings[0].minBitrate=Math.min(12000000,Math.max(4000000,Math.floor((Number(bitrate)||preferredBitrate)*.45)));p.encodings[0].maxFramerate=preferredQuality.endsWith('30')?30:60;p.encodings[0].priority='high';p.degradationPreference='maintain-resolution';try{p.encodings[0].scalabilityMode='L1T2';}catch(_){}await sender.setParameters(p);startStreamStats(pc);}catch(e){console.warn('Sender optimization:',e);}}
-async function optimizeSender(call){mediaConn=call;await applySenderBitrate(preferredBitrate);}
-function attachRemoteStream(remoteStream){const v=document.getElementById('remote-video'),p=document.getElementById('stream-placeholder');v.srcObject=remoteStream;v.playsInline=true;v.autoplay=true;v.style.objectFit='contain';p.style.display='none';v.play().catch(()=>{});optimizeReceiver();startStreamStats(mediaConn&&mediaConn.peerConnection);}
-function optimizeReceiver(){try{if(!mediaConn||!mediaConn.peerConnection)return;for(const receiver of mediaConn.peerConnection.getReceivers()){if(receiver.track&&receiver.track.kind==='video'){if('playoutDelayHint' in receiver)receiver.playoutDelayHint=0;if(receiver.requestKeyFrame)receiver.requestKeyFrame();}}}catch(e){}}
-async function applyTrackQuality(track){if(!track||!track.applyConstraints)return;const map={'1440p60':{width:{ideal:2560,max:2560},height:{ideal:1440,max:1440},frameRate:{ideal:60,max:60}},'1080p60':{width:{ideal:1920,max:1920},height:{ideal:1080,max:1080},frameRate:{ideal:60,max:60}},'1080p30':{width:{ideal:1920,max:1920},height:{ideal:1080,max:1080},frameRate:{ideal:30,max:30}}};try{await track.applyConstraints(map[preferredQuality]);}catch(e){console.warn('quality constraints rejected',e);}}
-function applyPreferredQuality(){preferredQuality=document.getElementById('stream-quality').value;if(myStream)applyTrackQuality(myStream.getVideoTracks()[0]).then(()=>applySenderBitrate(preferredBitrate));requestKeyframeNow();}
-function requestViewerBitrate(){preferredBitrate=Number(document.getElementById('viewer-bitrate')?.value)||28000000;sendData({type:'viewer_bitrate',bitrate:preferredBitrate});if(isOwner)applySenderBitrate(preferredBitrate);}
-function requestKeyframeNow(){try{const pc=mediaConn&&mediaConn.peerConnection;if(!pc)return;pc.getReceivers().forEach(r=>{if(r.requestKeyFrame)r.requestKeyFrame();});}catch(_){} }
-async function startScreenShare(){if(!isOwner&&!isSoloMode){updateStatus('البث يفتحه صاحب الغرفة فقط. أنتِ وضع مشاهدة.',true);return;}if(!hasPermission('screen')&&!isSoloMode)return;try{const displayStream=await navigator.mediaDevices.getDisplayMedia({video:{width:{ideal:2560,max:2560},height:{ideal:1440,max:1440},frameRate:{ideal:60,max:60},displaySurface:'monitor',resizeMode:'none'},audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},systemAudio:'include',preferCurrentTab:false,selfBrowserSurface:'exclude'});const videoTrack=displayStream.getVideoTracks()[0];try{videoTrack.contentHint='motion';}catch(_){}await applyTrackQuality(videoTrack);myStream=displayStream;const localV=document.getElementById('remote-video');localV.srcObject=displayStream;localV.muted=true;localV.volume=0;document.getElementById('stream-placeholder').style.display='none';document.getElementById('start-screen-btn').classList.add('hidden');document.getElementById('stop-screen-btn').classList.remove('hidden');if(dataConn&&dataConn.peer&&peer&&peer.open){const call=peer.call(dataConn.peer,displayStream,{metadata:{quality:preferredQuality,bitrate:preferredBitrate,lowLatency:true}});mediaConn=call;call.on('error',e=>console.warn('media call error',e));setTimeout(()=>applySenderBitrate(preferredBitrate),500);}videoTrack.onended=()=>stopScreenShare();}catch(err){console.error('Screen share error:',err);if(err.name!=='NotAllowedError')alert('تعذر تشغيل مشاركة الشاشة: '+err.message);}}
-function stopScreenShare(){if(statsTimer){clearInterval(statsTimer);statsTimer=null;}if(qualityTimer){clearInterval(qualityTimer);qualityTimer=null;}if(myStream){myStream.getTracks().forEach(t=>t.stop());myStream=null;}if(mediaConn){try{mediaConn.close();}catch(_){}mediaConn=null;}document.getElementById('remote-video').srcObject=null;document.getElementById('stream-placeholder').style.display='flex';document.getElementById('start-screen-btn').classList.remove('hidden');document.getElementById('stop-screen-btn').classList.add('hidden');['stream-res-pill','stream-fps-pill','stream-bitrate-pill'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='—';});}
-function startStreamStats(pc){if(!pc)return;if(statsTimer)clearInterval(statsTimer);let lastBytes=0,lastTs=0;statsTimer=setInterval(async()=>{try{let inbound=null,outbound=null;const stats=await pc.getStats();stats.forEach(r=>{if(r.type==='inbound-rtp'&&(r.kind==='video'||r.mediaType==='video'))inbound=r;if(r.type==='outbound-rtp'&&(r.kind==='video'||r.mediaType==='video'))outbound=r;});const r=inbound||outbound;if(!r)return;const bytes=(r.bytesReceived??r.bytesSent??0),ts=r.timestamp||Date.now(),mbps=lastTs?((bytes-lastBytes)*8/((ts-lastTs)/1000)/1000000):0,fps=r.framesPerSecond||0,w=r.frameWidth||0,h=r.frameHeight||0;if(w&&h)document.getElementById('stream-res-pill').textContent=`${w}×${h}`;if(fps)document.getElementById('stream-fps-pill').textContent=`${Math.round(fps)} FPS`;if(mbps)document.getElementById('stream-bitrate-pill').textContent=`${mbps.toFixed(1)} Mbps`;const pill=document.getElementById('stream-quality-pill');if(inbound){const lost=r.packetsLost||0,recv=r.packetsReceived||0,loss=(lost/(lost+recv||1))*100;if(loss>3||(fps&&fps<54)){pill.textContent='الشبكة غير مستقرة';pill.className='stream-pill warn';}else{pill.textContent='2K / 60 مستقر';pill.className='stream-pill good';}}lastBytes=bytes;lastTs=ts;}catch(e){}},1000);}
+async function applySenderBitrate(bitrate=preferredBitrate){
+    try{
+        const pc=mediaConn&&mediaConn.peerConnection;if(!pc)return;
+        const sender=pc.getSenders().find(x=>x.track&&x.track.kind==='video');if(!sender)return;
+        const target=Math.max(12000000,Math.min(28000000,Number(bitrate)||preferredBitrate));
+        const p=sender.getParameters();
+        if(!p.encodings||!p.encodings.length)p.encodings=[{}];
+        const enc=p.encodings[0];
+        enc.maxBitrate=target;
+        enc.maxFramerate=preferredQuality.endsWith('30')?30:60;
+        enc.priority='high';
+        enc.networkPriority='high';
+        if('scaleResolutionDownBy' in enc)enc.scaleResolutionDownBy=1;
+        p.degradationPreference='maintain-resolution';
+        try{if('scalabilityMode' in enc)enc.scalabilityMode='L1T1';}catch(_){}
+        await sender.setParameters(p);
+        startStreamStats(pc);
+    }catch(e){console.warn('Sender optimization:',e);}
+}
+async function optimizeSender(call){mediaConn=call;await applySenderBitrate(preferredBitrate);startQualityEngine();}
+function attachRemoteStream(remoteStream){
+    const v=document.getElementById('remote-video'),p=document.getElementById('stream-placeholder');
+    v.srcObject=remoteStream;v.playsInline=true;v.autoplay=true;v.style.objectFit='contain';p.style.display='none';v.play().catch(()=>{});optimizeReceiver();startStreamStats(mediaConn&&mediaConn.peerConnection);startQualityEngine();
+}
+function optimizeReceiver(){try{if(!mediaConn||!mediaConn.peerConnection)return;for(const receiver of mediaConn.peerConnection.getReceivers()){if(receiver.track&&receiver.track.kind==='video'){if('playoutDelayHint'in receiver)receiver.playoutDelayHint=0;if(receiver.requestKeyFrame)receiver.requestKeyFrame();}}}catch(e){}}
+async function applyTrackQuality(track){if(!track||!track.applyConstraints)return;const map={'1440p60':{width:{ideal:2560,max:2560},height:{ideal:1440,max:1440},frameRate:{ideal:60,max:60},resizeMode:'none'},'1080p60':{width:{ideal:1920,max:1920},height:{ideal:1080,max:1080},frameRate:{ideal:60,max:60}},'1080p30':{width:{ideal:1920,max:1920},height:{ideal:1080,max:1080},frameRate:{ideal:30,max:30}}};try{await track.applyConstraints(map[preferredQuality]);}catch(e){console.warn('quality constraints rejected',e);}}
+function applyPreferredQuality(){
+    preferredQuality=document.getElementById('stream-quality').value;
+    if(myStream){applyTrackQuality(myStream.getVideoTracks()[0]).then(()=>applySenderBitrate(preferredBitrate));}
+    requestKeyframeNow();
+}
+function requestViewerBitrate(){
+    viewerMaxBitrate=Math.max(12000000,Math.min(28000000,Number(document.getElementById('viewer-bitrate')?.value)||28000000));
+    preferredBitrate=Math.min(preferredBitrate,viewerMaxBitrate);
+    localStorage.setItem('pomme-bitrate',String(viewerMaxBitrate));
+    sendData({type:'viewer_bitrate',bitrate:viewerMaxBitrate});
+    if(isOwner)applySenderBitrate(preferredBitrate);
+}
+function requestKeyframeNow(){try{const pc=mediaConn&&mediaConn.peerConnection;if(!pc)return;pc.getReceivers().forEach(r=>{if(r.requestKeyFrame)r.requestKeyFrame();});pc.getSenders().forEach(s=>{if(s.track&&s.track.kind==='video'&&s.getParameters)s.getParameters();});}catch(_){}}
+async function startScreenShare(){
+    if(!isOwner&&!isSoloMode){updateStatus('البث يفتحه صاحب الغرفة فقط. أنت وضع مشاهدة.',true);return;}
+    if(!hasPermission('screen')&&!isSoloMode)return;
+    try{
+        const displayStream=await navigator.mediaDevices.getDisplayMedia({video:{width:{ideal:2560,max:2560},height:{ideal:1440,max:1440},frameRate:{ideal:60,max:60},displaySurface:'monitor',resizeMode:'none'},audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},systemAudio:'include',preferCurrentTab:false,selfBrowserSurface:'exclude'});
+        const videoTrack=displayStream.getVideoTracks()[0];
+        try{videoTrack.contentHint='motion';}catch(_){}
+        await applyTrackQuality(videoTrack);myStream=displayStream;
+        const localV=document.getElementById('remote-video');localV.srcObject=displayStream;localV.muted=true;localV.volume=0;document.getElementById('stream-placeholder').style.display='none';document.getElementById('start-screen-btn').classList.add('hidden');document.getElementById('stop-screen-btn').classList.remove('hidden');
+        if(dataConn&&dataConn.peer&&peer&&peer.open){
+            const call=peer.call(dataConn.peer,displayStream,{metadata:{quality:preferredQuality,bitrate:preferredBitrate,lowLatency:true,contentHint:'motion'}});
+            mediaConn=call;call.on('error',e=>{console.warn('media call error',e);setNetworkState('degraded');});call.on('close',()=>{mediaConn=null;});
+            setTimeout(()=>applySenderBitrate(preferredBitrate),450);
+        }
+        startQualityEngine();videoTrack.onended=()=>stopScreenShare();
+    }catch(err){console.error('Screen share error:',err);if(err.name!=='NotAllowedError')alert('تعذر تشغيل مشاركة الشاشة: '+err.message);}
+}
+function stopScreenShare(){
+    if(statsTimer){clearInterval(statsTimer);statsTimer=null;}if(qualityEngineTimer){clearInterval(qualityEngineTimer);qualityEngineTimer=null;}
+    if(myStream){myStream.getTracks().forEach(t=>t.stop());myStream=null;}if(mediaConn){try{mediaConn.close();}catch(_){}mediaConn=null;}
+    document.getElementById('remote-video').srcObject=null;document.getElementById('stream-placeholder').style.display='flex';document.getElementById('start-screen-btn').classList.toggle('hidden',!isOwner&&!isSoloMode);document.getElementById('stop-screen-btn').classList.add('hidden');
+    ['stream-res-pill','stream-fps-pill','stream-bitrate-pill'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='—';});
+    ['diag-rtt','diag-jitter','diag-loss','diag-dropped','diag-codec'].forEach(id=>setDiag(id,'—'));setNetworkState(isSoloMode?'local':'waiting');
+}
+function pickCodecFromStats(stats){for(const r of stats.values?stats.values():[])if(r.type==='codec'&&r.mimeType&&/video/i.test(r.mimeType))return r.mimeType.replace('video/','');return '—';}
+async function readWebRTCStats(pc){
+    if(!pc)return null;
+    try{
+        const stats=await pc.getStats();let inbound=null,outbound=null,candidatePair=null,codecMap=new Map();
+        stats.forEach(r=>{if(r.type==='inbound-rtp'&&(r.kind==='video'||r.mediaType==='video'))inbound=r;if(r.type==='outbound-rtp'&&(r.kind==='video'||r.mediaType==='video'))outbound=r;if(r.type==='candidate-pair'&&(r.state==='succeeded'||r.nominated))candidatePair=r;if(r.type==='codec')codecMap.set(r.id,r);});
+        const remote= inbound||outbound;
+        let codec='—';if(remote&&remote.codecId&&codecMap.get(remote.codecId)?.mimeType)codec=codecMap.get(remote.codecId).mimeType.replace('video/','');
+        if(candidatePair){setDiag('diag-rtt',candidatePair.currentRoundTripTime?`${Math.round(candidatePair.currentRoundTripTime*1000)} ms`:'— ms');}
+        if(remote){
+            const lost=remote.packetsLost||0,recv=remote.packetsReceived||0,total=Math.max(1,lost+recv),loss=(lost/total)*100;
+            const fps=remote.framesPerSecond||0,w=remote.frameWidth||0,h=remote.frameHeight||0,dropped=remote.framesDropped||0,jitter=remote.jitter?remote.jitter*1000:null;
+            if(w&&h)setDiag('stream-res-pill',`${w}×${h}`);
+            if(fps)setDiag('stream-fps-pill',`${Math.round(fps)} FPS`,fps>=57?'good':'warn');
+            if(jitter!=null)setDiag('diag-jitter',`${jitter.toFixed(1)} ms`);
+            setDiag('diag-loss',`${loss.toFixed(2)} %`,loss<=1?'good':loss<=3?'warn':'bad');
+            setDiag('diag-dropped',String(dropped),dropped<=2?'good':dropped<=10?'warn':'bad');setDiag('diag-codec',codec);
+            if(w&&h&&w>=2400&&h>=1350&&fps>=57&&loss<1)setNetworkState('excellent');
+            else if((fps>=55||!fps)&&loss<3)setNetworkState('good');else setNetworkState('degraded');
+        }
+        return {inbound,outbound,candidatePair};
+    }catch(e){return null;}
+}
+function startStreamStats(pc){
+    if(!pc)return;if(statsTimer)clearInterval(statsTimer);let lastBytes=0,lastTs=0;
+    statsTimer=setInterval(async()=>{
+        const d=await readWebRTCStats(pc);if(!d)return;const r=d.inbound||d.outbound;if(!r)return;
+        const bytes=(r.bytesReceived??r.bytesSent??0),ts=r.timestamp||Date.now();const mbps=lastTs?((bytes-lastBytes)*8/Math.max(1,(ts-lastTs))/1000000):0;
+        if(mbps>0)setDiag('stream-bitrate-pill',`${mbps.toFixed(1)} Mbps`);lastBytes=bytes;lastTs=ts;
+    },1000);
+}
+function startQualityEngine(){
+    if(qualityEngineTimer)clearInterval(qualityEngineTimer);
+    qualityEngineTimer=setInterval(async()=>{
+        if(!mediaConn||!mediaConn.peerConnection)return;
+        const d=await readWebRTCStats(mediaConn.peerConnection);if(!d)return;
+        const r=d.outbound||d.inbound;if(!r)return;
+        const localLoss=((r.packetsLost||0)/Math.max(1,(r.packetsLost||0)+(r.packetsReceived||0)))*100;
+        const localFps=r.framesPerSecond||60;
+        if(!isOwner){
+            sendData({type:'quality_feedback',loss:Number(localLoss.toFixed(3)),fps:Number(localFps.toFixed(1)),dropped:r.framesDropped||0,rtt:d.candidatePair?.currentRoundTripTime?Math.round(d.candidatePair.currentRoundTripTime*1000):null,at:Date.now()});
+            return;
+        }
+        if(dataConn&&dataConn.open){
+            const fb=latestViewerFeedback;
+            const loss=fb&&Number.isFinite(fb.loss)?fb.loss:localLoss;
+            const fps=fb&&Number.isFinite(fb.fps)?fb.fps:localFps;
+            let target=preferredBitrate;
+            if(loss>4||fps<52)target=Math.max(12000000,Math.floor(target*.82));
+            else if(loss>2||fps<56)target=Math.max(12000000,Math.floor(target*.90));
+            else if(loss<.5&&fps>=59)target=Math.min(viewerMaxBitrate,Math.floor(target*1.04));
+            target=Math.min(target,viewerMaxBitrate);
+            if(Math.abs(target-preferredBitrate)>=500000){preferredBitrate=target;applySenderBitrate(preferredBitrate);}
+        }
+    },2500);
+}
+function toggleGameMode(){
+    gameMode=!gameMode;document.body.classList.toggle('game-mode',gameMode);const b=document.getElementById('game-mode-btn');if(b)b.textContent=gameMode?'🛑 Exit Game Mode':'🎮 Game Mode';if(gameMode)switchTab('stream');
+}
 
 // ===========================
 // TIMER
@@ -1753,7 +1916,15 @@ function escapeHTML(str) {
 // ===========================
 document.addEventListener('DOMContentLoaded', () => {
     updateTimerDisplay();
-    try { document.getElementById('room-code-input').value = roomId; } catch(_) {}
+    const remember=localStorage.getItem('pomme-remember-names')!=='0';
+    const a=remember?(localStorage.getItem('pomme-my-name')||''):'';
+    const b=remember?(localStorage.getItem('pomme-friend-name')||''):'';
+    const ai=document.getElementById('my-name-input'),bi=document.getElementById('friend-name-input'),ri=document.getElementById('remember-names');
+    if(ai)ai.value=a;if(bi)bi.value=b;if(ri)ri.checked=remember;
+    const saved=Number(localStorage.getItem('pomme-bitrate')||28000000);
+    viewerMaxBitrate=Math.max(12000000,Math.min(28000000,saved));
+    preferredBitrate=viewerMaxBitrate;
+    const vb=document.getElementById('viewer-bitrate');if(vb)vb.value=String(preferredBitrate);
     updateConnectionUI();
 });
 
