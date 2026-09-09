@@ -799,8 +799,11 @@ function initPeer(id = null) {
         call.on('stream', (remoteStream) => {
             const v = document.getElementById('remote-video');
             v.srcObject = remoteStream;
-            v.muted = false;
-            v.play().catch(() => {});
+            v.muted = false; // تفعيل الصوت للمستقبل
+            v.volume = 1.0;  // أعلى درجة صوت
+            v.play().catch(e => {
+                console.error("Autoplay prevented:", e);
+            });
         });
         mediaConn = call;
         optimizeReceiver();
@@ -972,7 +975,7 @@ function addFileToList(name, blob, isSent) {
 }
 
 // ===========================
-// SCREEN SHARE (Optimized - No Mic)
+// SCREEN SHARE (FIXED AUDIO & QUALITY)
 // ===========================
 function updateZoom() {
     const z = document.getElementById('video-zoom').value;
@@ -999,15 +1002,22 @@ async function optimizeSender(call) {
             if (sender.track && sender.track.kind === 'video') {
                 const params = sender.getParameters();
                 if (!params.encodings || !params.encodings.length) params.encodings = [{}];
-                params.encodings[0].maxBitrate = 10000000; // 10 Mbps
-                params.encodings[0].maxFramerate = 60;
-                params.degradationPreference = 'maintain-framerate';
+                
+                // قوة نقل بيانات هائلة (50 ميجابت) لضمان عدم وجود غباش أثناء الحركة السريعة
+                params.encodings[0].maxBitrate = 50000000; 
+                // الحد الأدنى للبيانات لعدم هبوط الجودة
+                params.encodings[0].minBitrate = 8000000;
+                // السماح للمتصفح بالموازنة للحصول على أفضل صورة
+                params.degradationPreference = 'balanced'; 
+                
                 await sender.setParameters(params);
             }
             if (sender.track && sender.track.kind === 'audio') {
                 const params = sender.getParameters();
                 if (!params.encodings || !params.encodings.length) params.encodings = [{}];
-                params.encodings[0].maxBitrate = 256000; // 256 kbps audio
+                
+                // أعلى جودة صوت ممكنة
+                params.encodings[0].maxBitrate = 320000; 
                 await sender.setParameters(params);
             }
         }
@@ -1020,7 +1030,6 @@ function optimizeReceiver() {
         const pc = mediaConn.peerConnection;
         for (const receiver of pc.getReceivers()) {
             if (receiver.track && receiver.track.kind === 'video') {
-                // Request keyframe for faster start
                 if (receiver.requestKeyFrame) receiver.requestKeyFrame();
             }
         }
@@ -1032,64 +1041,54 @@ async function startScreenShare() {
     try {
         const displayStream = await navigator.mediaDevices.getDisplayMedia({
             video: {
-                width: { ideal: 1920 }, height: { ideal: 1080 },
+                width: { ideal: 1920, max: 2560 }, 
+                height: { ideal: 1080, max: 1440 },
                 frameRate: { ideal: 60, max: 144 },
-                displaySurface: 'monitor'
+                displaySurface: 'monitor',
+                resizeMode: 'none' // منع المتصفح من تصغير الشاشة لتقليل الجودة
             },
             audio: {
-                echoCancellation: false, noiseSuppression: false,
-                autoGainControl: false, sampleRate: 48000, channelCount: 2
+                echoCancellation: false, 
+                noiseSuppression: false,
+                autoGainControl: false, 
+                sampleRate: 48000, 
+                channelCount: 2
             },
-            selfBrowserSurface: 'exclude',
             systemAudio: 'include'
         });
 
         const videoTrack = displayStream.getVideoTracks()[0];
-        if ('contentHint' in videoTrack) videoTrack.contentHint = 'motion';
+        if ('contentHint' in videoTrack) videoTrack.contentHint = 'motion'; // تحسين الشاشة للألعاب والحركة
 
-        let finalStream = displayStream;
-
-        // Boost system audio volume
-        try {
-            if (displayStream.getAudioTracks().length > 0) {
-                const audioCtx = new AudioContext({ sampleRate: 48000 });
-                const dest = audioCtx.createMediaStreamDestination();
-                const gain = audioCtx.createGain();
-                gain.gain.value = 3.0;
-                const source = audioCtx.createMediaStreamSource(displayStream);
-                source.connect(gain);
-                gain.connect(dest);
-                finalStream = new MediaStream([videoTrack, ...dest.stream.getAudioTracks()]);
-                videoTrack.onended = () => { audioCtx.close(); stopScreenShare(); };
-            } else {
-                videoTrack.onended = () => stopScreenShare();
-            }
-        } catch (e) {
-            console.warn('Audio boost failed:', e);
-            videoTrack.onended = () => stopScreenShare();
+        // فحص إذا لم يقم المستخدم بتفعيل زر الصوت أثناء البث
+        if (displayStream.getAudioTracks().length === 0) {
+            alert("⚠️ تنبيه هام: لقد قمت ببدء البث بدون صوت اللعبة!\n\nلكي تسمع صديقتك الصوت بوضوح، يرجى:\n1. الضغط على 'إيقاف البث'.\n2. الضغط على 'بدء بث الشاشة' مرة أخرى.\n3. في نافذة المتصفح التي تظهر لاختيار الشاشة، تأكد من وضع علامة (صح) ✅ على خيار 'مشاركة صوت النظام' (Share system audio) الموجود في الأسفل قبل الضغط على (Share).");
         }
 
-        myStream = finalStream;
+        // تم إلغاء معالجة الصوت الإضافية التي كانت تسبب اختفاءه. نستخدم الصوت الأصلي الصافي
+        myStream = displayStream;
 
-        // Local preview (muted to avoid echo)
         const localV = document.getElementById('remote-video');
-        localV.srcObject = finalStream;
-        localV.muted = true;
+        localV.srcObject = displayStream;
+        localV.muted = true; // يتم كتم الصوت عندك أنت فقط حتى لا تسمع صدى
 
         document.getElementById('start-screen-btn').classList.add('hidden');
         document.getElementById('stop-screen-btn').classList.remove('hidden');
 
-        // Call peer with optimized stream
         if (dataConn && dataConn.peer) {
-            const call = peer.call(dataConn.peer, finalStream);
+            const call = peer.call(dataConn.peer, displayStream);
             mediaConn = call;
-            // Optimize after connection is established
             call.on('stream', () => {});
-            setTimeout(() => optimizeSender(call), 2000);
+            setTimeout(() => optimizeSender(call), 1000);
         }
+        
+        videoTrack.onended = () => stopScreenShare();
+
     } catch (err) {
         console.error('Screen share error:', err);
-        alert('تعذر مشاركة الشاشة. تأكد من تحديد "مشاركة صوت النظام".');
+        if (err.name !== 'NotAllowedError') {
+            alert('تعذر مشاركة الشاشة. يرجى المحاولة مرة أخرى والتأكد من تحديد خيار مشاركة الصوت.');
+        }
     }
 }
 
