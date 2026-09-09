@@ -2,1491 +2,1042 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pomme - مساحة العمل المشتركة</title>
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+
     <style>
         :root {
-            --bg-deep: #060b18;
-            --bg-dark: #0c1024;
-            --bg-card: #111833;
-            --bg-elevated: #161d3f;
-            --border: rgba(99,102,241,0.18);
-            --border-active: rgba(99,102,241,0.5);
-            --primary: #6366f1;
-            --primary-light: #818cf8;
-            --cyan: #22d3ee;
-            --emerald: #10b981;
-            --rose: #f43f5e;
-            --amber: #f59e0b;
-            --white: #f1f5f9;
-            --muted: #94a3b8;
-            --font: 'Cairo', sans-serif;
-            --radius: 14px;
-            --radius-sm: 8px;
-            --glass: rgba(17,25,64,0.75);
-            --gradient: linear-gradient(135deg, #6366f1 0%, #22d3ee 100%);
-            --gradient-warm: linear-gradient(135deg, #f43f5e 0%, #f59e0b 100%);
-            --shadow: 0 8px 32px rgba(0,0,0,0.3);
-            --sidebar-width: 78px;
+            --navy-deep: #0a0e27;
+            --navy-dark: #0d1333;
+            --navy-mid: #111940;
+            --accent-blue: #4a6cf7;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #7b5cff;
+            --white: #ffffff;
+            --white-muted: #b0b8d1;
+            --font-main: 'Cairo', sans-serif;
+            --radius: 16px;
+            --glass-bg: rgba(17, 25, 64, 0.7);
+            --glass-border: rgba(74, 108, 247, 0.3);
+            --accent-gradient: linear-gradient(135deg, #4a6cf7 0%, #00d4ff 50%, #7b5cff 100%);
         }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: var(--font); background: var(--bg-deep); color: var(--white); height: 100vh; overflow: hidden; font-size: 16px; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
-        ::selection { background: var(--primary); color: white; }
 
-        /* ===== AUTH SCREEN ===== */
-        #auth-screen, #app-screen { width: 100%; height: 100%; display: none; }
-        #auth-screen.active { display: flex; align-items: center; justify-content: center; background: radial-gradient(ellipse at 50% 30%, rgba(99,102,241,0.15), transparent 60%), var(--bg-deep); }
-        #app-screen.active { display: flex; flex-direction: column; }
+        body {
+            font-family: var(--font-main);
+            background: var(--navy-deep);
+            color: var(--white);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            font-size: 20px;
+        }
+
+        /* --- Screens --- */
+        #auth-screen, #app-screen {
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+
+        #auth-screen.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background: radial-gradient(circle at center, var(--navy-mid), var(--navy-deep));
+        }
+
+        #app-screen.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Auth Screen --- */
         .auth-card {
-            background: var(--glass); border: 1px solid var(--border); padding: 44px 36px;
-            border-radius: 20px; backdrop-filter: blur(20px); text-align: center;
-            max-width: 460px; width: 92%; box-shadow: var(--shadow);
-            animation: fadeUp 0.6s ease;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: var(--radius);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
         }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .auth-card h1 { font-size: 42px; font-weight: 900; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
-        .auth-card p { color: var(--muted); margin-bottom: 28px; font-size: 18px; }
+        .auth-card h1 { font-size: 36px; margin-bottom: 10px; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .auth-card p { color: var(--white-muted); margin-bottom: 30px; font-size: 22px; }
+        
         .auth-buttons button {
-            display: block; width: 100%; padding: 14px; margin-bottom: 12px; border-radius: var(--radius);
-            border: none; font-size: 18px; font-weight: 700; font-family: var(--font); cursor: pointer; transition: all 0.3s;
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: var(--radius);
+            border: none;
+            font-size: 22px;
+            font-weight: bold;
+            font-family: var(--font-main);
+            cursor: pointer;
+            transition: 0.3s;
         }
-        .btn-primary { background: var(--gradient); color: white; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(99,102,241,0.4); }
-        .btn-secondary { background: transparent; border: 2px solid var(--primary) !important; color: white; }
-        .btn-secondary:hover { background: rgba(99,102,241,0.15); }
-        #status-msg { margin-top: 18px; color: var(--cyan); font-weight: 700; font-size: 16px; min-height: 24px; }
-        .hidden { display: none !important; }
+        
+        .btn-primary { background: var(--accent-gradient); color: white; }
+        .btn-primary:hover { transform: scale(1.02); }
+        .btn-secondary { background: transparent; border: 2px solid var(--accent-blue) !important; color: white; }
+        .btn-secondary:hover { background: rgba(74, 108, 247, 0.2); }
 
-        /* ===== APP LAYOUT ===== */
-        .app-body { flex: 1; display: flex; overflow: hidden; }
+        .input-group { margin-top: 20px; display: none; }
+        .input-group.active { display: block; }
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            font-size: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            background: var(--navy-dark);
+            color: white;
+            font-family: var(--font-main);
+            margin-bottom: 15px;
+            text-align: center;
+        }
 
-        /* ===== SIDEBAR ===== */
-        .sidebar {
-            width: var(--sidebar-width); background: var(--bg-dark); border-left: 1px solid var(--border);
-            display: flex; flex-direction: column; align-items: center; padding: 16px 0; gap: 4px;
-            order: 1; flex-shrink: 0; overflow-y: auto; overflow-x: hidden;
-        }
-        .sidebar-logo {
-            font-size: 20px; font-weight: 900; background: var(--gradient);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 16px; letter-spacing: -1px;
-        }
-        .sidebar-item {
-            width: 58px; height: 58px; border-radius: 14px; border: none; background: transparent;
-            color: var(--muted); cursor: pointer; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; gap: 2px; font-family: var(--font);
-            transition: all 0.25s; position: relative; font-size: 10px; font-weight: 600;
-        }
-        .sidebar-item .icon { font-size: 22px; line-height: 1; }
-        .sidebar-item:hover { background: rgba(99,102,241,0.1); color: var(--white); }
-        .sidebar-item.active {
-            background: rgba(99,102,241,0.18); color: var(--cyan);
-        }
-        .sidebar-item.active::before {
-            content: ''; position: absolute; right: -1px; top: 50%; transform: translateY(-50%);
-            width: 3px; height: 28px; background: var(--gradient); border-radius: 3px 0 0 3px;
-        }
-        .sidebar-divider { width: 40px; height: 1px; background: var(--border); margin: 8px 0; }
-        .sidebar-status {
-            margin-top: auto; padding-top: 12px;
-        }
-        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--rose); margin: 0 auto; }
-        .status-dot.connected { background: var(--emerald); box-shadow: 0 0 10px var(--emerald); }
+        #status-msg { margin-top: 20px; color: var(--accent-cyan); font-weight: bold; font-size: 18px; }
 
-        /* ===== CONTENT AREA ===== */
-        .content-area { flex: 1; display: flex; overflow: hidden; order: 2; }
-        .main-content { flex: 1; padding: 20px; overflow-y: auto; position: relative; }
-        .tab-content { display: none; height: 100%; flex-direction: column; animation: fadeIn 0.3s ease; }
-        .tab-content.active { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* ===== TOPBAR (minimal) ===== */
+        /* --- App Topbar --- */
         .topbar {
-            height: 50px; background: var(--bg-dark); border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
+            height: 70px;
+            background: var(--navy-dark);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
         }
-        .topbar-title { font-size: 15px; color: var(--muted); }
-        .topbar-title span { color: var(--cyan); font-weight: 700; }
-        .topbar-info { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); }
+        .logo { font-size: 28px; font-weight: 900; color: var(--accent-cyan); }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            height: 100%;
+            align-items: center;
+        }
+        .nav-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.2s;
+            font-weight: bold;
+            font-size: 20px;
+            color: var(--white-muted);
+        }
+        .nav-tab:hover { background: rgba(74, 108, 247, 0.1); color: white; }
+        .nav-tab.active { background: rgba(74, 108, 247, 0.2); color: var(--accent-cyan); border: 1px solid var(--glass-border); }
 
-        /* ===== NOTES ===== */
+        .connection-info { font-size: 18px; display: flex; align-items: center; gap: 10px; }
+        .status-dot { width: 12px; height: 12px; border-radius: 50%; background: red; }
+        .status-dot.connected { background: #00e676; box-shadow: 0 0 10px #00e676; }
+
+        /* --- App Workspace --- */
+        .workspace {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .tab-content { display: none; height: 100%; flex-direction: column; }
+        .tab-content.active { display: flex; }
+
+        /* --- Notes Tab --- */
         #notes-area {
-            flex: 1; width: 100%; background: var(--bg-card); color: var(--white);
-            border: 1px solid var(--border); border-radius: var(--radius); padding: 20px;
-            font-family: var(--font); font-size: 18px; resize: none; outline: none;
-            line-height: 1.8; transition: border-color 0.3s;
+            flex: 1;
+            width: 100%;
+            background: var(--navy-dark);
+            color: white;
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 20px;
+            font-family: var(--font-main);
+            font-size: 22px;
+            resize: none;
+            outline: none;
         }
-        #notes-area:focus { border-color: var(--primary); }
 
-        /* ===== FILES ===== */
+        /* --- Python Tab --- */
+        .CodeMirror {
+            flex: 1;
+            font-size: 22px;
+            border-radius: var(--radius);
+            border: 1px solid var(--glass-border);
+            font-family: monospace;
+        }
+
+        /* --- Files Tab --- */
+        .files-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
         .file-upload-box {
-            border: 2px dashed var(--border); border-radius: var(--radius); padding: 40px;
-            text-align: center; cursor: pointer; background: rgba(99,102,241,0.04); transition: all 0.3s;
+            border: 2px dashed var(--glass-border);
+            border-radius: var(--radius);
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            background: rgba(74, 108, 247, 0.05);
+            transition: 0.3s;
         }
-        .file-upload-box:hover { background: rgba(99,102,241,0.1); border-color: var(--primary); }
-        .file-upload-box .icon { font-size: 40px; margin-bottom: 10px; }
-        .file-upload-box h3 { font-size: 18px; color: var(--cyan); }
-        .file-upload-box p { color: var(--muted); margin-top: 8px; font-size: 14px; }
-        .file-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
+        .file-upload-box:hover { background: rgba(74, 108, 247, 0.1); }
+        .file-upload-box h3 { font-size: 24px; color: var(--accent-cyan); }
+        
+        .file-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
         .file-item {
-            background: var(--bg-card); padding: 14px 18px; border-radius: var(--radius-sm);
-            border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
+            background: var(--navy-dark);
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .file-item a { color: var(--cyan); text-decoration: none; font-weight: 700; font-size: 14px; }
+        .file-item a { color: var(--accent-cyan); text-decoration: none; font-weight: bold; font-size: 20px; }
 
-        /* ===== STREAM ===== */
-        .stream-controls {
-            display: flex; gap: 10px; margin-bottom: 16px; justify-content: center; flex-wrap: wrap;
+        /* --- Screen Share Tab --- */
+        .screen-share-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            justify-content: center;
         }
-        .stream-controls button {
-            padding: 10px 22px; border-radius: var(--radius-sm); border: none; font-size: 15px;
-            font-family: var(--font); font-weight: 700; cursor: pointer; transition: all 0.3s;
+        .screen-share-controls button {
+            padding: 12px 25px;
+            border-radius: 8px;
+            border: none;
+            font-size: 20px;
+            font-family: var(--font-main);
+            font-weight: bold;
+            cursor: pointer;
         }
         .video-container {
-            flex: 1; background: #000; border-radius: var(--radius); border: 1px solid var(--border);
-            overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 300px;
+            flex: 1;
+            background: black;
+            border-radius: var(--radius);
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .video-container video { width: 100%; height: 100%; object-fit: contain; }
+        video { width: 100%; height: 100%; object-fit: contain; }
 
-        /* ===== TIMER ===== */
-        .timer-container { display: flex; flex-direction: column; align-items: center; gap: 24px; padding: 20px 0; }
-        .timer-modes { display: flex; gap: 8px; background: var(--bg-card); border-radius: var(--radius); padding: 4px; }
-        .timer-mode-btn {
-            padding: 10px 24px; border: none; background: transparent; color: var(--muted);
-            font-family: var(--font); font-size: 15px; font-weight: 700; cursor: pointer;
-            border-radius: 10px; transition: all 0.3s;
-        }
-        .timer-mode-btn.active { background: var(--gradient); color: white; }
-        .timer-display {
-            position: relative; width: 260px; height: 260px; display: flex;
-            align-items: center; justify-content: center;
-        }
-        .timer-display svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
-        .timer-circle-bg { fill: none; stroke: rgba(99,102,241,0.15); stroke-width: 6; }
-        .timer-circle-progress { fill: none; stroke: url(#timerGrad); stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 0.5s linear; }
-        .timer-time { font-size: 44px; font-weight: 900; z-index: 2; font-variant-numeric: tabular-nums; }
-        .timer-ms { font-size: 20px; color: var(--muted); }
-        .timer-inputs {
-            display: flex; gap: 12px; align-items: center;
-        }
-        .timer-input-group { text-align: center; }
-        .timer-input-group label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
-        .timer-input-group input {
-            width: 70px; padding: 10px; text-align: center; font-size: 24px; font-weight: 700;
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm);
-            color: var(--white); font-family: var(--font); outline: none;
-        }
-        .timer-input-group input:focus { border-color: var(--primary); }
-        .timer-separator { font-size: 28px; font-weight: 900; color: var(--muted); margin-top: 16px; }
-        .timer-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
-        .timer-actions button {
-            padding: 12px 28px; border-radius: 50px; border: none; font-size: 16px; font-weight: 700;
-            font-family: var(--font); cursor: pointer; transition: all 0.3s;
-        }
-        .btn-start { background: var(--gradient); color: white; }
-        .btn-start:hover { box-shadow: 0 4px 20px rgba(99,102,241,0.4); }
-        .btn-pause { background: rgba(245,158,11,0.2); color: var(--amber); border: 1px solid var(--amber) !important; }
-        .btn-reset { background: rgba(244,63,94,0.15); color: var(--rose); border: 1px solid rgba(244,63,94,0.3) !important; }
-        .btn-lap { background: rgba(34,211,238,0.15); color: var(--cyan); border: 1px solid rgba(34,211,238,0.3) !important; }
-        .lap-list {
-            width: 100%; max-width: 360px; max-height: 200px; overflow-y: auto;
-            display: flex; flex-direction: column; gap: 4px;
-        }
-        .lap-item {
-            display: flex; justify-content: space-between; padding: 8px 16px;
-            background: var(--bg-card); border-radius: var(--radius-sm); font-size: 14px;
-            border: 1px solid var(--border);
-        }
-
-        /* ===== CALCULATOR ===== */
-        .calc-container { max-width: 420px; margin: 0 auto; width: 100%; }
-        .calc-display {
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-            padding: 20px; margin-bottom: 12px; min-height: 100px; display: flex; flex-direction: column;
-            justify-content: flex-end; overflow: hidden;
-        }
-        .calc-expression {
-            font-size: 16px; color: var(--muted); text-align: left; direction: ltr;
-            word-break: break-all; min-height: 22px; margin-bottom: 8px;
-        }
-        .calc-result {
-            font-size: 36px; font-weight: 900; text-align: left; direction: ltr;
-            font-variant-numeric: tabular-nums; overflow-x: auto;
-        }
-        .calc-mode-indicator {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
-        }
-        .calc-deg-btn {
-            padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border);
-            background: var(--bg-card); color: var(--cyan); font-family: var(--font);
-            font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.3s;
-        }
-        .calc-deg-btn.rad { color: var(--amber); border-color: var(--amber); }
-        .calc-mem-indicator { font-size: 12px; color: var(--primary-light); font-weight: 700; }
-        .calc-sci-grid {
-            display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 6px;
-        }
-        .calc-basic-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
-        }
-        .calc-btn {
-            padding: 14px 4px; border: none; border-radius: var(--radius-sm);
-            font-family: var(--font); font-size: 15px; font-weight: 700; cursor: pointer;
-            transition: all 0.15s; text-align: center;
-        }
-        .calc-btn:active { transform: scale(0.93); }
-        .calc-btn-num { background: var(--bg-card); color: var(--white); }
-        .calc-btn-num:hover { background: var(--bg-elevated); }
-        .calc-btn-op { background: rgba(99,102,241,0.15); color: var(--primary-light); }
-        .calc-btn-op:hover { background: rgba(99,102,241,0.25); }
-        .calc-btn-sci { background: rgba(34,211,238,0.1); color: var(--cyan); font-size: 13px; }
-        .calc-btn-sci:hover { background: rgba(34,211,238,0.2); }
-        .calc-btn-action { background: rgba(244,63,94,0.15); color: var(--rose); }
-        .calc-btn-action:hover { background: rgba(244,63,94,0.25); }
-        .calc-btn-eq { background: var(--gradient); color: white; }
-        .calc-btn-eq:hover { box-shadow: 0 4px 16px rgba(99,102,241,0.4); }
-        .calc-btn-span2 { grid-column: span 2; }
-
-        /* ===== GOALS ===== */
-        .goals-container { max-width: 560px; margin: 0 auto; width: 100%; }
-        .goals-header {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
-        }
-        .goals-date { font-size: 18px; font-weight: 700; color: var(--cyan); }
-        .goals-progress { font-size: 14px; color: var(--muted); }
-        .goals-progress span { color: var(--emerald); font-weight: 700; }
-        .goals-input-area {
-            display: flex; gap: 10px; margin-bottom: 20px;
-        }
-        .goals-input-area input {
-            flex: 1; padding: 14px 18px; border-radius: var(--radius); border: 1px solid var(--border);
-            background: var(--bg-card); color: var(--white); font-family: var(--font); font-size: 16px; outline: none;
-        }
-        .goals-input-area input:focus { border-color: var(--primary); }
-        .goals-input-area button {
-            padding: 14px 24px; border-radius: var(--radius); border: none; background: var(--gradient);
-            color: white; font-family: var(--font); font-size: 16px; font-weight: 700; cursor: pointer;
-            transition: all 0.3s; white-space: nowrap;
-        }
-        .goals-input-area button:hover { box-shadow: 0 4px 16px rgba(99,102,241,0.4); }
-        .goals-list { display: flex; flex-direction: column; gap: 8px; }
-        .goal-item {
-            display: flex; align-items: center; gap: 14px; padding: 16px;
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-            transition: all 0.3s; animation: slideIn 0.3s ease;
-        }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-        .goal-item.completed { opacity: 0.6; }
-        .goal-item.completed .goal-text { text-decoration: line-through; color: var(--muted); }
-        .goal-checkbox {
-            width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--border);
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: all 0.3s; flex-shrink: 0; background: transparent;
-        }
-        .goal-checkbox:hover { border-color: var(--primary); }
-        .goal-checkbox.checked {
-            background: var(--gradient); border-color: transparent; animation: popIn 0.35s ease;
-        }
-        .goal-checkbox.checked::after { content: '✓'; color: white; font-size: 16px; font-weight: 900; }
-        @keyframes popIn { 0% { transform: scale(0.5); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
-        .goal-text { flex: 1; font-size: 16px; line-height: 1.5; }
-        .goal-delete {
-            background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px;
-            padding: 4px 8px; border-radius: 6px; transition: all 0.2s;
-        }
-        .goal-delete:hover { background: rgba(244,63,94,0.15); color: var(--rose); }
-
-        /* ===== PERMISSIONS ===== */
-        .perm-list { display: flex; flex-direction: column; gap: 12px; max-width: 500px; margin: 20px auto; }
+        /* --- Permissions Tab --- */
+        .perm-list { display: flex; flex-direction: column; gap: 15px; max-width: 600px; margin: 0 auto; }
         .perm-item {
-            display: flex; justify-content: space-between; align-items: center;
-            background: var(--bg-card); padding: 18px; border-radius: var(--radius); border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--navy-dark);
+            padding: 20px;
+            border-radius: var(--radius);
+            border: 1px solid var(--glass-border);
+            font-size: 22px;
         }
-        .switch { position: relative; display: inline-block; width: 52px; height: 28px; }
+        
+        /* Toggle Switch */
+        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute; cursor: pointer; inset: 0; background: var(--bg-elevated);
-            transition: 0.3s; border-radius: 28px;
-        }
-        .slider:before {
-            position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px;
-            background: white; transition: 0.3s; border-radius: 50%;
-        }
-        input:checked + .slider { background: var(--emerald); }
-        input:checked + .slider:before { transform: translateX(24px); }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #00e676; }
+        input:checked + .slider:before { transform: translateX(26px); }
 
-        /* ===== CHAT ===== */
-        .chat-panel {
-            width: 300px; background: var(--bg-dark); border-right: 1px solid var(--border);
-            display: flex; flex-direction: column; order: 3; flex-shrink: 0;
+        /* --- Chat Sidebar --- */
+        .chat-sidebar {
+            width: 350px;
+            background: var(--navy-dark);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            order: 2; /* Move chat to the right in LTR, or bottom in column */
         }
         .chat-header {
-            padding: 14px; border-bottom: 1px solid var(--border); font-size: 16px;
-            font-weight: 700; text-align: center; color: var(--cyan);
+            padding: 15px;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            color: var(--accent-cyan);
         }
-        .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
         .chat-msg {
-            max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.6;
-            animation: fadeIn 0.2s ease;
+            max-width: 85%;
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-size: 18px;
+            line-height: 1.5;
         }
-        .chat-msg.sent { align-self: flex-start; background: rgba(99,102,241,0.15); border-bottom-right-radius: 2px; }
-        .chat-msg.received { align-self: flex-end; background: rgba(139,92,246,0.15); border-bottom-left-radius: 2px; }
-        .chat-input-area { display: flex; padding: 10px; border-top: 1px solid var(--border); gap: 8px; }
+        .chat-msg.sent { align-self: flex-start; background: rgba(74, 108, 247, 0.2); border-bottom-right-radius: 2px; }
+        .chat-msg.received { align-self: flex-end; background: rgba(123, 92, 255, 0.2); border-bottom-left-radius: 2px; }
+        
+        .chat-input-area {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid var(--glass-border);
+        }
         .chat-input-area input {
-            flex: 1; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);
-            background: var(--bg-deep); color: white; font-family: var(--font); font-size: 14px; outline: none;
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            background: var(--navy-deep);
+            color: white;
+            font-family: var(--font-main);
+            font-size: 18px;
+            outline: none;
         }
         .chat-input-area button {
-            background: var(--gradient); border: none; color: white; padding: 0 18px;
-            border-radius: var(--radius-sm); cursor: pointer; font-size: 14px; font-family: var(--font); font-weight: 700;
+            background: var(--accent-gradient);
+            border: none;
+            color: white;
+            padding: 0 20px;
+            margin-right: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-family: var(--font-main);
+            font-weight: bold;
         }
+        
+        .hidden { display: none !important; }
 
-        /* ===== CHAT FAB (Mobile) ===== */
-        .chat-fab {
-            display: none; position: fixed; bottom: 80px; left: 16px; z-index: 100;
-            width: 52px; height: 52px; border-radius: 50%; background: var(--gradient);
-            border: none; color: white; font-size: 24px; cursor: pointer;
-            box-shadow: 0 4px 20px rgba(99,102,241,0.5); transition: transform 0.3s;
-        }
-        .chat-fab:active { transform: scale(0.9); }
-
-        /* ===== MOBILE CHAT OVERLAY ===== */
-        .chat-overlay {
-            display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(4px);
-        }
-        .chat-overlay.active { display: flex; align-items: flex-end; }
-        .chat-overlay .chat-panel {
-            width: 100%; height: 65vh; border-radius: 20px 20px 0 0; order: unset;
-            border-right: none; border-top: 2px solid var(--primary); animation: slideUp 0.3s ease;
-        }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .chat-overlay-close {
-            position: absolute; top: 16px; left: 16px; background: rgba(255,255,255,0.1);
-            border: none; color: white; width: 36px; height: 36px; border-radius: 50%;
-            font-size: 18px; cursor: pointer;
-        }
-
-        /* ===== MOBILE ===== */
+        /* --- Mobile Responsiveness --- */
         @media (max-width: 768px) {
-            body { font-size: 14px; }
-            .sidebar {
-                position: fixed; bottom: 0; left: 0; right: 0; width: 100%; height: 68px;
-                flex-direction: row; padding: 0 8px; gap: 0; z-index: 50;
-                border-left: none; border-top: 1px solid var(--border);
-                justify-content: space-around; overflow-x: auto;
-                background: rgba(12,16,36,0.95); backdrop-filter: blur(20px);
+            body {
+                height: auto;
+                overflow-y: auto;
+                display: block;
             }
-            .sidebar-logo, .sidebar-divider, .sidebar-status { display: none; }
-            .sidebar-item {
-                width: 52px; height: 54px; border-radius: 10px; font-size: 9px;
+            #app-screen.active {
+                display: block;
+                height: auto;
             }
-            .sidebar-item .icon { font-size: 20px; }
-            .sidebar-item.active::before {
-                right: 50%; top: -1px; transform: translateX(50%);
-                width: 24px; height: 3px; border-radius: 0 0 3px 3px;
+            .workspace {
+                display: flex;
+                flex-direction: column;
+                height: auto;
             }
-            .app-body { padding-bottom: 68px; }
-            .main-content { padding: 14px; }
-            .chat-panel { display: none; }
-            .chat-fab { display: flex; align-items: center; justify-content: center; }
-            .topbar { height: 44px; padding: 0 14px; }
-            .timer-display { width: 220px; height: 220px; }
-            .timer-time { font-size: 36px; }
-            .calc-btn { padding: 12px 2px; font-size: 14px; }
-            .calc-btn-sci { font-size: 12px; }
-            .calc-result { font-size: 28px; }
-            .stream-controls button { padding: 8px 14px; font-size: 13px; }
+            .topbar {
+                height: auto;
+                flex-wrap: wrap;
+                padding: 10px;
+            }
+            .logo { font-size: 24px; width: 50%; }
+            .connection-info { width: 50%; justify-content: flex-end; }
+            .nav-tabs {
+                width: 100%;
+                overflow-x: auto;
+                padding-top: 10px;
+                margin-top: 10px;
+                border-top: 1px solid var(--glass-border);
+            }
+            .nav-tab { font-size: 16px; padding: 5px 12px; white-space: nowrap; }
+            
+            .main-content {
+                min-height: 55vh;
+                flex: none;
+                overflow: visible;
+            }
+            .chat-sidebar {
+                width: 100%;
+                height: 400px;
+                flex: none;
+                border-right: none;
+                border-top: 2px solid var(--accent-blue);
+                order: 2;
+            }
+            .screen-share-controls {
+                flex-wrap: wrap;
+            }
+            .screen-share-controls button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .zoom-controls { display: none !important; } /* Hide manual zoom on mobile, use native fullscreen pinch-to-zoom */
         }
     </style>
 </head>
 <body>
 
-<!-- ===== AUTH SCREEN ===== -->
-<div id="auth-screen" class="active">
-    <div class="auth-card">
-        <h1>🍎 Pomme</h1>
-        <p>مساحة العمل المشتركة</p>
-        <div class="auth-buttons" id="role-selection">
-            <button class="btn-primary" onclick="initHost()">👑 أنا المالك (بدء الغرفة)</button>
-            <button class="btn-secondary" onclick="joinRoom()">💜 أنا الصديقة (دخول مباشر)</button>
-        </div>
-        <div id="status-msg"></div>
-        <div id="host-code-display" class="hidden" style="margin-top: 20px;">
-            <h2 style="color: var(--cyan); font-size: 22px;">الغرفة جاهزة 🚀</h2>
-            <p style="font-size:15px; margin-top:8px; color: var(--muted);">بانتظار دخول الصديقة الآن...</p>
-        </div>
-    </div>
-</div>
+    <!-- ================== AUTH SCREEN ================== -->
+    <div id="auth-screen" class="active">
+        <div class="auth-card">
+            <h1>Pomme</h1>
+            <p>اختر دورك للبدء</p>
+            
+            <div class="auth-buttons" id="role-selection">
+                <button class="btn-primary" onclick="initHost()">👑 أنا المالك (بدء الغرفة)</button>
+                <button class="btn-secondary" onclick="joinRoom()">💜 أنا الصديقة (دخول مباشر)</button>
+            </div>
 
-<!-- ===== APP SCREEN ===== -->
-<div id="app-screen">
-    <div class="topbar">
-        <div class="topbar-title">🍎 <span id="current-tab-name">الملاحظات</span></div>
-        <div class="topbar-info">
-            <span id="role-badge">المالك</span>
-            <div class="status-dot connected"></div>
+            <div id="status-msg"></div>
+            
+            <div id="host-code-display" class="hidden" style="margin-top: 20px;">
+                <h2 style="color: var(--accent-cyan);">الغرفة جاهزة 🚀</h2>
+                <p style="font-size:18px; margin-top:10px;">بانتظار دخول الصديقة الآن...</p>
+            </div>
         </div>
     </div>
 
-    <div class="app-body">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar">
-            <div class="sidebar-logo">Pomme</div>
-            <button class="sidebar-item active" data-tab="notes" onclick="switchTab('notes')">
-                <span class="icon">📝</span><span>ملاحظات</span>
-            </button>
-            <button class="sidebar-item" data-tab="stream" onclick="switchTab('stream')">
-                <span class="icon">🖥️</span><span>البث</span>
-            </button>
-            <button class="sidebar-item" data-tab="files" onclick="switchTab('files')">
-                <span class="icon">📁</span><span>ملفات</span>
-            </button>
-            <div class="sidebar-divider"></div>
-            <button class="sidebar-item" data-tab="timer" onclick="switchTab('timer')">
-                <span class="icon">⏱️</span><span>تايمر</span>
-            </button>
-            <button class="sidebar-item" data-tab="calc" onclick="switchTab('calc')">
-                <span class="icon">🧮</span><span>حاسبة</span>
-            </button>
-            <button class="sidebar-item" data-tab="goals" onclick="switchTab('goals')">
-                <span class="icon">🎯</span><span>أهداف</span>
-            </button>
-            <div class="sidebar-divider"></div>
-            <button class="sidebar-item hidden" id="perm-tab-btn" data-tab="permissions" onclick="switchTab('permissions')">
-                <span class="icon">🔐</span><span>صلاحيات</span>
-            </button>
-            <div class="sidebar-status">
-                <div class="status-dot connected" id="sidebar-status-dot"></div>
+    <!-- ================== APP SCREEN ================== -->
+    <div id="app-screen">
+        <div class="topbar">
+            <div class="logo">Pomme</div>
+            <div class="nav-tabs">
+                <div class="nav-tab active" data-tab="notes" onclick="switchTab('notes')">📝 الملاحظات</div>
+                <div class="nav-tab" data-tab="python" onclick="switchTab('python')">🐍 بايثون</div>
+                <div class="nav-tab" data-tab="files" onclick="switchTab('files')">📁 الملفات</div>
+                <div class="nav-tab" data-tab="screen" onclick="switchTab('screen')">🖥️ البث</div>
+                <div class="nav-tab hidden" id="perm-tab-btn" data-tab="permissions" onclick="switchTab('permissions')">🔐 الصلاحيات</div>
             </div>
-        </nav>
-
-        <!-- Content Area -->
-        <div class="content-area">
-            <div class="main-content">
-
-                <!-- TAB: Notes -->
-                <div id="tab-notes" class="tab-content active">
-                    <textarea id="notes-area" placeholder="اكتب ملاحظاتك هنا... سيتم مزامنتها فوراً ✍️"></textarea>
-                </div>
-
-                <!-- TAB: Stream -->
-                <div id="tab-stream" class="tab-content">
-                    <div class="stream-controls">
-                        <button class="btn-primary" id="start-screen-btn" onclick="startScreenShare()">▶️ بدء بث الشاشة</button>
-                        <button class="btn-secondary hidden" id="stop-screen-btn" onclick="stopScreenShare()">⏹️ إيقاف البث</button>
-                        <button class="btn-secondary" onclick="toggleFullScreen()" style="background:rgba(34,211,238,0.15); color:var(--cyan); border-color:var(--cyan)!important;">📱 ملء الشاشة</button>
-                    </div>
-                    <div class="zoom-controls" style="display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:12px;background:var(--bg-card);padding:10px;border-radius:var(--radius-sm);">
-                        <span style="font-size:13px;">🔍 زوم:</span>
-                        <input type="range" id="video-zoom" min="1" max="5" step="0.5" value="1" oninput="updateZoom()" style="flex:1;max-width:180px;accent-color:var(--primary);">
-                        <button onclick="resetZoom()" style="background:var(--gradient);color:white;border:none;padding:4px 14px;border-radius:5px;cursor:pointer;font-family:var(--font);font-weight:700;font-size:13px;">إرجاع</button>
-                    </div>
-                    <div class="video-container" style="overflow:auto;position:relative;">
-                        <video id="remote-video" autoplay playsinline></video>
-                    </div>
-                </div>
-
-                <!-- TAB: Files -->
-                <div id="tab-files" class="tab-content">
-                    <div class="file-upload-box" onclick="document.getElementById('file-input').click()">
-                        <div class="icon">📥</div>
-                        <h3>اضغط هنا لرفع ومشاركة ملف</h3>
-                        <p>سيتم إرسال الملف مباشرة للطرف الآخر</p>
-                    </div>
-                    <input type="file" id="file-input" style="display:none" onchange="handleFileUpload(event)">
-                    <h3 style="margin-top:20px;font-size:16px;">الملفات المشتركة:</h3>
-                    <ul class="file-list" id="file-list"></ul>
-                </div>
-
-                <!-- TAB: Timer -->
-                <div id="tab-timer" class="tab-content">
-                    <div class="timer-container">
-                        <div class="timer-modes">
-                            <button class="timer-mode-btn active" onclick="switchTimerMode('countdown')">⏳ عد تنازلي</button>
-                            <button class="timer-mode-btn" onclick="switchTimerMode('stopwatch')">⏱️ ساعة إيقاف</button>
-                        </div>
-
-                        <!-- Timer Display -->
-                        <div class="timer-display">
-                            <svg viewBox="0 0 200 200">
-                                <defs>
-                                    <linearGradient id="timerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" style="stop-color:#6366f1"/>
-                                        <stop offset="100%" style="stop-color:#22d3ee"/>
-                                    </linearGradient>
-                                </defs>
-                                <circle cx="100" cy="100" r="92" class="timer-circle-bg"/>
-                                <circle cx="100" cy="100" r="92" class="timer-circle-progress" id="timer-progress"
-                                    stroke-dasharray="578.05" stroke-dashoffset="0"/>
-                            </svg>
-                            <div style="text-align:center;z-index:2;">
-                                <div class="timer-time" id="timer-display-text">00:00:00</div>
-                                <div class="timer-ms" id="timer-display-ms"></div>
-                            </div>
-                        </div>
-
-                        <!-- Countdown Inputs -->
-                        <div class="timer-inputs" id="countdown-inputs">
-                            <div class="timer-input-group">
-                                <label>ساعات</label>
-                                <input type="number" id="cd-hours" value="0" min="0" max="99">
-                            </div>
-                            <div class="timer-separator">:</div>
-                            <div class="timer-input-group">
-                                <label>دقائق</label>
-                                <input type="number" id="cd-minutes" value="5" min="0" max="59">
-                            </div>
-                            <div class="timer-separator">:</div>
-                            <div class="timer-input-group">
-                                <label>ثوان</label>
-                                <input type="number" id="cd-seconds" value="0" min="0" max="59">
-                            </div>
-                        </div>
-
-                        <!-- Timer Actions -->
-                        <div class="timer-actions">
-                            <button class="btn-start" id="timer-start-btn" onclick="timerStart()">▶️ ابدأ</button>
-                            <button class="btn-pause hidden" id="timer-pause-btn" onclick="timerPause()">⏸️ إيقاف مؤقت</button>
-                            <button class="btn-reset hidden" id="timer-reset-btn" onclick="timerReset()">🔄 إعادة</button>
-                            <button class="btn-lap hidden" id="timer-lap-btn" onclick="timerLap()">🏁 لفة</button>
-                        </div>
-
-                        <!-- Lap Times -->
-                        <div class="lap-list" id="lap-list"></div>
-                    </div>
-                </div>
-
-                <!-- TAB: Calculator -->
-                <div id="tab-calc" class="tab-content">
-                    <div class="calc-container">
-                        <div class="calc-display">
-                            <div class="calc-mode-indicator">
-                                <button class="calc-deg-btn" id="calc-deg-btn" onclick="toggleDegRad()">DEG</button>
-                                <div class="calc-mem-indicator" id="calc-mem-indicator"></div>
-                            </div>
-                            <div class="calc-expression" id="calc-expression"></div>
-                            <div class="calc-result" id="calc-result">0</div>
-                        </div>
-
-                        <!-- Scientific Buttons -->
-                        <div class="calc-sci-grid">
-                            <button class="calc-btn calc-btn-sci" onclick="calcFunc('sin(')">sin</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcFunc('cos(')">cos</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcFunc('tan(')">tan</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcFunc('log(')">log</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcFunc('ln(')">ln</button>
-
-                            <button class="calc-btn calc-btn-sci" onclick="calcFunc('asin(')">sin⁻¹</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcFunc('acos(')">cos⁻¹</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcFunc('atan(')">tan⁻¹</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcFunc('nCr(')">nCr</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcFunc('nPr(')">nPr</button>
-
-                            <button class="calc-btn calc-btn-sci" onclick="calcOp('²')">x²</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcOp('³')">x³</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcFunc('√(')">√</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcFunc('∛(')">∛</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcOp('^')">xⁿ</button>
-
-                            <button class="calc-btn calc-btn-sci" onclick="calcFunc('fact(')">n!</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcFunc('abs(')">|x|</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcInsert('π')">π</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcInsert('e')">e</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcOp('⁻¹')">1/x</button>
-                        </div>
-
-                        <!-- Memory Row -->
-                        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:6px;">
-                            <button class="calc-btn calc-btn-sci" onclick="calcMem('MC')" style="font-size:12px;">MC</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcMem('MR')" style="font-size:12px;">MR</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcMem('M+')" style="font-size:12px;">M+</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcMem('M-')" style="font-size:12px;">M-</button>
-                            <button class="calc-btn calc-btn-sci" onclick="calcFunc('10^(')" style="font-size:12px;">10ˣ</button>
-                        </div>
-
-                        <!-- Basic Buttons -->
-                        <div class="calc-basic-grid">
-                            <button class="calc-btn calc-btn-action" onclick="calcClear()">AC</button>
-                            <button class="calc-btn calc-btn-action" onclick="calcBackspace()">⌫</button>
-                            <button class="calc-btn calc-btn-op" onclick="calcInsert('(')">(</button>
-                            <button class="calc-btn calc-btn-op" onclick="calcInsert(')')">)</button>
-
-                            <button class="calc-btn calc-btn-num" onclick="calcInsert('7')">7</button>
-                            <button class="calc-btn calc-btn-num" onclick="calcInsert('8')">8</button>
-                            <button class="calc-btn calc-btn-num" onclick="calcInsert('9')">9</button>
-                            <button class="calc-btn calc-btn-op" onclick="calcInsert('÷')">÷</button>
-
-                            <button class="calc-btn calc-btn-num" onclick="calcInsert('4')">4</button>
-                            <button class="calc-btn calc-btn-num" onclick="calcInsert('5')">5</button>
-                            <button class="calc-btn calc-btn-num" onclick="calcInsert('6')">6</button>
-                            <button class="calc-btn calc-btn-op" onclick="calcInsert('×')">×</button>
-
-                            <button class="calc-btn calc-btn-num" onclick="calcInsert('1')">1</button>
-                            <button class="calc-btn calc-btn-num" onclick="calcInsert('2')">2</button>
-                            <button class="calc-btn calc-btn-num" onclick="calcInsert('3')">3</button>
-                            <button class="calc-btn calc-btn-op" onclick="calcInsert('−')">−</button>
-
-                            <button class="calc-btn calc-btn-num" onclick="calcInsert('±')">±</button>
-                            <button class="calc-btn calc-btn-num" onclick="calcInsert('0')">0</button>
-                            <button class="calc-btn calc-btn-num" onclick="calcInsert('.')">.</button>
-                            <button class="calc-btn calc-btn-op" onclick="calcInsert('+')">+</button>
-
-                            <button class="calc-btn calc-btn-op" onclick="calcInsert('%')">%</button>
-                            <button class="calc-btn calc-btn-op" onclick="calcInsert(',')">،</button>
-                            <button class="calc-btn calc-btn-eq calc-btn-span2" onclick="calcEvaluate()">=</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TAB: Goals -->
-                <div id="tab-goals" class="tab-content">
-                    <div class="goals-container">
-                        <div class="goals-header">
-                            <div class="goals-date" id="goals-date"></div>
-                            <div class="goals-progress" id="goals-progress"></div>
-                        </div>
-                        <div class="goals-input-area">
-                            <input type="text" id="goal-input" placeholder="أضف هدف جديد..." onkeypress="if(event.key==='Enter')addGoal()">
-                            <button onclick="addGoal()">+ إضافة</button>
-                        </div>
-                        <div class="goals-list" id="goals-list"></div>
-                    </div>
-                </div>
-
-                <!-- TAB: Permissions (Owner Only) -->
-                <div id="tab-permissions" class="tab-content">
-                    <h2 style="text-align:center;margin-bottom:24px;font-size:20px;">🔐 تحكم بصلاحيات الصديقة</h2>
-                    <div class="perm-list">
-                        <div class="perm-item">
-                            <span>📝 تعديل الملاحظات</span>
-                            <label class="switch"><input type="checkbox" id="perm-notes" checked onchange="updatePermissions()"><span class="slider"></span></label>
-                        </div>
-                        <div class="perm-item">
-                            <span>📁 مشاركة الملفات</span>
-                            <label class="switch"><input type="checkbox" id="perm-files" checked onchange="updatePermissions()"><span class="slider"></span></label>
-                        </div>
-                        <div class="perm-item">
-                            <span>🖥️ بدء بث الشاشة</span>
-                            <label class="switch"><input type="checkbox" id="perm-screen" checked onchange="updatePermissions()"><span class="slider"></span></label>
-                        </div>
-                    </div>
-                </div>
-
+            <div class="connection-info">
+                <span id="role-badge">المالك</span>
+                <div class="status-dot connected"></div>
             </div>
+        </div>
 
-            <!-- Chat Panel (Desktop) -->
-            <div class="chat-panel" id="chat-panel-desktop">
+        <div class="workspace">
+            <!-- Chat Sidebar (Right side in RTL) -->
+            <div class="chat-sidebar">
                 <div class="chat-header">💬 الشات</div>
                 <div class="chat-messages" id="chat-messages">
-                    <div style="text-align:center;color:var(--muted);font-size:13px;padding:10px;">بدأت المحادثة المباشرة 💬</div>
+                    <div style="text-align:center; color: var(--white-muted); font-size: 16px; margin-bottom:10px;">بدأت المحادثة المباشرة</div>
                 </div>
                 <div class="chat-input-area">
                     <input type="text" id="chat-input" placeholder="اكتب رسالتك..." onkeypress="handleChatEnter(event)">
                     <button onclick="sendChat()">إرسال</button>
                 </div>
             </div>
+
+            <div class="main-content">
+                <!-- Tab: Notes -->
+                <div id="tab-notes" class="tab-content active">
+                    <textarea id="notes-area" placeholder="اكتب ملاحظاتك هنا... سيتم مزامنتها فوراً"></textarea>
+                </div>
+
+                <!-- Tab: Python -->
+                <div id="tab-python" class="tab-content">
+                    <div id="python-editor-container" style="flex:1; display:flex; flex-direction:column; overflow:hidden;"></div>
+                </div>
+
+                <!-- Tab: Files -->
+                <div id="tab-files" class="tab-content">
+                    <div class="files-container">
+                        <div class="file-upload-box" onclick="document.getElementById('file-input').click()">
+                            <h3>📥 اضغط هنا لرفع ومشاركة ملف</h3>
+                            <p style="color:var(--white-muted); margin-top:10px;">سيتم إرسال الملف مباشرة للطرف الآخر</p>
+                        </div>
+                        <input type="file" id="file-input" style="display:none" onchange="handleFileUpload(event)">
+                        
+                        <h3 style="margin-top: 20px;">الملفات المشتركة:</h3>
+                        <ul class="file-list" id="file-list">
+                            <!-- Files will appear here -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Tab: Screen Share -->
+                <div id="tab-screen" class="tab-content">
+                    <div class="screen-share-controls">
+                        <button class="btn-primary" id="start-screen-btn" onclick="startScreenShare()">▶️ بدء بث الشاشة</button>
+                        <button class="btn-secondary hidden" id="stop-screen-btn" onclick="stopScreenShare()">⏹️ إيقاف البث</button>
+                        <button class="btn-secondary" id="toggle-mic-btn" onclick="toggleMic()" style="background: rgba(255, 59, 48, 0.2); border-color: #ff3b30!important; color: #ff3b30;">🔇 المايك معطل</button>
+                    </div>
+                    
+                    <div class="zoom-controls" style="display: flex; gap: 10px; align-items: center; justify-content: center; margin-bottom: 15px; background: var(--navy-dark); padding: 10px; border-radius: 8px;">
+                        <span>🔍 زوم للكمبيوتر:</span>
+                        <input type="range" id="video-zoom" min="1" max="5" step="0.5" value="1" oninput="updateZoom()" style="flex: 1; max-width: 200px;">
+                        <button onclick="resetZoom()" style="background: var(--accent-gradient); color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; font-family: var(--font-main); font-weight: bold;">إرجاع</button>
+                    </div>
+
+                    <div style="text-align: center; margin-bottom: 10px;">
+                        <button onclick="toggleFullScreen()" style="background: var(--accent-cyan); color: var(--navy-deep); border: none; padding: 10px 20px; border-radius: 8px; font-size: 18px; font-family: var(--font-main); font-weight: bold; cursor: pointer; width: 100%; max-width: 300px;">
+                            📱 تكبير الشاشة بالكامل (للهاتف)
+                        </button>
+                        <p style="font-size: 14px; color: var(--white-muted); margin-top: 5px;">عند التكبير، يمكنك عمل زوم بإصبعين ✌️</p>
+                    </div>
+
+                    <div class="video-container" style="overflow: auto; position: relative;">
+                        <video id="remote-video" autoplay playsinline style="width: 100%; height: 100%; object-fit: contain; max-width: 100%;"></video>
+                    </div>
+                </div>
+
+                <!-- Tab: Permissions (Owner Only) -->
+                <div id="tab-permissions" class="tab-content">
+                    <h2 style="text-align: center; margin-bottom: 30px;">تحكم بصلاحيات الصديقة</h2>
+                    <div class="perm-list">
+                        <div class="perm-item">
+                            <span>تعديل الملاحظات</span>
+                            <label class="switch">
+                                <input type="checkbox" id="perm-notes" checked onchange="updatePermissions()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="perm-item">
+                            <span>تعديل كود بايثون</span>
+                            <label class="switch">
+                                <input type="checkbox" id="perm-python" checked onchange="updatePermissions()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="perm-item">
+                            <span>مشاركة الملفات</span>
+                            <label class="switch">
+                                <input type="checkbox" id="perm-files" checked onchange="updatePermissions()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="perm-item">
+                            <span>بدء بث الشاشة</span>
+                            <label class="switch">
+                                <input type="checkbox" id="perm-screen" checked onchange="updatePermissions()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Chat FAB (Mobile) -->
-<button class="chat-fab" id="chat-fab" onclick="openMobileChat()">💬</button>
+    <!-- ================== LIBRARIES ================== -->
+    <!-- PeerJS -->
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    
+    <!-- CodeMirror 5 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
 
-<!-- Chat Overlay (Mobile) -->
-<div class="chat-overlay" id="chat-overlay">
-    <button class="chat-overlay-close" onclick="closeMobileChat()">✕</button>
-    <div class="chat-panel" id="chat-panel-mobile">
-        <div class="chat-header">💬 الشات</div>
-        <div class="chat-messages" id="chat-messages-mobile"></div>
-        <div class="chat-input-area">
-            <input type="text" id="chat-input-mobile" placeholder="اكتب رسالتك..." onkeypress="handleChatEnterMobile(event)">
-            <button onclick="sendChatMobile()">إرسال</button>
-        </div>
-    </div>
-</div>
+    <!-- ================== LOGIC ================== -->
+    <script>
+        // --- State Variables ---
+        let peer = null;
+        let dataConn = null;
+        let mediaConn = null;
+        let isOwner = false;
+        let myStream = null;
+        let includeMic = false;
+        
+        let editor = null;
+        let isCodeUpdatingProgrammatically = false;
+        let isNotesUpdatingProgrammatically = false;
 
-<!-- PeerJS -->
-<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+        let permissions = {
+            notes: true,
+            python: true,
+            files: true,
+            screen: true
+        };
 
-<script>
-// ===========================
-// STATE
-// ===========================
-let peer = null, dataConn = null, mediaConn = null;
-let isOwner = false, myStream = null;
-let isNotesUpdatingProgrammatically = false;
-let permissions = { notes: true, files: true, screen: true };
-const FIXED_ROOM_ID = 'pomme-app-modasmadi-2026';
-const statusMsg = document.getElementById('status-msg');
-const notesArea = document.getElementById('notes-area');
+        const statusMsg = document.getElementById('status-msg');
+        
+        // --- UI Initialization ---
+        function initCodeMirror() {
+            if(!editor) {
+                editor = CodeMirror(document.getElementById('python-editor-container'), {
+                    mode: "python",
+                    theme: "dracula",
+                    lineNumbers: true,
+                    value: "# اكتب كود بايثون هنا...\nprint('مرحباً في Pomme!')",
+                    viewportMargin: Infinity
+                });
+                editor.setSize("100%", "100%");
 
-const TAB_NAMES = {
-    notes: 'الملاحظات', stream: 'البث المباشر', files: 'الملفات',
-    timer: 'التايمر', calc: 'الآلة الحاسبة', goals: 'الأهداف اليومية',
-    permissions: 'الصلاحيات'
-};
-
-// ===========================
-// TAB SWITCHING
-// ===========================
-function switchTab(tabId) {
-    document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    const btn = document.querySelector(`.sidebar-item[data-tab="${tabId}"]`);
-    if (btn) btn.classList.add('active');
-    const tab = document.getElementById(`tab-${tabId}`);
-    if (tab) tab.classList.add('active');
-    document.getElementById('current-tab-name').textContent = TAB_NAMES[tabId] || tabId;
-}
-
-// ===========================
-// AUTH & NETWORK
-// ===========================
-function updateStatus(msg, isError = false) {
-    statusMsg.textContent = msg;
-    statusMsg.style.color = isError ? 'var(--rose)' : 'var(--cyan)';
-}
-
-function showAppScreen() {
-    document.getElementById('auth-screen').classList.remove('active');
-    document.getElementById('app-screen').classList.add('active');
-    if (isOwner) {
-        document.getElementById('role-badge').textContent = 'المالك 👑';
-        document.getElementById('perm-tab-btn').classList.remove('hidden');
-    } else {
-        document.getElementById('role-badge').textContent = 'الصديقة 💜';
-        applyPermissionsUI();
-    }
-    loadGoals();
-}
-
-const PEER_CONFIG = {
-    config: {
-        iceServers: [
-            { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' },
-            { urls: 'stun:stun2.l.google.com:19302' },
-            { urls: 'stun:stun3.l.google.com:19302' }
-        ],
-        sdpSemantics: 'unified-plan',
-        bundlePolicy: 'max-bundle',
-        rtcpMuxPolicy: 'require'
-    }
-};
-
-function initPeer(id = null) {
-    peer = id ? new Peer(id, PEER_CONFIG) : new Peer(PEER_CONFIG);
-    peer.on('open', () => {
-        if (isOwner) {
-            document.getElementById('role-selection').classList.add('hidden');
-            document.getElementById('host-code-display').classList.remove('hidden');
-            updateStatus('تم فتح الغرفة. بانتظار الصديقة...');
-        }
-    });
-    peer.on('connection', (conn) => {
-        if (isOwner && !dataConn) setupDataConnection(conn);
-        else if (isOwner && dataConn) conn.close();
-    });
-    peer.on('call', (call) => {
-        call.answer();
-        call.on('stream', (remoteStream) => {
-            const v = document.getElementById('remote-video');
-            v.srcObject = remoteStream;
-            v.muted = false;
-            v.play().catch(() => {});
-        });
-        mediaConn = call;
-        optimizeReceiver();
-    });
-    peer.on('error', (err) => {
-        console.error(err);
-        updateStatus('خطأ: ' + err.type, true);
-    });
-}
-
-function initHost() {
-    isOwner = true;
-    updateStatus('جاري فتح الغرفة...');
-    initPeer(FIXED_ROOM_ID);
-}
-
-function joinRoom() {
-    isOwner = false;
-    updateStatus('جاري الدخول...');
-    initPeer();
-    peer.on('open', () => {
-        const conn = peer.connect(FIXED_ROOM_ID, { reliable: true });
-        setupDataConnection(conn);
-    });
-}
-
-function setupDataConnection(conn) {
-    dataConn = conn;
-    dataConn.on('open', () => {
-        showAppScreen();
-        if (isOwner) {
-            sendData({ type: 'permissions_update', permissions });
-            sendData({ type: 'note_update', content: notesArea.value });
-        }
-    });
-    dataConn.on('data', handleIncomingData);
-    dataConn.on('close', () => { alert('تم قطع الاتصال.'); location.reload(); });
-}
-
-function sendData(data) {
-    if (dataConn && dataConn.open) dataConn.send(data);
-}
-
-function handleIncomingData(data) {
-    if (data.type === 'note_update') {
-        isNotesUpdatingProgrammatically = true;
-        notesArea.value = data.content;
-        isNotesUpdatingProgrammatically = false;
-    } else if (data.type === 'chat_msg') {
-        appendChatMsg(data.text, 'received');
-    } else if (data.type === 'file_transfer') {
-        receiveFile(data.name, data.file, data.typeStr);
-    } else if (data.type === 'permissions_update') {
-        if (!isOwner) { permissions = data.permissions; applyPermissionsUI(); }
-    }
-}
-
-// ===========================
-// NOTES
-// ===========================
-notesArea.addEventListener('input', () => {
-    if (!isNotesUpdatingProgrammatically && hasPermission('notes')) {
-        sendData({ type: 'note_update', content: notesArea.value });
-    }
-});
-
-// ===========================
-// PERMISSIONS
-// ===========================
-function hasPermission(f) { return isOwner || permissions[f]; }
-
-function updatePermissions() {
-    if (!isOwner) return;
-    permissions = {
-        notes: document.getElementById('perm-notes').checked,
-        files: document.getElementById('perm-files').checked,
-        screen: document.getElementById('perm-screen').checked
-    };
-    sendData({ type: 'permissions_update', permissions });
-}
-
-function applyPermissionsUI() {
-    notesArea.readOnly = !permissions.notes;
-    notesArea.placeholder = permissions.notes ? 'اكتب ملاحظاتك هنا...' : '🚫 ليس لديك صلاحية للتعديل';
-    const fileBox = document.querySelector('.file-upload-box');
-    if (fileBox) {
-        fileBox.style.pointerEvents = permissions.files ? 'auto' : 'none';
-        fileBox.style.opacity = permissions.files ? '1' : '0.5';
-    }
-    const screenBtn = document.getElementById('start-screen-btn');
-    if (screenBtn) {
-        screenBtn.disabled = !permissions.screen;
-        screenBtn.style.opacity = permissions.screen ? '1' : '0.5';
-        screenBtn.textContent = permissions.screen ? '▶️ بدء بث الشاشة' : '🚫 البث غير متاح';
-    }
-}
-
-// ===========================
-// CHAT
-// ===========================
-function sendChat() {
-    const input = document.getElementById('chat-input');
-    const text = input.value.trim();
-    if (!text) return;
-    appendChatMsg(text, 'sent');
-    sendData({ type: 'chat_msg', text });
-    input.value = '';
-}
-function handleChatEnter(e) { if (e.key === 'Enter') sendChat(); }
-
-function sendChatMobile() {
-    const input = document.getElementById('chat-input-mobile');
-    const text = input.value.trim();
-    if (!text) return;
-    appendChatMsg(text, 'sent');
-    sendData({ type: 'chat_msg', text });
-    input.value = '';
-}
-function handleChatEnterMobile(e) { if (e.key === 'Enter') sendChatMobile(); }
-
-function appendChatMsg(text, type) {
-    // Desktop chat
-    const c1 = document.getElementById('chat-messages');
-    const m1 = document.createElement('div');
-    m1.className = `chat-msg ${type}`;
-    m1.textContent = text;
-    c1.appendChild(m1);
-    c1.scrollTop = c1.scrollHeight;
-    // Mobile chat mirror
-    const c2 = document.getElementById('chat-messages-mobile');
-    const m2 = document.createElement('div');
-    m2.className = `chat-msg ${type}`;
-    m2.textContent = text;
-    c2.appendChild(m2);
-    c2.scrollTop = c2.scrollHeight;
-}
-
-function openMobileChat() {
-    document.getElementById('chat-overlay').classList.add('active');
-}
-function closeMobileChat() {
-    document.getElementById('chat-overlay').classList.remove('active');
-}
-
-// ===========================
-// FILE SHARING
-// ===========================
-function handleFileUpload(e) {
-    if (!hasPermission('files')) return;
-    const file = e.target.files[0];
-    if (!file) return;
-    addFileToList(file.name, file, true);
-    sendData({ type: 'file_transfer', name: file.name, typeStr: file.type, file });
-    e.target.value = '';
-}
-
-function receiveFile(name, blob, typeStr) {
-    const file = new Blob([blob], { type: typeStr });
-    addFileToList(name, file, false);
-}
-
-function addFileToList(name, blob, isSent) {
-    const list = document.getElementById('file-list');
-    const url = URL.createObjectURL(blob);
-    const li = document.createElement('li');
-    li.className = 'file-item';
-    li.innerHTML = `<span>${isSent ? '📤' : '📥'} ${name}</span><a href="${url}" download="${name}">تحميل</a>`;
-    list.appendChild(li);
-}
-
-// ===========================
-// SCREEN SHARE (Optimized - No Mic)
-// ===========================
-function updateZoom() {
-    const z = document.getElementById('video-zoom').value;
-    const v = document.getElementById('remote-video');
-    if (z == 1) { v.style.width = '100%'; v.style.height = '100%'; v.style.maxWidth = '100%'; }
-    else { v.style.width = `${z * 100}%`; v.style.height = 'auto'; v.style.maxWidth = 'none'; }
-}
-function resetZoom() { document.getElementById('video-zoom').value = 1; updateZoom(); }
-
-function toggleFullScreen() {
-    const v = document.getElementById('remote-video');
-    if (!document.fullscreenElement) {
-        (v.requestFullscreen || v.webkitRequestFullscreen || v.msRequestFullscreen).call(v);
-    } else {
-        (document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen).call(document);
-    }
-}
-
-async function optimizeSender(call) {
-    try {
-        const pc = call.peerConnection;
-        if (!pc) return;
-        for (const sender of pc.getSenders()) {
-            if (sender.track && sender.track.kind === 'video') {
-                const params = sender.getParameters();
-                if (!params.encodings || !params.encodings.length) params.encodings = [{}];
-                params.encodings[0].maxBitrate = 10000000; // 10 Mbps
-                params.encodings[0].maxFramerate = 60;
-                params.degradationPreference = 'maintain-framerate';
-                await sender.setParameters(params);
-            }
-            if (sender.track && sender.track.kind === 'audio') {
-                const params = sender.getParameters();
-                if (!params.encodings || !params.encodings.length) params.encodings = [{}];
-                params.encodings[0].maxBitrate = 256000; // 256 kbps audio
-                await sender.setParameters(params);
+                // Listen for changes
+                editor.on('change', (cm, changeObj) => {
+                    if(!isCodeUpdatingProgrammatically && hasPermission('python')) {
+                        sendData({ type: 'code_update', content: cm.getValue() });
+                    }
+                });
             }
         }
-    } catch (e) { console.warn('Sender optimization warning:', e); }
-}
 
-function optimizeReceiver() {
-    try {
-        if (!mediaConn || !mediaConn.peerConnection) return;
-        const pc = mediaConn.peerConnection;
-        for (const receiver of pc.getReceivers()) {
-            if (receiver.track && receiver.track.kind === 'video') {
-                // Request keyframe for faster start
-                if (receiver.requestKeyFrame) receiver.requestKeyFrame();
+        // Listen for Notes changes
+        const notesArea = document.getElementById('notes-area');
+        notesArea.addEventListener('input', () => {
+            if(!isNotesUpdatingProgrammatically && hasPermission('notes')) {
+                sendData({ type: 'note_update', content: notesArea.value });
             }
-        }
-    } catch (e) { console.warn('Receiver optimization warning:', e); }
-}
-
-async function startScreenShare() {
-    if (!hasPermission('screen')) return;
-    try {
-        const displayStream = await navigator.mediaDevices.getDisplayMedia({
-            video: {
-                width: { ideal: 1920 }, height: { ideal: 1080 },
-                frameRate: { ideal: 60, max: 144 },
-                displaySurface: 'monitor'
-            },
-            audio: {
-                echoCancellation: false, noiseSuppression: false,
-                autoGainControl: false, sampleRate: 48000, channelCount: 2
-            },
-            selfBrowserSurface: 'exclude',
-            systemAudio: 'include'
         });
 
-        const videoTrack = displayStream.getVideoTracks()[0];
-        if ('contentHint' in videoTrack) videoTrack.contentHint = 'motion';
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            document.querySelector(`.nav-tab[data-tab="${tabId}"]`).classList.add('active');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            
+            if(tabId === 'python' && editor) {
+                setTimeout(() => editor.refresh(), 10);
+            }
+        }
 
-        let finalStream = displayStream;
+        // Fixed ID for the application so no codes are needed
+        const FIXED_ROOM_ID = 'pomme-app-modasmadi-2026';
 
-        // Boost system audio volume
-        try {
-            if (displayStream.getAudioTracks().length > 0) {
-                const audioCtx = new AudioContext({ sampleRate: 48000 });
-                const dest = audioCtx.createMediaStreamDestination();
-                const gain = audioCtx.createGain();
-                gain.gain.value = 3.0;
-                const source = audioCtx.createMediaStreamSource(displayStream);
-                source.connect(gain);
-                gain.connect(dest);
-                finalStream = new MediaStream([videoTrack, ...dest.stream.getAudioTracks()]);
-                videoTrack.onended = () => { audioCtx.close(); stopScreenShare(); };
+        function showJoinInput() {
+            // Not needed anymore, kept empty just in case
+        }
+
+        function hideJoinInput() {
+            // Not needed anymore
+        }
+
+        function showAppScreen() {
+            document.getElementById('auth-screen').classList.remove('active');
+            document.getElementById('app-screen').classList.add('active');
+            initCodeMirror();
+            
+            if(isOwner) {
+                document.getElementById('role-badge').innerText = 'المالك 👑';
+                document.getElementById('perm-tab-btn').classList.remove('hidden');
             } else {
-                videoTrack.onended = () => stopScreenShare();
-            }
-        } catch (e) {
-            console.warn('Audio boost failed:', e);
-            videoTrack.onended = () => stopScreenShare();
-        }
-
-        myStream = finalStream;
-
-        // Local preview (muted to avoid echo)
-        const localV = document.getElementById('remote-video');
-        localV.srcObject = finalStream;
-        localV.muted = true;
-
-        document.getElementById('start-screen-btn').classList.add('hidden');
-        document.getElementById('stop-screen-btn').classList.remove('hidden');
-
-        // Call peer with optimized stream
-        if (dataConn && dataConn.peer) {
-            const call = peer.call(dataConn.peer, finalStream);
-            mediaConn = call;
-            // Optimize after connection is established
-            call.on('stream', () => {});
-            setTimeout(() => optimizeSender(call), 2000);
-        }
-    } catch (err) {
-        console.error('Screen share error:', err);
-        alert('تعذر مشاركة الشاشة. تأكد من تحديد "مشاركة صوت النظام".');
-    }
-}
-
-function stopScreenShare() {
-    if (myStream) { myStream.getTracks().forEach(t => t.stop()); myStream = null; }
-    if (mediaConn) { mediaConn.close(); mediaConn = null; }
-    document.getElementById('remote-video').srcObject = null;
-    document.getElementById('start-screen-btn').classList.remove('hidden');
-    document.getElementById('stop-screen-btn').classList.add('hidden');
-}
-
-// ===========================
-// TIMER
-// ===========================
-let timerMode = 'countdown'; // 'countdown' | 'stopwatch'
-let timerInterval = null;
-let timerRunning = false;
-let timerElapsed = 0; // ms elapsed (stopwatch) or remaining (countdown)
-let timerTotal = 0;   // total ms for countdown
-let laps = [];
-const CIRCUMFERENCE = 2 * Math.PI * 92; // ~578.05
-
-function switchTimerMode(mode) {
-    timerReset();
-    timerMode = mode;
-    document.querySelectorAll('.timer-mode-btn').forEach(b => b.classList.remove('active'));
-    document.querySelector(`.timer-mode-btn[onclick*="${mode}"]`).classList.add('active');
-    document.getElementById('countdown-inputs').style.display = mode === 'countdown' ? 'flex' : 'none';
-    document.getElementById('timer-lap-btn').classList.toggle('hidden', mode === 'countdown');
-    document.getElementById('timer-display-ms').textContent = '';
-}
-
-function formatTime(ms) {
-    const totalSec = Math.floor(ms / 1000);
-    const h = Math.floor(totalSec / 3600);
-    const m = Math.floor((totalSec % 3600) / 60);
-    const s = totalSec % 60;
-    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-}
-
-function updateTimerDisplay() {
-    const display = document.getElementById('timer-display-text');
-    const msDisplay = document.getElementById('timer-display-ms');
-    const progress = document.getElementById('timer-progress');
-
-    if (timerMode === 'countdown') {
-        display.textContent = formatTime(timerElapsed);
-        msDisplay.textContent = '';
-        if (timerTotal > 0) {
-            const ratio = 1 - (timerElapsed / timerTotal);
-            progress.style.strokeDashoffset = CIRCUMFERENCE * ratio;
-        }
-    } else {
-        display.textContent = formatTime(timerElapsed);
-        const ms = Math.floor((timerElapsed % 1000) / 10);
-        msDisplay.textContent = `.${String(ms).padStart(2,'0')}`;
-        // Continuous rotation for stopwatch
-        const rotation = (timerElapsed / 60000) * CIRCUMFERENCE;
-        progress.style.strokeDashoffset = -(rotation % CIRCUMFERENCE);
-    }
-}
-
-function timerStart() {
-    if (timerRunning) return;
-
-    if (timerMode === 'countdown' && timerElapsed === 0) {
-        const h = parseInt(document.getElementById('cd-hours').value) || 0;
-        const m = parseInt(document.getElementById('cd-minutes').value) || 0;
-        const s = parseInt(document.getElementById('cd-seconds').value) || 0;
-        timerTotal = (h * 3600 + m * 60 + s) * 1000;
-        if (timerTotal <= 0) return;
-        timerElapsed = timerTotal;
-    }
-
-    timerRunning = true;
-    const startTime = Date.now() - (timerMode === 'stopwatch' ? timerElapsed : 0);
-    const countdownStart = Date.now();
-    const countdownInitial = timerElapsed;
-
-    document.getElementById('timer-start-btn').classList.add('hidden');
-    document.getElementById('timer-pause-btn').classList.remove('hidden');
-    document.getElementById('timer-reset-btn').classList.remove('hidden');
-    if (timerMode === 'stopwatch') document.getElementById('timer-lap-btn').classList.remove('hidden');
-    document.getElementById('countdown-inputs').style.display = 'none';
-
-    timerInterval = setInterval(() => {
-        if (timerMode === 'stopwatch') {
-            timerElapsed = Date.now() - startTime;
-        } else {
-            const elapsed = Date.now() - countdownStart;
-            timerElapsed = Math.max(0, countdownInitial - elapsed);
-            if (timerElapsed <= 0) {
-                timerElapsed = 0;
-                timerPause();
-                playAlarm();
-                updateTimerDisplay();
-                return;
+                document.getElementById('role-badge').innerText = 'الصديقة 💜';
+                applyPermissionsUI();
             }
         }
-        updateTimerDisplay();
-    }, 30);
-}
 
-function timerPause() {
-    timerRunning = false;
-    clearInterval(timerInterval);
-    document.getElementById('timer-start-btn').classList.remove('hidden');
-    document.getElementById('timer-pause-btn').classList.add('hidden');
-    document.getElementById('timer-start-btn').textContent = '▶️ استمرار';
-}
-
-function timerReset() {
-    timerRunning = false;
-    clearInterval(timerInterval);
-    timerElapsed = 0;
-    timerTotal = 0;
-    laps = [];
-    document.getElementById('lap-list').innerHTML = '';
-    document.getElementById('timer-start-btn').classList.remove('hidden');
-    document.getElementById('timer-start-btn').textContent = '▶️ ابدأ';
-    document.getElementById('timer-pause-btn').classList.add('hidden');
-    document.getElementById('timer-reset-btn').classList.add('hidden');
-    document.getElementById('timer-lap-btn').classList.add('hidden');
-    document.getElementById('timer-progress').style.strokeDashoffset = '0';
-    document.getElementById('timer-display-text').textContent = '00:00:00';
-    document.getElementById('timer-display-ms').textContent = '';
-    if (timerMode === 'countdown') {
-        document.getElementById('countdown-inputs').style.display = 'flex';
-    }
-}
-
-function timerLap() {
-    if (!timerRunning || timerMode !== 'stopwatch') return;
-    laps.push(timerElapsed);
-    const list = document.getElementById('lap-list');
-    const item = document.createElement('div');
-    item.className = 'lap-item';
-    item.innerHTML = `<span>لفة ${laps.length}</span><span>${formatTime(timerElapsed)}</span>`;
-    list.prepend(item);
-}
-
-function playAlarm() {
-    try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const freqs = [880, 1100, 880, 1100, 880];
-        freqs.forEach((freq, i) => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.frequency.value = freq;
-            osc.type = 'sine';
-            const t = ctx.currentTime + i * 0.25;
-            gain.gain.setValueAtTime(0.25, t);
-            gain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
-            osc.start(t);
-            osc.stop(t + 0.25);
-        });
-    } catch (e) {}
-}
-
-// ===========================
-// SCIENTIFIC CALCULATOR
-// ===========================
-let calcExpr = '';
-let calcDeg = true;
-let calcMemory = 0;
-let calcLastResult = 0;
-
-function calcInsert(val) {
-    if (val === '±') {
-        if (calcExpr === '' || calcExpr === '0') { calcExpr = '-'; }
-        else if (calcExpr.endsWith('-')) { calcExpr = calcExpr.slice(0, -1); }
-        else { calcExpr += '×(-1)'; }
-    } else {
-        calcExpr += val;
-    }
-    updateCalcDisplay();
-}
-
-function calcFunc(fn) {
-    calcExpr += fn;
-    updateCalcDisplay();
-}
-
-function calcOp(op) {
-    if (op === '²') calcExpr += '^2';
-    else if (op === '³') calcExpr += '^3';
-    else if (op === '⁻¹') calcExpr += '^(-1)';
-    else calcExpr += op;
-    updateCalcDisplay();
-}
-
-function calcClear() {
-    calcExpr = '';
-    document.getElementById('calc-expression').textContent = '';
-    document.getElementById('calc-result').textContent = '0';
-}
-
-function calcBackspace() {
-    // Handle multi-char functions
-    const funcs = ['sin(', 'cos(', 'tan(', 'asin(', 'acos(', 'atan(', 'log(', 'ln(', 'abs(', 'fact(', 'nCr(', 'nPr(', '10^(', '√(', '∛('];
-    for (const fn of funcs) {
-        if (calcExpr.endsWith(fn)) { calcExpr = calcExpr.slice(0, -fn.length); updateCalcDisplay(); return; }
-    }
-    calcExpr = calcExpr.slice(0, -1);
-    updateCalcDisplay();
-}
-
-function calcMem(action) {
-    const indicator = document.getElementById('calc-mem-indicator');
-    switch (action) {
-        case 'MC': calcMemory = 0; indicator.textContent = ''; break;
-        case 'MR': calcExpr += calcMemory.toString(); updateCalcDisplay(); break;
-        case 'M+': calcMemory += calcLastResult; indicator.textContent = 'M'; break;
-        case 'M-': calcMemory -= calcLastResult; indicator.textContent = 'M'; break;
-    }
-}
-
-function toggleDegRad() {
-    calcDeg = !calcDeg;
-    const btn = document.getElementById('calc-deg-btn');
-    btn.textContent = calcDeg ? 'DEG' : 'RAD';
-    btn.classList.toggle('rad', !calcDeg);
-    updateCalcDisplay();
-}
-
-function updateCalcDisplay() {
-    document.getElementById('calc-expression').textContent = calcExpr;
-    // Try live evaluation
-    try {
-        const result = evaluateCalcExpr(calcExpr);
-        if (!isNaN(result) && isFinite(result)) {
-            calcLastResult = result;
-            document.getElementById('calc-result').textContent = formatCalcNumber(result);
+        function updateStatus(msg, isError = false) {
+            statusMsg.innerText = msg;
+            statusMsg.style.color = isError ? '#ff3b30' : 'var(--accent-cyan)';
         }
-    } catch (e) { /* Don't update result on error - keep last valid */ }
-}
 
-function calcEvaluate() {
-    try {
-        const result = evaluateCalcExpr(calcExpr);
-        if (isNaN(result) || !isFinite(result)) {
-            document.getElementById('calc-result').textContent = 'خطأ';
-            return;
+        // --- Network Logic (PeerJS) ---
+        
+        function initPeer(id = null) {
+            peer = id ? new Peer(id) : new Peer();
+            
+            peer.on('open', (peerId) => {
+                if(isOwner) {
+                    document.getElementById('role-selection').classList.add('hidden');
+                    document.getElementById('host-code-display').classList.remove('hidden');
+                    updateStatus('تم فتح الغرفة. اطلبي من صديقتك الدخول الآن.');
+                }
+            });
+
+            peer.on('connection', (conn) => {
+                if(isOwner && !dataConn) { // Accept connection
+                    setupDataConnection(conn);
+                } else if(isOwner && dataConn) {
+                    // Only 1 friend allowed
+                    conn.close();
+                }
+            });
+
+            peer.on('call', (call) => {
+                // Receive media call (screen share)
+                call.answer();
+                call.on('stream', (remoteStream) => {
+                    const videoElement = document.getElementById('remote-video');
+                    videoElement.srcObject = remoteStream;
+                    videoElement.muted = false; // Ensure friend hears the sound
+                    videoElement.play();
+                });
+                mediaConn = call;
+            });
+
+            peer.on('error', (err) => {
+                console.error(err);
+                updateStatus('حدث خطأ: ' + err.type, true);
+            });
         }
-        calcLastResult = result;
-        document.getElementById('calc-result').textContent = formatCalcNumber(result);
-        document.getElementById('calc-expression').textContent = calcExpr + ' =';
-        calcExpr = result.toString();
-    } catch (e) {
-        document.getElementById('calc-result').textContent = 'خطأ';
-    }
-}
 
-function formatCalcNumber(n) {
-    if (Number.isInteger(n) && Math.abs(n) < 1e15) return n.toLocaleString('en-US');
-    if (Math.abs(n) < 0.000001 || Math.abs(n) > 1e12) return n.toExponential(8);
-    return parseFloat(n.toPrecision(12)).toString();
-}
+        function initHost() {
+            isOwner = true;
+            updateStatus('جاري فتح الغرفة...');
+            initPeer(FIXED_ROOM_ID);
+        }
 
-// Math helpers
-function factorial(n) {
-    if (n < 0) return NaN; if (n <= 1) return 1;
-    let r = 1; for (let i = 2; i <= n; i++) r *= i; return r;
-}
-function combination(n, r) { return factorial(n) / (factorial(r) * factorial(n - r)); }
-function permutation(n, r) { return factorial(n) / factorial(n - r); }
+        function joinRoom() {
+            isOwner = false;
+            updateStatus('جاري الدخول للغرفة...');
+            initPeer();
+            
+            peer.on('open', () => {
+                const conn = peer.connect(FIXED_ROOM_ID, { reliable: true });
+                setupDataConnection(conn);
+            });
+        }
 
-function evaluateCalcExpr(expr) {
-    if (!expr || expr.trim() === '') return 0;
-    let e = expr;
-    const D = calcDeg ? Math.PI / 180 : 1;
-    const ID = calcDeg ? 180 / Math.PI : 1;
+        function setupDataConnection(conn) {
+            dataConn = conn;
+            dataConn.on('open', () => {
+                showAppScreen();
+                if(isOwner) {
+                    // Send initial state and permissions
+                    sendData({ type: 'permissions_update', permissions: permissions });
+                    sendData({ type: 'note_update', content: notesArea.value });
+                    if(editor) sendData({ type: 'code_update', content: editor.getValue() });
+                }
+            });
 
-    // Replace display symbols
-    e = e.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/,/g, ',');
-    e = e.replace(/π/g, `(${Math.PI})`);
-    // Replace 'e' only when standalone (not part of function names)
-    e = e.replace(/(?<![a-zA-Z])e(?![a-zA-Z^])/g, `(${Math.E})`);
-    e = e.replace(/%/g, '*0.01');
+            dataConn.on('data', (data) => {
+                handleIncomingData(data);
+            });
 
-    // Power operator
-    e = e.replace(/\^/g, '**');
+            dataConn.on('close', () => {
+                alert("تم قطع الاتصال.");
+                location.reload();
+            });
+        }
 
-    // Functions
-    e = e.replace(/asin\(/g, `(${ID}*Math.asin(`);
-    e = e.replace(/acos\(/g, `(${ID}*Math.acos(`);
-    e = e.replace(/atan\(/g, `(${ID}*Math.atan(`);
-    // Careful: replace sin/cos/tan AFTER asin/acos/atan
-    e = e.replace(/(?<!a)sin\(/g, `Math.sin(${D}*(`);
-    e = e.replace(/(?<!a)cos\(/g, `Math.cos(${D}*(`);
-    e = e.replace(/(?<!a)tan\(/g, `Math.tan(${D}*(`);
-    e = e.replace(/log\(/g, 'Math.log10(');
-    e = e.replace(/ln\(/g, 'Math.log(');
-    e = e.replace(/√\(/g, 'Math.sqrt(');
-    e = e.replace(/∛\(/g, 'Math.cbrt(');
-    e = e.replace(/abs\(/g, 'Math.abs(');
-    e = e.replace(/fact\(/g, '__fact(');
-    e = e.replace(/nCr\(/g, '__nCr(');
-    e = e.replace(/nPr\(/g, '__nPr(');
-    e = e.replace(/10\^\(/g, '(10**(');
+        function sendData(data) {
+            if(dataConn && dataConn.open) {
+                dataConn.send(data);
+            }
+        }
 
-    // Balance parentheses
-    const openCount = (e.match(/\(/g) || []).length;
-    const closeCount = (e.match(/\)/g) || []).length;
-    for (let i = 0; i < openCount - closeCount; i++) e += ')';
+        // --- Data Handling ---
+        
+        function handleIncomingData(data) {
+            if(data.type === 'note_update') {
+                isNotesUpdatingProgrammatically = true;
+                notesArea.value = data.content;
+                isNotesUpdatingProgrammatically = false;
+            } 
+            else if(data.type === 'code_update') {
+                if(editor) {
+                    isCodeUpdatingProgrammatically = true;
+                    const cursor = editor.getCursor();
+                    editor.setValue(data.content);
+                    editor.setCursor(cursor);
+                    isCodeUpdatingProgrammatically = false;
+                }
+            }
+            else if(data.type === 'chat_msg') {
+                appendChatMsg(data.text, 'received');
+            }
+            else if(data.type === 'file_transfer') {
+                receiveFile(data.name, data.file, data.typeStr);
+            }
+            else if(data.type === 'permissions_update') {
+                if(!isOwner) {
+                    permissions = data.permissions;
+                    applyPermissionsUI();
+                }
+            }
+        }
 
-    // Sanitize: only allow safe characters
-    if (!/^[\d\s\+\-\*\/\.\(\)\,\%aMathsincologqrtbcbpfe\_\^]*$/.test(e.replace(/Math\.\w+/g, '').replace(/__\w+/g, ''))) {
-        // Relaxed check - just evaluate
-    }
+        // --- Permissions Logic ---
+        
+        function hasPermission(feature) {
+            return isOwner || permissions[feature];
+        }
 
-    const __fact = factorial;
-    const __nCr = combination;
-    const __nPr = permutation;
+        function updatePermissions() {
+            if(!isOwner) return;
+            permissions = {
+                notes: document.getElementById('perm-notes').checked,
+                python: document.getElementById('perm-python').checked,
+                files: document.getElementById('perm-files').checked,
+                screen: document.getElementById('perm-screen').checked
+            };
+            sendData({ type: 'permissions_update', permissions: permissions });
+        }
 
-    return new Function('Math', '__fact', '__nCr', '__nPr', `"use strict"; return (${e})`)(Math, __fact, __nCr, __nPr);
-}
+        function applyPermissionsUI() {
+            // Notes
+            notesArea.readOnly = !permissions.notes;
+            notesArea.placeholder = permissions.notes ? "اكتب ملاحظاتك هنا..." : "ليس لديك صلاحية لتعديل الملاحظات.";
+            
+            // Python
+            if(editor) editor.setOption("readOnly", !permissions.python);
 
-// ===========================
-// DAILY GOALS
-// ===========================
-let goals = [];
+            // Files
+            const fileUploadBox = document.querySelector('.file-upload-box');
+            if(permissions.files) {
+                fileUploadBox.style.pointerEvents = 'auto';
+                fileUploadBox.style.opacity = '1';
+                fileUploadBox.querySelector('h3').innerText = '📥 اضغط هنا لرفع ومشاركة ملف';
+            } else {
+                fileUploadBox.style.pointerEvents = 'none';
+                fileUploadBox.style.opacity = '0.5';
+                fileUploadBox.querySelector('h3').innerText = '🚫 ليس لديك صلاحية لرفع الملفات';
+            }
 
-function getTodayKey() {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
+            // Screen
+            const screenBtn = document.getElementById('start-screen-btn');
+            if(permissions.screen) {
+                screenBtn.disabled = false;
+                screenBtn.innerText = '▶️ بدء بث الشاشة';
+                screenBtn.style.opacity = '1';
+            } else {
+                screenBtn.disabled = true;
+                screenBtn.innerText = '🚫 البث غير متاح لك';
+                screenBtn.style.opacity = '0.5';
+            }
+        }
 
-function loadGoals() {
-    const key = getTodayKey();
-    const saved = localStorage.getItem('pomme-goals-' + key);
-    goals = saved ? JSON.parse(saved) : [];
-    renderGoals();
-    // Set date display
-    const d = new Date();
-    const days = ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
-    const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-    document.getElementById('goals-date').textContent = `${days[d.getDay()]}، ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
-}
+        // --- Chat Logic ---
+        function sendChat() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if(!text) return;
 
-function saveGoals() {
-    localStorage.setItem('pomme-goals-' + getTodayKey(), JSON.stringify(goals));
-}
+            appendChatMsg(text, 'sent');
+            sendData({ type: 'chat_msg', text: text });
+            input.value = '';
+        }
 
-function addGoal() {
-    const input = document.getElementById('goal-input');
-    const text = input.value.trim();
-    if (!text) return;
-    goals.push({ id: Date.now(), text, completed: false });
-    input.value = '';
-    saveGoals();
-    renderGoals();
-}
+        function handleChatEnter(e) {
+            if(e.key === 'Enter') sendChat();
+        }
 
-function toggleGoal(id) {
-    const goal = goals.find(g => g.id === id);
-    if (goal) {
-        goal.completed = !goal.completed;
-        saveGoals();
-        renderGoals();
-    }
-}
+        function appendChatMsg(text, type) {
+            const container = document.getElementById('chat-messages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-msg ${type}`;
+            msgDiv.innerText = text;
+            container.appendChild(msgDiv);
+            container.scrollTop = container.scrollHeight;
+        }
 
-function deleteGoal(id) {
-    goals = goals.filter(g => g.id !== id);
-    saveGoals();
-    renderGoals();
-}
+        // --- File Sharing Logic ---
+        function handleFileUpload(e) {
+            if(!hasPermission('files')) return;
+            const file = e.target.files[0];
+            if(!file) return;
 
-function renderGoals() {
-    const list = document.getElementById('goals-list');
-    const completed = goals.filter(g => g.completed).length;
-    document.getElementById('goals-progress').innerHTML = `<span>${completed}</span> / ${goals.length} مكتمل`;
+            // Add to UI as sent
+            addFileToList(file.name, file, true);
 
-    list.innerHTML = goals.map(g => `
-        <div class="goal-item ${g.completed ? 'completed' : ''}">
-            <div class="goal-checkbox ${g.completed ? 'checked' : ''}" onclick="toggleGoal(${g.id})"></div>
-            <span class="goal-text">${escapeHTML(g.text)}</span>
-            <button class="goal-delete" onclick="deleteGoal(${g.id})">🗑️</button>
-        </div>
-    `).join('');
-}
+            // Send via WebRTC DataChannel (PeerJS supports Blobs/ArrayBuffers natively)
+            sendData({
+                type: 'file_transfer',
+                name: file.name,
+                typeStr: file.type,
+                file: file
+            });
+            
+            // Reset input
+            e.target.value = '';
+        }
 
-function escapeHTML(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-}
+        function receiveFile(name, blob, typeStr) {
+            const file = new Blob([blob], { type: typeStr });
+            addFileToList(name, file, false);
+        }
 
-// ===========================
-// INIT
-// ===========================
-document.addEventListener('DOMContentLoaded', () => {
-    updateTimerDisplay();
-});
-</script>
+        function addFileToList(name, blob, isSent) {
+            const list = document.getElementById('file-list');
+            const url = URL.createObjectURL(blob);
+            const li = document.createElement('li');
+            li.className = 'file-item';
+            
+            const direction = isSent ? '📤 (أنت)' : '📥 (صديقتك)';
+            li.innerHTML = `
+                <span>${direction} ${name}</span>
+                <a href="${url}" download="${name}">تحميل</a>
+            `;
+            list.appendChild(li);
+        }
+
+        // --- Screen Sharing Logic ---
+        function updateZoom() {
+            const zoomLevel = document.getElementById('video-zoom').value;
+            const video = document.getElementById('remote-video');
+            
+            if (zoomLevel == 1) {
+                video.style.width = '100%';
+                video.style.height = '100%';
+                video.style.maxWidth = '100%';
+            } else {
+                video.style.width = `${zoomLevel * 100}%`;
+                video.style.height = 'auto';
+                video.style.maxWidth = 'none';
+            }
+        }
+
+        function resetZoom() {
+            document.getElementById('video-zoom').value = 1;
+            updateZoom();
+        }
+
+        function toggleFullScreen() {
+            const video = document.getElementById('remote-video');
+            if (!document.fullscreenElement) {
+                if (video.requestFullscreen) {
+                    video.requestFullscreen();
+                } else if (video.webkitRequestFullscreen) { /* Safari */
+                    video.webkitRequestFullscreen();
+                } else if (video.msRequestFullscreen) { /* IE11 */
+                    video.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) { /* Safari */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE11 */
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
+        function toggleMic() {
+            includeMic = !includeMic;
+            const btn = document.getElementById('toggle-mic-btn');
+            if(includeMic) {
+                btn.style.background = 'rgba(0, 230, 118, 0.2)';
+                btn.style.borderColor = '#00e676';
+                btn.style.color = '#00e676';
+                btn.innerText = '🎙️ المايك مفعل';
+            } else {
+                btn.style.background = 'rgba(255, 59, 48, 0.2)';
+                btn.style.borderColor = '#ff3b30';
+                btn.style.color = '#ff3b30';
+                btn.innerText = '🔇 المايك معطل';
+            }
+        }
+
+        async function startScreenShare() {
+            if(!hasPermission('screen')) return;
+            try {
+                // Request Screen + System Audio with 120fps for maximum smoothness
+                const displayStream = await navigator.mediaDevices.getDisplayMedia({ 
+                    video: { 
+                        width: { ideal: 1920 }, // 1080p is better for 120fps zero-latency over network
+                        height: { ideal: 1080 },
+                        frameRate: { ideal: 120, max: 144 } 
+                    }, 
+                    audio: {
+                        echoCancellation: false,
+                        noiseSuppression: false,
+                        autoGainControl: false, // Prevents browser from lowering game volume!
+                        sampleRate: 48000
+                    }
+                });
+                
+                // Prioritize smoothness for games (zero latency)
+                const videoTrack = displayStream.getVideoTracks()[0];
+                if ('contentHint' in videoTrack) {
+                    videoTrack.contentHint = 'motion';
+                }
+
+                let finalStream = displayStream;
+                let audioContext = null;
+
+                try {
+                    audioContext = new AudioContext();
+                    const dest = audioContext.createMediaStreamDestination();
+                    
+                    // Boost volume by 300%
+                    const gainNode = audioContext.createGain();
+                    gainNode.gain.value = 3.0; 
+                    gainNode.connect(dest);
+
+                    let hasAudio = false;
+
+                    // 1. Add System Audio (Always, if available)
+                    if (displayStream.getAudioTracks().length > 0) {
+                        const systemSource = audioContext.createMediaStreamSource(displayStream);
+                        systemSource.connect(gainNode);
+                        hasAudio = true;
+                    }
+                    
+                    // 2. Add Mic Audio (Only if enabled)
+                    let micStream = null;
+                    if (includeMic) {
+                        try {
+                            micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                            const micSource = audioContext.createMediaStreamSource(micStream);
+                            micSource.connect(gainNode);
+                            hasAudio = true;
+                        } catch(err) {
+                            console.warn("لم نتمكن من التقاط المايكروفون", err);
+                        }
+                    }
+
+                    if (hasAudio) {
+                        const mixedAudioTrack = dest.stream.getAudioTracks()[0];
+                        finalStream = new MediaStream([videoTrack, mixedAudioTrack]);
+                    }
+
+                    // Cleanup when sharing stops
+                    videoTrack.onended = () => {
+                        if (micStream) micStream.getTracks().forEach(t => t.stop());
+                        if (audioContext) audioContext.close();
+                        stopScreenShare();
+                    };
+
+                } catch (e) {
+                    console.error("Audio mixing failed:", e);
+                    videoTrack.onended = () => stopScreenShare();
+                }
+                
+                myStream = finalStream;
+                
+                // Show my stream locally but MUTED so it doesn't echo for the host
+                const localVideo = document.getElementById('remote-video');
+                localVideo.srcObject = finalStream;
+                localVideo.muted = true;
+                
+                document.getElementById('start-screen-btn').classList.add('hidden');
+                document.getElementById('stop-screen-btn').classList.remove('hidden');
+
+                // Call remote peer
+                if(dataConn && dataConn.peer) {
+                    mediaConn = peer.call(dataConn.peer, finalStream);
+                }
+
+            } catch(err) {
+                console.error("Error sharing screen: ", err);
+                alert("تعذر مشاركة الشاشة. تأكد من تحديد خيار 'مشاركة صوت النظام' عند اختيار الشاشة.");
+            }
+        }
+
+        function stopScreenShare() {
+            if(myStream) {
+                myStream.getTracks().forEach(track => track.stop());
+                myStream = null;
+            }
+            if(mediaConn) {
+                mediaConn.close();
+                mediaConn = null;
+            }
+            document.getElementById('remote-video').srcObject = null;
+            document.getElementById('start-screen-btn').classList.remove('hidden');
+            document.getElementById('stop-screen-btn').classList.add('hidden');
+        }
+
+    </script>
 </body>
 </html>
