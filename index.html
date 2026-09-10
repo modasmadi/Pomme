@@ -2,7 +2,11 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#060b18">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Pomme - مساحة العمل المشتركة</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -737,6 +741,26 @@ body[data-theme="oled"]{--bg-deep:#000;--bg-dark:#05070d;--bg-card:#0b0f1b;--bg-
 @media(max-width:768px){.app-home{gap:10px}.hero-card{padding:15px;border-radius:18px}.home-top{flex-direction:column}.home-room{width:100%}.home-grid{gap:8px}.quick-card{padding:12px;border-radius:15px;min-height:96px}.quick-card .qicon{font-size:24px}.quick-card strong{font-size:12px}.home-panel{border-radius:15px}.watch-player{min-height:48vh;border-radius:15px}.watch-layout{gap:8px}.watch-controls-panel{border-radius:15px;padding:10px}.settings-grid{grid-template-columns:1fr}.presence-card{margin-bottom:2px}.sidebar{padding-bottom:calc(5px + var(--safe-bottom));height:calc(74px + var(--safe-bottom));}.app-body{padding-bottom:calc(74px + var(--safe-bottom));}}
 @media(max-width:390px){.home-grid{grid-template-columns:1fr 1fr}.quick-card{min-height:92px}.watch-player{min-height:44vh}}
 
+
+/* ===== POMME V2 FEATURE LAYER ===== */
+.notes-workspace{height:100%;min-height:0;display:flex;flex-direction:column;background:linear-gradient(160deg,rgba(17,24,51,.9),rgba(9,14,34,.92));border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.22)}
+.notes-editor-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border);background:rgba(12,16,36,.72);backdrop-filter:blur(14px);flex-wrap:wrap}
+.notes-tool-group{display:flex;gap:6px;flex-wrap:wrap}.notes-tool{min-width:36px;height:34px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.04);color:var(--white);font-family:var(--font);font-weight:800;cursor:pointer}.notes-tool:hover,.notes-tool:focus-visible{border-color:rgba(34,211,238,.35);background:rgba(34,211,238,.08)}
+.notes-live{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:10px}.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--emerald);box-shadow:0 0 10px rgba(16,185,129,.4)}.notes-word-count{padding-inline-start:8px;border-inline-start:1px solid var(--border)}
+.notes-editor{flex:1;min-height:0;overflow:auto;padding:28px clamp(18px,4vw,54px);outline:none;font-size:18px;line-height:1.9;color:var(--white);white-space:pre-wrap;word-break:break-word}.notes-editor:empty:before{content:attr(data-placeholder);color:#65728d}.notes-editor h1,.notes-editor h2,.notes-editor h3{margin:.6em 0 .25em}.notes-editor ul,.notes-editor ol{padding-inline-start:28px}.notes-editor blockquote{border-inline-start:3px solid var(--cyan);padding-inline-start:14px;color:#c8d1e3}
+.notes-editor + *{display:none!important} #notes-area{display:none!important}
+.watch-layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px;height:100%;min-height:0}.watch-player{position:relative;min-height:320px;background:#000;border-radius:20px;overflow:hidden;border:1px solid var(--border);box-shadow:0 24px 70px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center}.watch-player video,.watch-youtube,.watch-youtube iframe{width:100%;height:100%;border:0;display:block;background:#000}.watch-empty{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--muted);padding:30px;text-align:center}.watch-controls-panel{display:flex;flex-direction:column;gap:10px;padding:14px;border:1px solid var(--border);border-radius:20px;background:linear-gradient(160deg,rgba(17,24,51,.88),rgba(11,16,35,.82));min-height:0;overflow:auto}.watch-row{display:grid;grid-template-columns:1fr auto;gap:8px}.watch-row:nth-of-type(2){grid-template-columns:repeat(4,1fr)}.watch-controls-panel input{width:100%;min-height:44px;border:1px solid var(--border);background:rgba(6,11,24,.75);color:var(--white);border-radius:11px;padding:10px 12px;font-family:var(--font);outline:none}.watch-btn{min-height:42px;border:1px solid var(--border);background:rgba(99,102,241,.12);color:var(--white);border-radius:11px;padding:9px 10px;font-family:var(--font);font-weight:800;cursor:pointer}.watch-btn:hover{background:rgba(99,102,241,.2);border-color:var(--border-active)}.watch-meta{font-size:11px;color:var(--muted);line-height:1.7;padding:10px;border-radius:12px;background:rgba(255,255,255,.03)}
+.game-center-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 13px;border:1px solid var(--border);border-radius:15px;background:rgba(17,24,51,.7)}.game-center-bar strong{display:block}.game-center-bar span,.game-center-score{font-size:10px;color:var(--muted)}
+.chat-fab{display:flex!important;align-items:center;justify-content:center;position:fixed;right:16px;left:auto;bottom:92px;z-index:220;width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#6366f1,#22d3ee);box-shadow:0 16px 40px rgba(34,211,238,.2),0 8px 20px rgba(0,0,0,.35)}.chat-fab .chat-unread{position:absolute;top:-4px;right:-4px;min-width:19px;height:19px;border-radius:999px;background:var(--rose);color:white;font-size:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--bg-deep)}
+.chat-overlay{display:none!important;position:fixed;inset:0;z-index:210;background:rgba(2,5,14,.58);backdrop-filter:blur(5px);align-items:flex-end;justify-content:center;padding:12px}.chat-overlay.active{display:flex!important}.chat-overlay .chat-panel{width:min(560px,100%);height:min(72dvh,720px);border:1px solid var(--border);border-radius:22px;box-shadow:0 30px 90px rgba(0,0,0,.45);order:unset;overflow:hidden}.chat-overlay-close{top:18px;left:18px;z-index:3}
+.room-modal{position:fixed;inset:0;z-index:700;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(2,5,14,.7);backdrop-filter:blur(12px)}.room-modal.active{display:flex}.room-modal-card{width:min(620px,100%);background:linear-gradient(160deg,rgba(17,24,51,.98),rgba(6,11,24,.98));border:1px solid rgba(129,140,248,.2);border-radius:24px;padding:18px;box-shadow:0 30px 100px rgba(0,0,0,.5)}.room-modal-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.room-kicker{font-size:9px;letter-spacing:.18em;color:var(--cyan);font-weight:900}.room-modal-head h3{margin-top:3px;font-size:22px}.modal-close{width:36px;height:36px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,.04);color:var(--white);font-size:24px;cursor:pointer}.invite-link-box{display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-top:14px}.invite-link-box input{min-height:44px;border:1px solid var(--border);background:rgba(6,11,24,.7);color:var(--white);border-radius:11px;padding:9px;font-family:var(--font);font-size:11px;direction:ltr}.invite-link-box button,.setting-status-row button{min-height:44px;border:1px solid var(--border);background:rgba(99,102,241,.12);color:var(--white);border-radius:11px;padding:8px 13px;font-family:var(--font);font-weight:800;cursor:pointer}.qr-box{margin:16px auto 8px;display:flex;flex-direction:column;align-items:center;gap:8px}.qr-box canvas{background:#fff;border-radius:14px;padding:10px;box-shadow:0 12px 35px rgba(0,0,0,.25);width:min(240px,68vw);height:auto}.invite-meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:10px}.settings-hint{font-size:10px;color:var(--muted);line-height:1.6;margin-top:8px}.setting-status-row{display:flex;align-items:center;gap:8px;margin-top:12px}.offline-dot{width:9px;height:9px;border-radius:50%;background:var(--rose)}.offline-dot.online{background:var(--emerald);box-shadow:0 0 10px rgba(16,185,129,.4)}
+.moments-mini{display:flex;flex-direction:column;gap:8px}.moments-mini-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 9px;border:1px solid rgba(255,255,255,.05);border-radius:11px;background:rgba(255,255,255,.02)}.moments-mini-row span{font-size:10px;color:var(--muted)}.moments-page{padding:14px;display:flex;flex-direction:column;gap:12px;margin-top:12px}.moments-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.moment-stat{padding:11px;border:1px solid var(--border);border-radius:13px;background:rgba(255,255,255,.03)}.moment-stat small{display:block;color:var(--muted);font-size:9px}.moment-stat strong{display:block;font-size:16px;margin-top:3px}.moments-timeline{display:flex;flex-direction:column;gap:7px;max-height:380px;overflow:auto}.moment-item{display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:9px;padding:9px;border:1px solid rgba(255,255,255,.05);border-radius:12px;background:rgba(255,255,255,.025)}.moment-icon{width:32px;height:32px;border-radius:10px;background:rgba(99,102,241,.12);display:flex;align-items:center;justify-content:center}.moment-copy strong{font-size:11px}.moment-copy span{display:block;color:var(--muted);font-size:9px;margin-top:2px}.moment-time{color:var(--muted);font-size:9px}
+.peer-mini-presence{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.025);font-size:10px}.presence-dot.smart-away{background:var(--amber)!important;box-shadow:0 0 10px rgba(245,158,11,.35)!important}.presence-dot.smart-busy{background:var(--rose)!important;box-shadow:0 0 10px rgba(244,63,94,.35)!important}
+.stream-voice-overlay{position:absolute;right:12px;bottom:12px;z-index:4;display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:12px;background:rgba(6,11,24,.74);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(12px);font-size:10px}.stream-voice-overlay .voice-dot{width:8px;height:8px;border-radius:50%;background:var(--emerald);box-shadow:0 0 9px rgba(16,185,129,.6)}
+@media(max-width:900px){.watch-layout{grid-template-columns:1fr}.watch-controls-panel{max-height:280px}.moments-summary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.main-content{padding:9px}.chat-fab{right:12px;bottom:84px}.home-grid{grid-template-columns:repeat(2,1fr)}.home-panels,.home-panels-3{grid-template-columns:1fr}.notes-editor{padding:22px 15px;font-size:16px}.notes-editor-toolbar{position:sticky;top:0;z-index:2}.watch-player{min-height:48vh;border-radius:16px}.watch-controls-panel{border-radius:16px}.room-modal-card{padding:15px;border-radius:20px}.invite-link-box{grid-template-columns:1fr 1fr}.invite-link-box input{grid-column:1/-1}.game-center-bar{align-items:flex-start;flex-direction:column}.moments-page{margin-bottom:4px}}
+@media(max-width:390px){.home-grid{grid-template-columns:1fr 1fr;gap:8px}.invite-link-box{grid-template-columns:1fr 1fr}.chat-fab{width:52px;height:52px}}
+@media(prefers-reduced-motion:reduce){.micro-pop,.toast,.sidebar-item,.game-card{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -864,15 +888,20 @@ body[data-theme="oled"]{--bg-deep:#000;--bg-dark:#05070d;--bg-card:#0b0f1b;--bg-
                             <div class="quick-card" onclick="switchTab('watch')"><div class="qicon">▶️</div><strong>Watch Together</strong><span>مشاهدة ومزامنة الفيديو</span></div>
                             <div class="quick-card" onclick="switchTab('mini-games')"><div class="qicon">🎮</div><strong>Mini Games</strong><span>Chess, Monopoly & more</span></div>
                             <div class="quick-card" onclick="switchTab('chat')"><div class="qicon">💬</div><strong>Chat</strong><span>رسائل وتفاعلات مباشرة</span></div>
+                            <div class="quick-card" onclick="openRoomInvite()"><div class="qicon">🔗</div><strong>Invite</strong><span>رابط + QR للدخول</span></div>
                         </div>
-                        <div class="home-panels">
+                        <div class="home-panels home-panels-3">
                             <div class="home-panel">
                                 <div class="home-panel-head"><strong>Recent Activity</strong><span class="sync-badge">Live</span></div>
                                 <div class="home-panel-body"><div class="activity-list" id="home-activity-list"><div class="activity-item"><div class="activity-icon">✨</div><div class="activity-copy"><strong>Pomme is ready</strong><span>ابدأ أي أداة من الاختصارات أعلاه</span></div></div></div></div>
                             </div>
                             <div class="home-panel">
                                 <div class="home-panel-head"><strong>Voice</strong><span class="sync-badge" id="home-voice-badge">Off</span></div>
-                                <div class="home-panel-body"><div class="voice-card"><div class="voice-state"><div class="voice-orb" id="home-voice-orb">🎙️</div><div><strong id="home-voice-state">Voice chat</strong><div style="font-size:10px;color:var(--muted)">اضغط للتحدث مع الطرف الآخر</div></div></div><button class="voice-btn" onclick="toggleVoice()" id="home-voice-btn">تشغيل</button></div></div>
+                                <div class="home-panel-body"><div class="voice-card"><div class="voice-state"><div class="voice-orb" id="home-voice-orb">🎙️</div><div><strong id="home-voice-state">Voice chat</strong><div style="font-size:10px;color:var(--muted)">صوت مستقل أو مع مشاركة الشاشة</div></div></div><button class="voice-btn" onclick="toggleVoice()" id="home-voice-btn">تشغيل</button></div></div>
+                            </div>
+                            <div class="home-panel">
+                                <div class="home-panel-head"><strong>Pomme Moments</strong><span class="sync-badge">Local</span></div>
+                                <div class="home-panel-body"><div class="moments-mini" id="home-moments-mini"></div></div>
                             </div>
                         </div>
                     </div>
@@ -884,14 +913,14 @@ body[data-theme="oled"]{--bg-deep:#000;--bg-dark:#05070d;--bg-card:#0b0f1b;--bg-
                         <div class="watch-player" id="watch-player">
                             <div class="watch-empty" id="watch-empty"><div style="font-size:48px">▶️</div><strong>Watch Together</strong><span>ضع رابط فيديو مباشر أو YouTube ثم اضغط Load.</span></div>
                             <video id="watch-video" playsinline controls hidden></video>
-                            <iframe id="watch-youtube" hidden allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+                            <div id="watch-youtube" class="watch-youtube" hidden></div>
                         </div>
                         <div class="watch-controls-panel">
                             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><strong>Watch Together</strong><span class="sync-badge">P2P Sync</span></div>
-                            <div class="watch-row"><input id="watch-url" placeholder="YouTube / direct video URL"><button class="watch-btn" onclick="loadWatchUrl()">Load</button></div>
-                            <div class="watch-row"><button class="watch-btn" onclick="watchPlayPause()">▶ / ⏸</button><button class="watch-btn" onclick="watchSeek(-10)">−10s</button><button class="watch-btn" onclick="watchSeek(10)">+10s</button></div>
-                            <button class="watch-btn" onclick="watchClear()">Clear</button>
-                            <div class="watch-meta">المزامنة الدقيقة تعمل على فيديوهات HTML5 المباشرة. YouTube يستخدم Embed؛ المزامنة الكاملة له تحتاج API رسميًا.</div>
+                            <div class="watch-row"><input id="watch-url" placeholder="YouTube أو رابط فيديو مباشر"><button class="watch-btn" onclick="loadWatchUrl()">تحميل</button></div>
+                            <div class="watch-row"><button class="watch-btn" onclick="watchPlayPause()">▶ / ⏸</button><button class="watch-btn" onclick="watchSeek(-10)">−10s</button><button class="watch-btn" onclick="watchSeek(10)">+10s</button><button class="watch-btn" onclick="watchRequestState()">↻ Sync</button></div>
+                            <button class="watch-btn" onclick="watchClear()">مسح</button>
+                            <div class="watch-meta">YouTube الآن يعمل عبر `IFrame API` مع مزامنة تشغيل/إيقاف/تقديم/ترجيع بين الطرفين. الفيديو المباشر يستخدم `HTML5` sync.</div>
                             <div class="watch-meta" id="watch-state">No media loaded</div>
                         </div>
                     </div>
@@ -914,12 +943,29 @@ body[data-theme="oled"]{--bg-deep:#000;--bg-dark:#05070d;--bg-card:#0b0f1b;--bg-
                         <div class="settings-card"><h3>🔊 Sound</h3><p>أصوات خفيفة للنقر، الرسائل، الألعاب، وتغير الاتصال.</p><div class="sound-row"><button class="theme-btn" onclick="togglePommeSounds()" id="sound-toggle-btn">Sounds: On</button><button class="theme-btn" onclick="pommeClickSound()">Test</button></div></div>
                         <div class="settings-card"><h3>📳 Notifications</h3><p>إشعارات داخل الصفحة وإشعارات المتصفح عند السماح بها.</p><button class="theme-btn" onclick="enableNotifications()">Enable Notifications</button></div>
                         <div class="settings-card"><h3>✨ Interface</h3><p>Micro-interactions وحركة خفيفة بدون التأثير على الأداء.</p><button class="theme-btn" onclick="toggleMicroAnimations()" id="motion-toggle-btn">Motion: On</button></div>
+                        <div class="settings-card"><h3>📴 Offline Mode</h3><p id="offline-settings-copy">البيانات المحلية والملاحظات والألعاب تستمر دون اتصال؛ المزامنة تعود تلقائيًا عند عودة الشبكة.</p><div class="setting-status-row"><span id="offline-status-dot" class="offline-dot online"></span><strong id="offline-settings-status">Online</strong></div></div>
+                        <div class="settings-card"><h3>📲 PWA</h3><p>نسخة قابلة للتثبيت على الهاتف عند تشغيل Pomme من `HTTPS` أو بيئة ويب موثوقة.</p><button class="theme-btn" onclick="installPomme()" id="pwa-install-btn">Install Pomme</button><div id="pwa-status" class="settings-hint">Checking install support…</div></div>
+                        <div class="settings-card"><h3>🔗 Room Invite</h3><p>أنشئ رابط دخول سريع وشارك `QR Code` للطرف الآخر.</p><button class="theme-btn" onclick="openRoomInvite()">Open Invite</button></div>
+                        <div class="settings-card"><h3>🧠 Moments</h3><p>سجل محلي لأهم ما حصل في الجلسات السابقة، مع مؤشرات بسيطة.</p><button class="theme-btn" onclick="switchTab('account');scrollToMoments()">View Moments</button></div>
                     </div>
                 </div>
 
                 <!-- TAB: Notes -->
                 <div id="tab-notes" class="tab-content">
-                    <textarea id="notes-area" placeholder="اكتب ملاحظاتك هنا... سيتم مزامنتها فوراً ✍️"></textarea>
+                    <div class="notes-workspace">
+                        <div class="notes-editor-toolbar" role="toolbar" aria-label="أدوات الملاحظات">
+                            <div class="notes-tool-group">
+                                <button type="button" class="notes-tool" onclick="notesCommand('bold')"><b>B</b></button>
+                                <button type="button" class="notes-tool" onclick="notesCommand('italic')"><i>I</i></button>
+                                <button type="button" class="notes-tool" onclick="notesCommand('underline')"><u>U</u></button>
+                                <button type="button" class="notes-tool" onclick="notesCommand('insertUnorderedList')">• قائمة</button>
+                                <button type="button" class="notes-tool" onclick="notesCommand('insertOrderedList')">1. قائمة</button>
+                            </div>
+                            <div class="notes-live"><span class="sync-dot"></span><span id="notes-sync-label">محفوظ محليًا</span><span class="notes-word-count" id="notes-word-count">0 كلمة</span></div>
+                        </div>
+                        <textarea id="notes-area" aria-hidden="true" tabindex="-1"></textarea>
+                        <div id="notes-editor" class="notes-editor" contenteditable="true" spellcheck="true" data-placeholder="اكتب ملاحظاتك هنا…"></div>
+                    </div>
                 </div>
 
                 <!-- TAB: Stream -->
@@ -929,6 +975,7 @@ body[data-theme="oled"]{--bg-deep:#000;--bg-dark:#05070d;--bg-card:#0b0f1b;--bg-
                         <button class="btn-secondary hidden" id="stop-screen-btn" onclick="stopScreenShare()">⏹️ Stop</button>
                         <button class="btn-secondary" onclick="toggleFullScreen()" style="background:rgba(34,211,238,0.15); color:var(--cyan); border-color:var(--cyan)!important;">⛶ Fullscreen</button>
                         <button class="btn-secondary" onclick="requestKeyframeNow()" style="background:rgba(16,185,129,0.11);color:#9ff3cb;border-color:rgba(16,185,129,.35)!important;">↻ Refresh</button>
+                        <button class="btn-secondary" id="voice-screen-btn" onclick="startVoiceAndScreen()" style="background:rgba(34,211,238,0.10);color:#bff8ff;border-color:rgba(34,211,238,.28)!important;">🎙️ + 🖥️ Voice + Screen</button>
                         <button class="btn-secondary" id="game-mode-btn" onclick="toggleGameMode()" style="background:rgba(245,158,11,0.11);color:#ffe2a8;border-color:rgba(245,158,11,.32)!important;">🎮 Game Mode</button>
                     </div>
                     <div class="stream-quality-bar">
@@ -954,6 +1001,7 @@ body[data-theme="oled"]{--bg-deep:#000;--bg-dark:#05070d;--bg-card:#0b0f1b;--bg-
                             <span>Start the stream from the other device, then keep this page open.</span>
                         </div>
                         <video id="remote-video" autoplay playsinline></video>
+                        <div class="stream-voice-overlay" id="stream-voice-overlay"><span class="voice-dot"></span><span id="stream-voice-label">Voice off</span></div>
                     </div>
                 </div>
 
@@ -1146,7 +1194,7 @@ body[data-theme="oled"]{--bg-deep:#000;--bg-dark:#05070d;--bg-card:#0b0f1b;--bg-
                     <div class="games-wrap">
                         <div class="section-head">
                             <div>
-                                <h2>🎮 Mini Games</h2>
+                                <h2>🎮 Game Center</h2>
                                 <p>ألعاب خفيفة تعمل منفردًا، ومع الاتصال يمكن مزامنة الحركات الأساسية.</p>
                             </div>
                             <div class="game-stat">P2P: <span id="games-connection-state">Local</span></div>
@@ -1160,6 +1208,7 @@ body[data-theme="oled"]{--bg-deep:#000;--bg-dark:#05070d;--bg-card:#0b0f1b;--bg-
                             </div>
                             <div class="lobby-actions"><button class="game-action" onclick="toggleGameReady()" id="ready-game-btn">✅ جاهز</button><button class="game-action" onclick="requestGameRematch()">↻ Rematch</button></div>
                         </div>
+                        <div class="game-center-bar"><div><strong>Game Center</strong><span id="game-center-presence">مستعد للّعب</span></div><div class="game-center-score" id="game-center-score">0 wins • 0 sessions</div></div>
                         <div class="game-grid">
                             <div class="game-card active" id="game-card-xo" onclick="selectMiniGame('xo')"><span class="gicon">❌⭕</span><strong>Tic-Tac-Toe</strong><span>Classic XO</span></div>
                             <div class="game-card" id="game-card-chess" onclick="selectMiniGame('chess')"><span class="gicon">♟️</span><strong>Chess</strong><span>2-player board</span></div>
@@ -1220,6 +1269,11 @@ body[data-theme="oled"]{--bg-deep:#000;--bg-dark:#05070d;--bg-card:#0b0f1b;--bg-
                         <div class="section-head"><div><h2>Session History</h2><p>آخر جلسات Pomme على هذا الجهاز</p></div><button class="game-action" onclick="clearSessionHistory()">مسح السجل</button></div>
                         <div class="history-list" id="session-history-list"><div class="empty-note">لا توجد جلسات محفوظة بعد.</div></div>
                     </div>
+                    <div class="moments-page card-shell" id="pomme-moments-panel">
+                        <div class="section-head"><div><h2>🕰️ Pomme Moments</h2><p>سجل محلي ذكي للجلسات والأحداث المهمة.</p></div><button class="theme-btn" onclick="clearMoments()">Clear</button></div>
+                        <div class="moments-summary" id="moments-summary"></div>
+                        <div class="moments-timeline" id="moments-timeline"></div>
+                    </div>
                 </div>
 
                 <div id="tab-permissions" class="tab-content">
@@ -1271,6 +1325,16 @@ body[data-theme="oled"]{--bg-deep:#000;--bg-dark:#05070d;--bg-card:#0b0f1b;--bg-
             <button onclick="sendChatMobile()">إرسال</button>
         </div>
     </div>
+</div>
+
+<!-- Room Invite Modal -->
+<div class="room-modal" id="room-invite-modal" aria-hidden="true">
+  <div class="room-modal-card">
+    <div class="room-modal-head"><div><span class="room-kicker">POMME ROOM</span><h3>Invite to this space</h3></div><button class="modal-close" onclick="closeRoomInvite()">×</button></div>
+    <div class="invite-link-box"><input id="invite-link-input" readonly><button onclick="copyInviteLink()">Copy</button><button onclick="shareInviteLink()">Share</button></div>
+    <div class="qr-box"><canvas id="invite-qr" width="220" height="220"></canvas><div id="qr-fallback" class="settings-hint">QR يحتاج اتصالًا لتحميل مولد QR أول مرة.</div></div>
+    <div class="invite-meta"><span id="invite-room-label">Room: Local</span><span>يدخل الضيف بالأسماء المحفوظة تلقائيًا</span></div>
+  </div>
 </div>
 
 <!-- PeerJS -->
@@ -1539,7 +1603,7 @@ function setupDataConnection(conn){
         sendData({type:'hello',name:myDisplayName,role:isOwner?'host':'guest',protocol:4,accountId:localAccount?.id||null});
         sendPresence(true);
         sendData({type:'sync_request'});
-        if(isOwner){sendData({type:'permissions_update',permissions});sendData({type:'note_update',content:notesArea.value});sendGameState();}
+        if(isOwner){sendData({type:'permissions_update',permissions});sendData({type:'note_update',content:notesHtml(),format:'html'});sendGameState();}
         updateConnectionUI();setNetworkState('good');
     });
     dataConn.on('data',handleIncomingData);
@@ -1549,8 +1613,10 @@ function setupDataConnection(conn){
 function sendData(data){if(dataConn&&dataConn.open)try{dataConn.send(data);}catch(_){} }
 function handleIncomingData(data){
     if(!data||typeof data!=='object')return;
-    if(data.type==='hello'){const rb=document.getElementById('role-badge');if(rb&&data.name){rb.textContent=(isOwner?'Host 👑':'Guest')+' • '+data.name;}peerPresence={online:true,name:data.name||friendDisplayName,lastSeen:Date.now()};updatePresenceUI();notifyPeer((data.name||friendDisplayName)+' دخل الغرفة');return;}
-    if(data.type==='presence'){peerPresence={online:data.online!==false,name:data.name||friendDisplayName,lastSeen:data.at||Date.now()};updatePresenceUI();return;}
+    if(data.type==='hello'){if(isOwner&&roomLocked){sendData({type:'room_rejected',reason:'locked'});try{dataConn?.close();}catch(_){}return;}const rb=document.getElementById('role-badge');if(rb&&data.name){rb.textContent=(isOwner?'Host 👑':'Guest')+' • '+data.name;}peerPresence={online:true,name:data.name||friendDisplayName,lastSeen:Date.now(),status:'online'};updatePresenceUI();notifyPeer((data.name||friendDisplayName)+' دخل الغرفة');return;}
+    if(data.type==='presence'){peerPresence={online:data.online!==false,name:data.name||friendDisplayName,lastSeen:data.at||Date.now(),status:data.status||'online',tab:data.tab||'home',visible:data.visible!==false};updatePresenceUI();return;}
+    if(data.type==='room_lock'){roomLocked=!!data.locked;applyRoomLockUI();return;}
+    if(data.type==='room_rejected'){notifyPeer('الغرفة مقفلة حاليًا.');try{dataConn?.close();}catch(_){}setNetworkState('waiting');return;}
     if(data.type==='watch_load'||data.type==='watch_state'||data.type==='watch_clear'){handleWatchData(data);return;}
     if(data.type==='typing'){const ti=document.getElementById('typing-indicator');if(ti)ti.textContent=data.active?(data.name||friendDisplayName)+' يكتب...':'';clearTimeout(typingTimer);if(data.active)typingTimer=setTimeout(()=>{if(ti)ti.textContent='';},1600);return;}
     if(data.type==='viewer_bitrate'){if(isOwner){viewerMaxBitrate=Math.max(10000000,Math.min(28000000,Number(data.bitrate)||viewerMaxBitrate));preferredBitrate=Math.min(preferredBitrate,viewerMaxBitrate);applySenderBitrate(preferredBitrate);}return;}
@@ -1569,7 +1635,7 @@ function handleIncomingData(data){
     if(data.type==='note_update'){isNotesUpdatingProgrammatically=true;notesArea.value=data.content||'';isNotesUpdatingProgrammatically=false;}
     else if(data.type==='permissions_update'){if(!isOwner){permissions=data.permissions||permissions;applyPermissionsUI();}}
     else if(data.type==='game_state'){if(!gameState.localEditLock){gameState=data.state;renderMiniGame();}}
-    else if(data.type==='sync_request'&&isOwner){sendData({type:'permissions_update',permissions});sendData({type:'note_update',content:notesArea.value});sendGameState();}
+    else if(data.type==='sync_request'&&isOwner){sendData({type:'permissions_update',permissions});sendData({type:'note_update',content:notesHtml(),format:'html'});sendGameState();}
 }
 
 // ===========================
@@ -1577,7 +1643,10 @@ function handleIncomingData(data){
 // ===========================
 notesArea.addEventListener('input', () => {
     if (!isNotesUpdatingProgrammatically && hasPermission('notes')) {
-        sendData({ type: 'note_update', content: notesArea.value });
+        const e=document.getElementById('notes-editor');
+        const html=e?sanitizeNoteHTML(e.innerHTML):notesArea.value;
+        notesArea.value=html;
+        sendData({ type: 'note_update', content: html, format:'html' });
     }
 });
 
@@ -1711,7 +1780,8 @@ function updatePresenceUI(){const n=document.getElementById('friend-presence-nam
 function setLobbyUI(){const a=document.getElementById('lobby-me-status'),b=document.getElementById('lobby-friend-status'),state=document.getElementById('lobby-state');if(a){a.textContent=lobbyReady?'جاهز':'غير جاهز';a.classList.toggle('ready',lobbyReady)}if(b){b.textContent=remoteLobbyReady?'جاهز':'غير جاهز';b.classList.toggle('ready',remoteLobbyReady)}if(state)state.textContent=(lobbyReady&&remoteLobbyReady)?'Ready — Start!':'Waiting';}
 function toggleGameReady(){lobbyReady=!lobbyReady;sendData({type:'lobby',ready:lobbyReady,name:myDisplayName,game:gameState.type});setLobbyUI();if(lobbyReady&&remoteLobbyReady)notifyPeer('كلاكما جاهز — ابدأوا اللعب');}
 function requestGameRematch(){lobbyReady=false;remoteLobbyReady=false;sendData({type:'game_rematch',game:gameState.type});setLobbyUI();resetCurrentGame();}
-function resetCurrentGame(){if(gameState.type==='xo')resetXO(false);else if(gameState.type==='chess')resetChess(false);else if(gameState.type==='monopoly')resetMonopoly(false);else if(gameState.type==='2048')reset2048(false);else resetMemory(false);}
+function resetCurrentGame(){
+    localStorage.setItem('pomme-game-sessions',String(Number(localStorage.getItem('pomme-game-sessions')||0)+1));if(gameState.type==='xo')resetXO(false);else if(gameState.type==='chess')resetChess(false);else if(gameState.type==='monopoly')resetMonopoly(false);else if(gameState.type==='2048')reset2048(false);else resetMemory(false);}
 
 // ===========================
 // SCREEN SHARE HELPERS
@@ -1766,6 +1836,7 @@ function requestViewerBitrate(){
 }
 function requestKeyframeNow(){try{const pc=mediaConn&&mediaConn.peerConnection;if(!pc)return;pc.getReceivers().forEach(r=>{if(r.requestKeyFrame)r.requestKeyFrame();});pc.getSenders().forEach(s=>{if(s.track&&s.track.kind==='video'&&s.getParameters)s.getParameters();});}catch(_){}}
 async function startScreenShare(){
+    logMoment('stream','Screen Share','بدأت مشاركة الشاشة','🖥️');
     if(!isOwner&&!isSoloMode){updateStatus('البث يفتحه صاحب الغرفة فقط. أنت وضع مشاهدة.',true);return;}
     if(!hasPermission('screen')&&!isSoloMode)return;
     try{
@@ -1783,6 +1854,7 @@ async function startScreenShare(){
     }catch(err){console.error('Screen share error:',err);if(err.name!=='NotAllowedError')alert('تعذر تشغيل مشاركة الشاشة: '+err.message);}
 }
 function stopScreenShare(){
+    logMoment('stream','Screen Share stopped','توقفت مشاركة الشاشة','⏹️');
     if(statsTimer){clearInterval(statsTimer);statsTimer=null;}if(qualityEngineTimer){clearInterval(qualityEngineTimer);qualityEngineTimer=null;}
     if(myStream){myStream.getTracks().forEach(t=>t.stop());myStream=null;}if(mediaConn){try{mediaConn.close();}catch(_){}mediaConn=null;}
     document.getElementById('remote-video').srcObject=null;document.getElementById('stream-placeholder').style.display='flex';document.getElementById('start-screen-btn').classList.toggle('hidden',!isOwner&&!isSoloMode);document.getElementById('stop-screen-btn').classList.add('hidden');
@@ -2262,7 +2334,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateConnectionUI();
     updatePresenceUI();
     setLobbyUI();
-    setInterval(()=>{if(dataConn&&dataConn.open){sendPresence(true);}else if(!isSoloMode){peerPresence.online=false;updatePresenceUI();}},15000);
+    setInterval(()=>{if(dataConn&&dataConn.open){sendSmartPresence(true);}else if(!isSoloMode){peerPresence.online=false;updatePresenceUI();}},10000);
     window.addEventListener('beforeunload',()=>{try{sendPresence(false)}catch(_){} });
 });
 
@@ -2284,6 +2356,7 @@ function sendGameState(){
     }
 }
 function selectMiniGame(type,broadcast=true){
+    logMoment('game','Game Center','اختيار '+type,'🎮');
     gameState.localEditLock=false;
     gameState.type=type;
     if(broadcast&&!isSoloMode)sendData({type:'game_request',game:type,name:myDisplayName});
@@ -2299,6 +2372,10 @@ function selectMiniGame(type,broadcast=true){
 }
 function renderMiniGame(){
     const s=document.getElementById('game-stage');
+    const score=document.getElementById('game-center-score');
+    const result=(gameState?.[gameState.type]?.winner||gameState?.[gameState.type]?.draw)?JSON.stringify([gameState.type,gameState?.[gameState.type]?.winner||'draw']):'';
+    if(result&&result!==lastGameResultSig){lastGameResultSig=result;localStorage.setItem('pomme-game-wins',String(Number(localStorage.getItem('pomme-game-wins')||0)+1));logMoment('game','Game finished','انتهت جولة '+gameState.type,'🏆');}
+if(score)score.textContent=`${Number(localStorage.getItem('pomme-game-wins')||0)} wins • ${Number(localStorage.getItem('pomme-game-sessions')||0)} sessions`;
     if(!s) return;
     if(gameState.type==='xo') renderXO(s);
     else if(gameState.type==='chess') renderChess(s);
@@ -2452,6 +2529,96 @@ function renderMemory(s){
       <div class="memory-grid">${g.cards.map((v,i)=>`<button class="memory-card ${g.open.includes(i)||g.done.includes(i)?'open':''} ${g.done.includes(i)?'done':''}" onclick="memoryClick(${i})">${g.open.includes(i)||g.done.includes(i)?v:'?'}</button>`).join('')}</div>
       <div class="game-actions"><button class="game-action" onclick="resetMemory()">New Game</button></div>`;
 }
+
+
+/* ===== POMME V2 LOGIC ===== */
+let watchYTPlayer=null, watchYTReady=false, watchSuppressV2=false, watchYtPendingId='';
+let deferredPWAInstall=null, presenceStatus='online', presenceLastActivity=Date.now(), lastPresenceSent=0;
+let pommeMoments=[];
+let inviteQRLoaded=false;
+let noteSaveTimer=null, lastGameResultSig='';
+
+function safeJson(key,fallback){try{const x=JSON.parse(localStorage.getItem(key)||'null');return x==null?fallback:x}catch(_){return fallback;}}
+function loadMoments(){pommeMoments=safeJson('pomme-moments',[]);if(!Array.isArray(pommeMoments))pommeMoments=[];renderMoments();}
+function logMoment(type,title,detail,icon='✨'){const ev={id:Date.now()+Math.random().toString(36).slice(2),type,title,detail,icon,at:Date.now(),tab:document.querySelector('.sidebar-item.active')?.dataset?.tab||'home'};pommeMoments.unshift(ev);pommeMoments=pommeMoments.slice(0,80);try{localStorage.setItem('pomme-moments',JSON.stringify(pommeMoments));}catch(_){}renderMoments();}
+function renderMoments(){const timeline=document.getElementById('moments-timeline'),summary=document.getElementById('moments-summary'),mini=document.getElementById('home-moments-mini');const total=pommeMoments.length;const sessions=pommeMoments.filter(x=>x.type==='session').length;const games=pommeMoments.filter(x=>x.type==='game').length;const messages=pommeMoments.filter(x=>x.type==='chat').length;if(summary)summary.innerHTML=`<div class="moment-stat"><small>Moments</small><strong>${total}</strong></div><div class="moment-stat"><small>Sessions</small><strong>${sessions}</strong></div><div class="moment-stat"><small>Games</small><strong>${games}</strong></div><div class="moment-stat"><small>Chat</small><strong>${messages}</strong></div>`;if(timeline)timeline.innerHTML=total?pommeMoments.map(m=>`<div class="moment-item"><div class="moment-icon">${escapeHTML(m.icon||'✨')}</div><div class="moment-copy"><strong>${escapeHTML(m.title||'Pomme')}</strong><span>${escapeHTML(m.detail||'')}</span></div><div class="moment-time">${new Date(m.at).toLocaleString([], {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div></div>`).join(''):`<div class="empty-note">لا توجد Moments بعد. ستظهر الأحداث تلقائيًا أثناء استخدام Pomme.</div>`;if(mini)mini.innerHTML=pommeMoments.slice(0,4).map(m=>`<div class="moments-mini-row"><strong>${escapeHTML(m.icon||'✨')} ${escapeHTML(m.title||'Pomme')}</strong><span>${new Date(m.at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span></div>`).join('')||'<div class="settings-hint">ابدأ جلسة أو لعبة وستظهر اللحظات هنا.</div>';}
+function clearMoments(){pommeMoments=[];localStorage.removeItem('pomme-moments');renderMoments();}
+function scrollToMoments(){setTimeout(()=>document.getElementById('pomme-moments-panel')?.scrollIntoView({behavior:'smooth',block:'start'}),50);}
+
+function notesHtml(){const e=document.getElementById('notes-editor');return e?sanitizeNoteHTML(e.innerHTML):'';}
+function sanitizeNoteHTML(html){const parser=new DOMParser(),doc=parser.parseFromString(`<div>${html||''}</div>`,'text/html'),root=doc.body.firstElementChild;const allowed=new Set(['B','STRONG','I','EM','U','BR','P','DIV','H1','H2','H3','UL','OL','LI','BLOCKQUOTE']);const walk=n=>{[...n.children].forEach(c=>{if(!allowed.has(c.tagName)){const frag=doc.createDocumentFragment();while(c.firstChild)frag.appendChild(c.firstChild);c.replaceWith(frag);walk(root);}else{[...c.attributes].forEach(a=>c.removeAttribute(a.name));walk(c);}})};walk(root);return root.innerHTML;}
+function notesSetHTML(html){const e=document.getElementById('notes-editor');const safe=sanitizeNoteHTML(html||'');if(e)e.innerHTML=safe;const n=document.getElementById('notes-area');if(n)n.value=safe;updateNotesMeta();}
+function updateNotesMeta(){const e=document.getElementById('notes-editor'),label=document.getElementById('notes-sync-label'),wc=document.getElementById('notes-word-count');if(!e)return;const text=(e.innerText||'').trim();if(wc)wc.textContent=`${text?text.split(/\s+/).length:0} كلمة`;if(label)label.textContent=navigator.onLine?'محفوظ محليًا + جاهز للمزامنة':'وضع Offline';}
+function notesCommand(cmd){const e=document.getElementById('notes-editor');if(!e||!hasPermission('notes'))return;e.focus();try{document.execCommand(cmd,false,null)}catch(_){}notesEditorInput(true);}
+function notesEditorInput(log=true){const e=document.getElementById('notes-editor');const html=notesHtml();const n=document.getElementById('notes-area');if(n)n.value=html;updateNotesMeta();try{localStorage.setItem('pomme-shared-notes',html)}catch(_){}clearTimeout(noteSaveTimer);noteSaveTimer=setTimeout(()=>{if(hasPermission('notes'))sendData({type:'note_update',content:html,format:'html',at:Date.now()});},120);if(log&&Math.random()<.08)logMoment('note','Shared Notes','تم تعديل الملاحظات المشتركة','📝');}
+function bindNotesV2(){const e=document.getElementById('notes-editor');if(!e||e.dataset.bound)return;e.dataset.bound='1';const cached=localStorage.getItem('pomme-shared-notes')||'';if(cached)notesSetHTML(cached);e.addEventListener('input',()=>notesEditorInput(true));e.addEventListener('blur',()=>notesEditorInput(false));updateNotesMeta();}
+
+function buildInviteUrl(){try{const url=new URL(location.href);url.searchParams.set('pomme','1');url.searchParams.set('a',btoa(unescape(encodeURIComponent(myDisplayName||''))));url.searchParams.set('b',btoa(unescape(encodeURIComponent(friendDisplayName||''))));return url.toString();}catch(_){return location.href;}}
+function readInviteUrl(){try{const u=new URL(location.href);if(u.searchParams.get('pomme')!=='1')return;const decode=v=>decodeURIComponent(escape(atob(v)));const a=u.searchParams.get('a'),b=u.searchParams.get('b');if(a)document.getElementById('my-name-input').value=decode(a);if(b)document.getElementById('friend-name-input').value=decode(b);}catch(_){} }
+function loadQRLib(){return new Promise((resolve,reject)=>{if(window.QRCode){resolve(window.QRCode);return;}const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js';sc.onload=()=>resolve(window.QRCode);sc.onerror=reject;document.head.appendChild(sc);});}
+async function renderInviteQR(text){const canvas=document.getElementById('invite-qr');if(!canvas)return;try{const QR=await loadQRLib();await QR.toCanvas(canvas,text,{width:220,margin:1,errorCorrectionLevel:'M'});document.getElementById('qr-fallback').textContent='QR جاهز للمسح بالكاميرا.';inviteQRLoaded=true;}catch(e){const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#111833';ctx.font='14px sans-serif';ctx.textAlign='center';ctx.fillText('QR unavailable',110,105);ctx.fillText('Use Copy / Share',110,130);document.getElementById('qr-fallback').textContent='تعذر تحميل مكتبة QR حاليًا؛ استخدم Copy أو Share.';}}
+function openRoomInvite(){const modal=document.getElementById('room-invite-modal');if(!modal)return;const link=buildInviteUrl();document.getElementById('invite-link-input').value=link;document.getElementById('invite-room-label').textContent='Room: '+(roomId||'Local');modal.classList.add('active');modal.setAttribute('aria-hidden','false');renderInviteQR(link);logMoment('room','Room Invite','تم إنشاء رابط دعوة','🔗');}
+function closeRoomInvite(){const m=document.getElementById('room-invite-modal');if(m){m.classList.remove('active');m.setAttribute('aria-hidden','true');}}
+async function copyInviteLink(){const v=document.getElementById('invite-link-input')?.value||'';try{await navigator.clipboard.writeText(v);notifyPeer('تم نسخ رابط الدعوة.');}catch(_){const i=document.getElementById('invite-link-input');i?.select();document.execCommand('copy');notifyPeer('تم نسخ رابط الدعوة.');}}
+async function shareInviteLink(){const v=document.getElementById('invite-link-input')?.value||'';if(navigator.share){try{await navigator.share({title:'Pomme Room',text:'انضم إلى مساحة Pomme',url:v});return;}catch(_){} }await copyInviteLink();}
+
+function smartPresenceStatus(){if(!document.hasFocus())return 'away';if(Date.now()-presenceLastActivity>45000)return 'away';const tab=document.querySelector('.sidebar-item.active')?.dataset?.tab||'home';if(['stream','watch','mini-games'].includes(tab))return 'busy';return 'online';}
+function sendSmartPresence(force=false){const now=Date.now(),st=smartPresenceStatus();presenceStatus=st;if(!force&&now-lastPresenceSent<2500)return;lastPresenceSent=now;sendData({type:'presence',name:myDisplayName,at:now,online:true,status:st,tab:document.querySelector('.sidebar-item.active')?.dataset?.tab||'home',visible:document.visibilityState==='visible'});updatePresenceUI();}
+function presenceTick(){sendSmartPresence(false);if(peerPresence.online&&peerPresence.lastSeen&&Date.now()-peerPresence.lastSeen>30000){peerPresence.online=false;updatePresenceUI();}}
+['pointerdown','keydown','touchstart','mousemove'].forEach(ev=>window.addEventListener(ev,()=>{presenceLastActivity=Date.now();sendSmartPresence(false)},{passive:true}));document.addEventListener('visibilitychange',()=>{presenceLastActivity=Date.now();sendSmartPresence(true)});window.addEventListener('focus',()=>{presenceLastActivity=Date.now();sendSmartPresence(true)});window.addEventListener('blur',()=>sendSmartPresence(true));
+
+function applySmartPeerPresence(data){peerPresence={online:data.online!==false,status:data.status||'online',tab:data.tab||'home',visible:data.visible!==false,name:data.name||friendDisplayName,lastSeen:data.at||Date.now()};updatePresenceUI();}
+const _updatePresenceUI=updatePresenceUI;
+updatePresenceUI=function(){_updatePresenceUI();const st=document.getElementById('friend-presence-state');const dot=document.getElementById('friend-presence-dot');if(!st||!dot)return;dot.classList.remove('smart-away','smart-busy');const lbl=peerPresence.online?(peerPresence.status==='away'?'بعيدة الآن':peerPresence.status==='busy'?'مشغولة الآن':'متصلة الآن'):(peerPresence.lastSeen?`آخر ظهور ${new Date(peerPresence.lastSeen).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`:'غير متصلة');st.textContent=lbl;if(peerPresence.status==='away')dot.classList.add('smart-away');if(peerPresence.status==='busy')dot.classList.add('smart-busy');};
+
+const _applyPermissionsUI_V2=applyPermissionsUI;
+applyPermissionsUI=function(){_applyPermissionsUI_V2();const e=document.getElementById('notes-editor');if(e){const ok=hasPermission('notes');e.contentEditable=ok?'true':'false';e.style.opacity=ok?'1':'.58';e.style.pointerEvents=ok?'auto':'none';}};
+function startVoiceAndScreen(){if(!dataConn||!dataConn.open){notifyPeer('اتصل بالطرف الآخر أولًا.');return;}Promise.resolve().then(async()=>{if(!voiceEnabled)await new Promise((resolve)=>{const old=voiceEnabled;toggleVoice();const timer=setInterval(()=>{if(voiceEnabled!==old){clearInterval(timer);resolve();}},80);setTimeout(()=>{clearInterval(timer);resolve();},2200)});await startScreenShare();logMoment('stream','Voice + Screen','بدأت مشاركة الشاشة مع الصوت','🎙️');});}
+
+function setOfflineUI(){const online=navigator.onLine;const dot=document.getElementById('offline-status-dot'),txt=document.getElementById('offline-settings-status');if(dot)dot.classList.toggle('online',online);if(txt)txt.textContent=online?'Online — Sync ready':'Offline — Local mode';const top=document.getElementById('topbar-network-state');if(top)top.textContent=online?'Online':'Offline';updateNotesMeta();}
+window.addEventListener('online',()=>{setOfflineUI();notifyPeer('عادت الشبكة — جارٍ استئناف المزامنة.');sendSmartPresence(true);});window.addEventListener('offline',()=>{setOfflineUI();notifyPeer('انقطع الإنترنت — Pomme يعمل محليًا، وتستمر البيانات المحفوظة.');});
+
+function installPomme(){if(deferredPWAInstall){deferredPWAInstall.prompt();deferredPWAInstall.userChoice.finally(()=>{deferredPWAInstall=null;setPWAStatus();});return;}if(location.protocol!=='https:'&&!['localhost','127.0.0.1'].includes(location.hostname)){setPWAStatus('التثبيت الحقيقي يحتاج HTTPS أو localhost مع Service Worker.');notifyPeer('هذه النسخة تعمل كـ One-File Offline App؛ PWA الكامل يحتاج استضافة HTTPS.');return;}notifyPeer('للتثبيت كـ PWA يجب تشغيل نسخة الويب مع Service Worker.');}
+function setPWAStatus(msg){const e=document.getElementById('pwa-status');if(!e)return;if(msg){e.textContent=msg;return;}e.textContent=deferredPWAInstall?'Install prompt: جاهز':'One-File offline mode جاهز؛ PWA الكامل يحتاج Service Worker مستضافًا عبر HTTPS';}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPWAInstall=e;setPWAStatus();});
+function injectManifest(){try{const manifest={name:'Pomme',short_name:'Pomme',start_url:location.href,display:'standalone',background_color:'#060b18',theme_color:'#060b18',lang:'ar',dir:'rtl',icons:[]};const link=document.createElement('link');link.rel='manifest';link.href='data:application/manifest+json;charset=utf-8,'+encodeURIComponent(JSON.stringify(manifest));document.head.appendChild(link);}catch(_){} }
+
+// YouTube IFrame API
+function ensureYouTubeAPI(){return new Promise((resolve,reject)=>{if(window.YT&&window.YT.Player){watchYTReady=true;resolve();return;}const old=window.onYouTubeIframeAPIReady;window.onYouTubeIframeAPIReady=()=>{old?.();watchYTReady=true;resolve();};if(document.querySelector('script[data-pomme-yt]')){setTimeout(()=>watchYTReady?resolve():reject(new Error('YT timeout')),5000);return;}const sc=document.createElement('script');sc.src='https://www.youtube.com/iframe_api';sc.dataset.pommeYt='1';sc.onerror=reject;document.head.appendChild(sc);setTimeout(()=>{if(!watchYTReady)reject(new Error('YT timeout'));},7000);});}
+async function ensureYTPlayer(id){try{await ensureYouTubeAPI();const el=document.getElementById('watch-youtube');if(!el)return;if(watchYTPlayer&&watchYtPendingId===id)return;watchYtPendingId=id;el.hidden=false;document.getElementById('watch-video').hidden=true;document.getElementById('watch-empty').style.display='none';el.innerHTML='';watchYTPlayer=new YT.Player('watch-youtube',{videoId:id,width:'100%',height:'100%',playerVars:{autoplay:0,playsinline:1,controls:1,rel:0,modestbranding:1,origin:location.origin},events:{onReady:()=>{document.getElementById('watch-state').textContent='YouTube ready • synced';watchRequestState();},onStateChange:(e)=>handleYTState(e)}});}catch(e){notifyPeer('تعذر تشغيل YouTube API. استخدم رابط فيديو مباشر.');}}
+function handleYTState(e){if(watchSuppressV2)return;if(!watchYTPlayer)return;let command=null;if(e.data===1)command='play';else if(e.data===2)command='pause';if(command)sendData({type:'watch_yt_cmd',command,time:watchYTPlayer.getCurrentTime?.()||0,videoId:watchYtPendingId});document.getElementById('watch-state').textContent=command?`YouTube • ${command}`:'YouTube • ready';}
+function watchRequestState(){if(watchMode==='youtube'&&watchYTPlayer){sendData({type:'watch_yt_state_request',videoId:watchYtPendingId});}}
+function loadWatchUrlV2(sync=true){const url=(document.getElementById('watch-url')?.value||'').trim();if(!url)return;const yid=youtubeIdFromUrl(url);watchMode=yid?'youtube':'video';watchYouTubeId=yid||'';if(yid){watchYTPlayer?.destroy?.();watchYTPlayer=null;watchYtPendingId='';if(sync)sendData({type:'watch_load',mode:'youtube',url,id:yid});ensureYTPlayer(yid).catch(()=>{});}else{watchSuppressV2=true;const v=document.getElementById('watch-video'),f=document.getElementById('watch-youtube');f.hidden=true;v.hidden=false;document.getElementById('watch-empty').style.display='none';v.src=url;v.load();setTimeout(()=>watchSuppressV2=false,150);if(sync)sendData({type:'watch_load',mode:'video',url,id:null});}addHomeActivity('▶️','Watch Together','Loaded media');logMoment('watch','Watch Together','تم تحميل محتوى للمشاهدة','▶️');}
+function watchPlayPauseV2(){if(watchMode==='youtube'&&watchYTPlayer){const st=watchYTPlayer.getPlayerState?.();watchSuppressV2=true;if(st===1)watchYTPlayer.pauseVideo();else watchYTPlayer.playVideo();setTimeout(()=>watchSuppressV2=false,200);return;}watchPlayPause();}
+function watchSeekV2(delta){if(watchMode==='youtube'&&watchYTPlayer){watchSuppressV2=true;watchYTPlayer.seekTo(Math.max(0,(watchYTPlayer.getCurrentTime?.()||0)+delta),true);setTimeout(()=>watchSuppressV2=false,200);sendData({type:'watch_yt_cmd',command:'seek',delta,time:watchYTPlayer.getCurrentTime?.()||0,videoId:watchYtPendingId});return;}watchSeek(delta);}
+function handleWatchDataV2(data){if(data.type==='watch_load'){const input=document.getElementById('watch-url');if(input)input.value=data.url||'';loadWatchUrlV2(false);}else if(data.type==='watch_yt_cmd'&&watchMode==='youtube'&&watchYTPlayer){watchSuppressV2=true;try{if(data.command==='play')watchYTPlayer.playVideo();else if(data.command==='pause')watchYTPlayer.pauseVideo();else if(data.command==='seek')watchYTPlayer.seekTo(Math.max(0,Number(data.time)||0),true);}catch(_){}setTimeout(()=>watchSuppressV2=false,260);}else if(data.type==='watch_yt_state_request'&&watchMode==='youtube'&&watchYTPlayer){sendData({type:'watch_yt_state',videoId:watchYtPendingId,time:watchYTPlayer.getCurrentTime?.()||0,state:watchYTPlayer.getPlayerState?.()||2});}else if(data.type==='watch_yt_state'&&watchMode==='youtube'&&watchYTPlayer){watchSuppressV2=true;try{const d=Math.abs((watchYTPlayer.getCurrentTime?.()||0)-(Number(data.time)||0));if(d>.65)watchYTPlayer.seekTo(Number(data.time)||0,true);if(data.state===1)watchYTPlayer.playVideo();if(data.state===2)watchYTPlayer.pauseVideo();}catch(_){}setTimeout(()=>watchSuppressV2=false,260);}else if(data.type==='watch_clear')watchClearV2(false);else handleWatchData(data);}
+function watchClearV2(sync=true){watchMode='none';watchYouTubeId='';watchYTPlayer?.destroy?.();watchYTPlayer=null;watchYtPendingId='';const v=document.getElementById('watch-video'),f=document.getElementById('watch-youtube'),e=document.getElementById('watch-empty');v.pause();v.removeAttribute('src');v.load();f.innerHTML='';f.hidden=true;v.hidden=true;e.style.display='flex';document.getElementById('watch-state').textContent='No media loaded';if(sync)sendData({type:'watch_clear'});}
+window.watchPlayPause=watchPlayPauseV2;window.watchSeek=watchSeekV2;window.loadWatchUrl=loadWatchUrlV2;window.watchClear=watchClearV2;
+
+function toggleVoiceV2(){return toggleVoice();}
+function updateVoiceStreamOverlay(){const e=document.getElementById('stream-voice-label');if(e)e.textContent=voiceEnabled?(voiceMuted?'Voice muted':'Voice live'):'Voice off';}
+const _setVoiceState=typeof setVoiceState==='function'?setVoiceState:null;
+if(_setVoiceState){setVoiceState=function(main,sub){_setVoiceState(main,sub);updateVoiceStreamOverlay();};}
+
+function openMobileChatV2(){const o=document.getElementById('chat-overlay');if(o){o.classList.add('active');o.setAttribute('aria-hidden','false');const i=document.getElementById('chat-input-mobile');setTimeout(()=>i?.focus(),80);}}
+function closeMobileChatV2(){const o=document.getElementById('chat-overlay');if(o){o.classList.remove('active');o.setAttribute('aria-hidden','true');}if(document.body.classList.contains('chat-only'))switchTab('home');}
+window.openMobileChat=openMobileChatV2;window.closeMobileChat=closeMobileChatV2;
+function updateChatUnread(){const fab=document.getElementById('chat-fab');if(!fab)return;let badge=fab.querySelector('.chat-unread');const count=Number(localStorage.getItem('pomme-chat-unread')||0);if(count&&!badge){badge=document.createElement('span');badge.className='chat-unread';fab.appendChild(badge);}if(badge)badge.textContent=count>9?'9+':String(count);if(!count&&badge)badge.remove();}
+function markChatRead(){localStorage.setItem('pomme-chat-unread','0');updateChatUnread();}
+const _appendChatMsgAll=appendChatMsgAll;
+appendChatMsgAll=function(text,type,name=myDisplayName,at=Date.now()){_appendChatMsgAll(text,type,name,at);if(type==='received'&&document.getElementById('chat-overlay')?.classList.contains('active')===false){localStorage.setItem('pomme-chat-unread',String(Number(localStorage.getItem('pomme-chat-unread')||0)+1));updateChatUnread();}if(type==='sent')logMoment('chat','Chat','تم إرسال رسالة','💬');};
+
+// Intercept incoming data for V2 features while retaining existing handler
+const _handleIncomingDataV2=handleIncomingData;
+handleIncomingData=function(data){if(!data||typeof data!=='object')return;if(data.type==='presence'){applySmartPeerPresence(data);return;}if(data.type==='note_update'){notesSetHTML(data.content||'');try{localStorage.setItem('pomme-shared-notes',sanitizeNoteHTML(data.content||''))}catch(_){}return;}if(data.type==='watch_load'||data.type==='watch_yt_cmd'||data.type==='watch_yt_state_request'||data.type==='watch_yt_state'||data.type==='watch_clear'){handleWatchDataV2(data);return;}_handleIncomingDataV2(data);};
+
+// Patch owner sync requests for rich notes + current watch state
+const _sendDataOriginal=sendData;
+function sendSyncSnapshotV2(){if(isOwner){sendData({type:'permissions_update',permissions});sendData({type:'note_update',content:notesHtml(),format:'html'});sendGameState();if(watchMode==='youtube'&&watchYtPendingId)sendData({type:'watch_load',mode:'youtube',url:document.getElementById('watch-url')?.value||'',id:watchYtPendingId});else if(watchMode==='video'&&document.getElementById('watch-video')?.src)sendData({type:'watch_load',mode:'video',url:document.getElementById('watch-video').src,id:null});}}
+
+// Improve local persistence / initialize V2 layer
+function initPommeV2(){loadMoments();bindNotesV2();readInviteUrl();injectManifest();setOfflineUI();setPWAStatus();updateChatUnread();const voiceScreen=document.getElementById('voice-screen-btn');if(voiceScreen&&voiceEnabled)voiceScreen.textContent='🎙️ + 🖥️ Active';document.getElementById('chat-fab')?.addEventListener('click',markChatRead);setInterval(presenceTick,7000);logMoment('session','Pomme ready','تم تشغيل مساحة العمل','✨');}
+window.addEventListener('DOMContentLoaded',initPommeV2);
 
 </script>
 </body>
