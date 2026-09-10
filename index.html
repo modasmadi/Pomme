@@ -979,14 +979,13 @@ body[data-theme="oled"]{--bg-deep:#000;--bg-dark:#05070d;--bg-card:#0b0f1b;--bg-
                         <button class="btn-secondary" id="game-mode-btn" onclick="toggleGameMode()" style="background:rgba(245,158,11,0.11);color:#ffe2a8;border-color:rgba(245,158,11,.32)!important;">🎮 Game Mode</button>
                     </div>
                     <div class="stream-quality-bar">
-                        <small>بث ألعاب عالي الوضوح • 1440p / 60FPS</small>
+                        <small>Ultra Low-Latency Game Stream • 1080p / 60FPS</small>
                         <select class="quality-select" id="stream-quality" onchange="applyPreferredQuality()">
+                            <option value="1080p60" selected>1080p • 60 FPS</option>
                             <option value="1440p60">2K • 60 FPS</option>
-                            <option value="1080p60">1080p • 60 FPS</option>
                             <option value="1080p30">1080p • 30 FPS</option>
                         </select>
                         <select class="quality-select" id="viewer-bitrate" onchange="requestViewerBitrate()">
-                            <option value="28000000">28 Mbps</option>
                             <option value="24000000">24 Mbps</option>
                             <option value="20000000">20 Mbps</option>
                             <option value="16000000">16 Mbps</option>
@@ -1361,9 +1360,15 @@ let peer = null, dataConn = null, mediaConn = null;
 let isOwner = false, isSoloMode = false, myStream = null;
 let roomId = 'pomme-app-modasmadi-2026';
 let statsTimer = null, qualityTimer = null;
-let preferredQuality = '1440p60';
-let preferredBitrate = 28000000;
-let viewerMaxBitrate = 28000000;
+let preferredQuality = '1080p60';
+let preferredBitrate = 16000000;
+let viewerMaxBitrate = 20000000;
+let streamTargetMin = 8000000;
+let streamTargetMax = 20000000;
+let streamAdaptTimer = null;
+let streamLastAdapt = 0;
+let streamStableTicks = 0;
+let streamBadTicks = 0;
 let latestViewerFeedback = null;
 let myDisplayName = '';
 let friendDisplayName = '';
@@ -1505,6 +1510,105 @@ function showAppScreen() {
 }
 
 
+// ===========================
+// ULTRA LOW-LATENCY STREAM ENGINE
+// ===========================
+const ULTRA_STREAM = {
+    width: 1920,
+    height: 1080,
+    fps: 60,
+    startBitrate: 16000000,
+    minBitrate: 8000000,
+    maxBitrate: 20000000,
+    hardMaxBitrate: 24000000,
+    preferH264: true,
+    maxJitterBuffer: 0,
+    keyframeMs: 1200
+};
+
+function tuneVideoSDP(sdp){
+    try{
+        let out=sdp;
+        // Encourage fast decoder start and a sensible initial rate on Chromium/WebRTC.
+        out=out.replace(/(a=fmtp:(\d+) [^\r\n]*)(\r?\n)/g,(m,fmtp,pt,nl)=>{
+            if(/apt=/i.test(fmtp) || /rtx/i.test(fmtp)) return m;
+            if(/x-google-start-bitrate=/i.test(fmtp)) return m;
+            return fmtp+';x-google-start-bitrate=12000;x-google-min-bitrate=6000;x-google-max-bitrate=24000'+nl;
+        });
+        // Prefer H264 for hardware-accelerated game/desktop encoding when offered.
+        const lines=out.split(/\r?\n/);
+        let videoMLine=-1, h264Pts=[];
+        const codecs=[];
+        for(let i=0;i<lines.length;i++){
+            if(lines[i].startsWith('m=video ')) videoMLine=i;
+            const mm=lines[i].match(/^a=rtpmap:(\d+)\s+([^/]+)\//i);
+            if(mm && /H264/i.test(mm[2])) h264Pts.push(mm[1]);
+        }
+        if(videoMLine>=0 && h264Pts.length){
+            const m=lines[videoMLine].trim().split(/\s+/);
+            const header=m.slice(0,3);
+            const pts=m.slice(3);
+            pts.sort((a,b)=> (h264Pts.includes(a)?-1:0) - (h264Pts.includes(b)?-1:0));
+            lines[videoMLine]=[...header,...pts].join(' ');
+            out=lines.join('\r\n');
+        }
+        return out;
+    }catch(_){return sdp;}
+}
+
+function setCodecPreferencesForSender(pc){
+    try{
+        if(!ULTRA_STREAM.preferH264 || !pc || !RTCRtpReceiver.getCapabilities) return;
+        const caps=RTCRtpReceiver.getCapabilities('video');
+        if(!caps?.codecs?.length) return;
+        const h264=caps.codecs.filter(c=>/video\/H264/i.test(c.mimeType));
+        const rest=caps.codecs.filter(c=>!/video\/H264/i.test(c.mimeType));
+        if(h264.length){
+            for(const t of pc.getTransceivers()){
+                if(t.sender?.track?.kind==='video' && t.setCodecPreferences){
+                    try{t.setCodecPreferences([...h264,...rest]);}catch(_){ }
+                }
+            }
+        }
+    }catch(_){ }
+}
+
+async function hardTuneVideoSender(pc){
+    try{
+        if(!pc) return;
+        setCodecPreferencesForSender(pc);
+        const sender=pc.getSenders().find(x=>x.track?.kind==='video');
+        if(!sender) return;
+        const p=sender.getParameters();
+        if(!p.encodings?.length) p.encodings=[{}];
+        const enc=p.encodings[0];
+        enc.maxBitrate=Math.min(ULTRA_STREAM.hardMaxBitrate,Math.max(ULTRA_STREAM.minBitrate,preferredBitrate));
+        enc.maxFramerate=preferredQuality.endsWith('30')?30:60;
+        enc.priority='high';
+        if('networkPriority' in enc) enc.networkPriority='high';
+        if('scaleResolutionDownBy' in enc) enc.scaleResolutionDownBy=1;
+        // Keep 60 FPS first; WebRTC may reduce resolution under pressure rather than building latency.
+        p.degradationPreference='maintain-framerate';
+        await sender.setParameters(p);
+    }catch(e){ console.warn('Ultra sender tune failed',e); }
+}
+
+function ultraVideoElementSetup(v){
+    if(!v) return;
+    v.autoplay=true; v.playsInline=true; v.muted=true; v.volume=0;
+    try{v.setAttribute('disableRemotePlayback','');}catch(_){ }
+    try{v.disablePictureInPicture=true;}catch(_){ }
+    try{v.style.objectFit='contain';}catch(_){ }
+}
+
+function requestFastKeyframe(){
+    try{
+        const pc=mediaConn?.peerConnection;
+        if(!pc) return;
+        for(const r of pc.getReceivers?.()||[]) if(r.requestKeyFrame) r.requestKeyFrame();
+    }catch(_){ }
+}
+
 const PEER_CONFIG = {
     config: {
         iceServers: [
@@ -1519,7 +1623,8 @@ const PEER_CONFIG = {
         sdpSemantics: 'unified-plan',
         bundlePolicy: 'max-bundle',
         rtcpMuxPolicy: 'require',
-        iceCandidatePoolSize: 10
+        iceCandidatePoolSize: 10,
+        iceTransportPolicy: 'all'
     },
     debug: 0,
     pingInterval: 5000
@@ -1582,7 +1687,7 @@ function initPeer(id=null){
     });
     peer.on('call',call=>{
         if(call.metadata?.kind==='voice'){handleIncomingVoiceCall(call);return;}
-        if(!isOwner&&!isSoloMode){call.answer();mediaConn=call;call.on('stream',attachRemoteStream);call.on('close',()=>{mediaConn=null;setNetworkState('waiting');});call.on('error',()=>{setNetworkState('degraded');});setTimeout(optimizeReceiver,250);}
+        if(!isOwner&&!isSoloMode){call.answer(undefined,{sdpTransform:tuneVideoSDP});mediaConn=call;call.on('stream',attachRemoteStream);call.on('close',()=>{mediaConn=null;setNetworkState('waiting');});call.on('error',()=>{setNetworkState('degraded');});setTimeout(()=>{optimizeReceiver();hardTuneVideoSender(call.peerConnection);requestFastKeyframe();},180);}
     });
     peer.on('disconnected',()=>{peerReady=false;updateConnectionUI();clearTimeout(reconnectTimer);reconnectTimer=setTimeout(()=>{try{peer.reconnect();}catch(_){}},1200);setNetworkState('reconnecting');});
     peer.on('close',()=>{peerReady=false;updateConnectionUI();});
@@ -1619,7 +1724,7 @@ function handleIncomingData(data){
     if(data.type==='room_rejected'){notifyPeer('الغرفة مقفلة حاليًا.');try{dataConn?.close();}catch(_){}setNetworkState('waiting');return;}
     if(data.type==='watch_load'||data.type==='watch_state'||data.type==='watch_clear'){handleWatchData(data);return;}
     if(data.type==='typing'){const ti=document.getElementById('typing-indicator');if(ti)ti.textContent=data.active?(data.name||friendDisplayName)+' يكتب...':'';clearTimeout(typingTimer);if(data.active)typingTimer=setTimeout(()=>{if(ti)ti.textContent='';},1600);return;}
-    if(data.type==='viewer_bitrate'){if(isOwner){viewerMaxBitrate=Math.max(10000000,Math.min(28000000,Number(data.bitrate)||viewerMaxBitrate));preferredBitrate=Math.min(preferredBitrate,viewerMaxBitrate);applySenderBitrate(preferredBitrate);}return;}
+    if(data.type==='viewer_bitrate'){if(isOwner){viewerMaxBitrate=Math.max(8000000,Math.min(24000000,Number(data.bitrate)||viewerMaxBitrate));preferredBitrate=Math.min(preferredBitrate,viewerMaxBitrate);applySenderBitrate(preferredBitrate);}return;}
     if(data.type==='quality_feedback'){if(isOwner)latestViewerFeedback=data;return;}
     if(data.type==='chat_msg'){appendChatMsgAll(data.text,'received',data.name||friendDisplayName,data.at||Date.now());notifyPeer('رسالة جديدة');return;}
     if(data.type==='file_start'){beginIncomingFile(data);return;}
@@ -1800,35 +1905,48 @@ async function applySenderBitrate(bitrate=preferredBitrate){
     try{
         const pc=mediaConn&&mediaConn.peerConnection;if(!pc)return;
         const sender=pc.getSenders().find(x=>x.track&&x.track.kind==='video');if(!sender)return;
-        const target=Math.max(10000000,Math.min(28000000,Number(bitrate)||preferredBitrate));
+        const target=Math.max(streamTargetMin,Math.min(streamTargetMax,Number(bitrate)||preferredBitrate));
+        preferredBitrate=target;
         const p=sender.getParameters();
         if(!p.encodings||!p.encodings.length)p.encodings=[{}];
         const enc=p.encodings[0];
         enc.maxBitrate=target;
         enc.maxFramerate=preferredQuality.endsWith('30')?30:60;
         enc.priority='high';
-        enc.networkPriority='high';
+        if('networkPriority' in enc)enc.networkPriority='high';
         if('scaleResolutionDownBy' in enc)enc.scaleResolutionDownBy=1;
-        p.degradationPreference='maintain-resolution';
-        try{if('scalabilityMode' in enc)enc.scalabilityMode='L1T1';}catch(_){}
+        p.degradationPreference='maintain-framerate';
+        try{if('scalabilityMode' in enc)enc.scalabilityMode='L1T1';}catch(_){ }
         await sender.setParameters(p);
         startStreamStats(pc);
     }catch(e){console.warn('Sender optimization:',e);}
 }
-async function optimizeSender(call){mediaConn=call;await applySenderBitrate(preferredBitrate);startQualityEngine();}
+async function optimizeSender(call){mediaConn=call;await hardTuneVideoSender(call.peerConnection);await applySenderBitrate(preferredBitrate);startQualityEngine();requestFastKeyframe();}
 function attachRemoteStream(remoteStream){
     const v=document.getElementById('remote-video'),p=document.getElementById('stream-placeholder');
-    v.srcObject=remoteStream;v.playsInline=true;v.autoplay=true;v.style.objectFit='contain';p.style.display='none';v.play().catch(()=>{});optimizeReceiver();startStreamStats(mediaConn&&mediaConn.peerConnection);startQualityEngine();
+    ultraVideoElementSetup(v);v.srcObject=remoteStream;p.style.display='none';v.play().catch(()=>{});optimizeReceiver();requestFastKeyframe();startStreamStats(mediaConn&&mediaConn.peerConnection);startQualityEngine();
 }
-function optimizeReceiver(){try{if(!mediaConn||!mediaConn.peerConnection)return;for(const receiver of mediaConn.peerConnection.getReceivers()){if(receiver.track&&receiver.track.kind==='video'){if('playoutDelayHint'in receiver)receiver.playoutDelayHint=0;if(receiver.requestKeyFrame)receiver.requestKeyFrame();}}}catch(e){}}
-async function applyTrackQuality(track){if(!track||!track.applyConstraints)return;const map={'1440p60':{width:{ideal:2560,max:2560},height:{ideal:1440,max:1440},frameRate:{ideal:60,max:60},resizeMode:'none'},'1080p60':{width:{ideal:1920,max:1920},height:{ideal:1080,max:1080},frameRate:{ideal:60,max:60}},'1080p30':{width:{ideal:1920,max:1920},height:{ideal:1080,max:1080},frameRate:{ideal:30,max:30}}};try{await track.applyConstraints(map[preferredQuality]);}catch(e){console.warn('quality constraints rejected',e);}}
+function optimizeReceiver(){try{if(!mediaConn||!mediaConn.peerConnection)return;for(const receiver of mediaConn.peerConnection.getReceivers()){if(receiver.track&&receiver.track.kind==='video'){if('playoutDelayHint'in receiver)receiver.playoutDelayHint=0;if('jitterBufferTarget'in receiver)receiver.jitterBufferTarget=0;if('jitterBufferMinimumDelayHint'in receiver)receiver.jitterBufferMinimumDelayHint=0;if('contentHint'in receiver.track)receiver.track.contentHint='motion';if(receiver.requestKeyFrame)receiver.requestKeyFrame();}}}catch(e){}}
+async function applyTrackQuality(track){
+    if(!track||!track.applyConstraints)return;
+    const map={
+        '1080p60':{width:{ideal:1920,max:1920},height:{ideal:1080,max:1080},frameRate:{ideal:60,max:60},resizeMode:'none'},
+        '1440p60':{width:{ideal:2560,max:2560},height:{ideal:1440,max:1440},frameRate:{ideal:60,max:60},resizeMode:'none'},
+        '1080p30':{width:{ideal:1920,max:1920},height:{ideal:1080,max:1080},frameRate:{ideal:30,max:30}}
+    };
+    try{
+        await track.applyConstraints(map[preferredQuality]||map['1080p60']);
+        try{track.contentHint='motion';}catch(_){ }
+    }catch(e){console.warn('quality constraints rejected',e);}
+}
 function applyPreferredQuality(){
     preferredQuality=document.getElementById('stream-quality').value;
+    localStorage.setItem('pomme-stream-quality',preferredQuality);
     if(myStream){applyTrackQuality(myStream.getVideoTracks()[0]).then(()=>applySenderBitrate(preferredBitrate));}
     requestKeyframeNow();
 }
 function requestViewerBitrate(){
-    viewerMaxBitrate=Math.max(10000000,Math.min(28000000,Number(document.getElementById('viewer-bitrate')?.value)||28000000));
+    viewerMaxBitrate=Math.max(8000000,Math.min(24000000,Number(document.getElementById('viewer-bitrate')?.value)||20000000));
     preferredBitrate=Math.min(preferredBitrate,viewerMaxBitrate);
     localStorage.setItem('pomme-bitrate',String(viewerMaxBitrate));
     sendData({type:'viewer_bitrate',bitrate:viewerMaxBitrate});
@@ -1840,17 +1958,34 @@ async function startScreenShare(){
     if(!isOwner&&!isSoloMode){updateStatus('البث يفتحه صاحب الغرفة فقط. أنت وضع مشاهدة.',true);return;}
     if(!hasPermission('screen')&&!isSoloMode)return;
     try{
-        const displayStream=await navigator.mediaDevices.getDisplayMedia({video:{width:{ideal:2560,max:2560},height:{ideal:1440,max:1440},frameRate:{ideal:60,max:60},displaySurface:'monitor',resizeMode:'none'},audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},systemAudio:'include',preferCurrentTab:false,selfBrowserSurface:'exclude'});
+        const captureVideo = preferredQuality==='1440p60'
+            ? {width:{ideal:2560,max:2560},height:{ideal:1440,max:1440},frameRate:{ideal:60,max:60},displaySurface:'monitor',resizeMode:'none'}
+            : {width:{ideal:1920,max:1920},height:{ideal:1080,max:1080},frameRate:{ideal:60,max:60},displaySurface:'monitor',resizeMode:'none'};
+        const displayStream=await navigator.mediaDevices.getDisplayMedia({
+            video:captureVideo,
+            audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},
+            systemAudio:'include',preferCurrentTab:false,selfBrowserSurface:'exclude'
+        });
         const videoTrack=displayStream.getVideoTracks()[0];
-        try{videoTrack.contentHint='motion';}catch(_){}
-        await applyTrackQuality(videoTrack);myStream=displayStream;
-        const localV=document.getElementById('remote-video');localV.srcObject=displayStream;localV.muted=true;localV.volume=0;document.getElementById('stream-placeholder').style.display='none';document.getElementById('start-screen-btn').classList.add('hidden');document.getElementById('stop-screen-btn').classList.remove('hidden');
+        try{videoTrack.contentHint='motion';}catch(_){ }
+        await applyTrackQuality(videoTrack);
+        myStream=displayStream;
+        const localV=document.getElementById('remote-video');
+        ultraVideoElementSetup(localV);
+        localV.srcObject=displayStream;localV.muted=true;localV.volume=0;
+        document.getElementById('stream-placeholder').style.display='none';
+        document.getElementById('start-screen-btn').classList.add('hidden');
+        document.getElementById('stop-screen-btn').classList.remove('hidden');
         if(dataConn&&dataConn.peer&&peer&&peer.open){
-            const call=peer.call(dataConn.peer,displayStream,{metadata:{quality:preferredQuality,bitrate:preferredBitrate,lowLatency:true,contentHint:'motion'}});
-            mediaConn=call;call.on('error',e=>{console.warn('media call error',e);setNetworkState('degraded');});call.on('close',()=>{mediaConn=null;});
-            setTimeout(()=>applySenderBitrate(preferredBitrate),450);
+            const call=peer.call(dataConn.peer,displayStream,{metadata:{quality:preferredQuality,bitrate:preferredBitrate,lowLatency:true,contentHint:'motion',ultra:true},sdpTransform:tuneVideoSDP});
+            mediaConn=call;
+            call.on('error',e=>{console.warn('media call error',e);setNetworkState('degraded');});
+            call.on('close',()=>{mediaConn=null;});
+            setTimeout(async()=>{await hardTuneVideoSender(call.peerConnection);await applySenderBitrate(preferredBitrate);requestFastKeyframe();},250);
+            setTimeout(()=>{requestFastKeyframe();},ULTRA_STREAM.keyframeMs);
         }
-        startQualityEngine();videoTrack.onended=()=>stopScreenShare();
+        startQualityEngine();startStreamStats(mediaConn&&mediaConn.peerConnection);
+        videoTrack.onended=()=>stopScreenShare();
     }catch(err){console.error('Screen share error:',err);if(err.name!=='NotAllowedError')alert('تعذر تشغيل مشاركة الشاشة: '+err.message);}
 }
 function stopScreenShare(){
@@ -1894,28 +2029,53 @@ function startStreamStats(pc){
 }
 function startQualityEngine(){
     if(qualityEngineTimer)clearInterval(qualityEngineTimer);
+    streamStableTicks=0;streamBadTicks=0;
     qualityEngineTimer=setInterval(async()=>{
         if(!mediaConn||!mediaConn.peerConnection)return;
         const d=await readWebRTCStats(mediaConn.peerConnection);if(!d)return;
-        const r=d.outbound||d.inbound;if(!r)return;
+        const r=d.inbound||d.outbound;if(!r)return;
         const localLoss=((r.packetsLost||0)/Math.max(1,(r.packetsLost||0)+(r.packetsReceived||0)))*100;
-        const localFps=r.framesPerSecond||60;
+        const localFps=Number(r.framesPerSecond||60);
+        const fb=!isOwner?null:latestViewerFeedback;
+        const loss=fb&&Number.isFinite(fb.loss)?fb.loss:localLoss;
+        const fps=fb&&Number.isFinite(fb.fps)?fb.fps:localFps;
+        const dropped=fb&&Number.isFinite(fb.dropped)?fb.dropped:(r.framesDropped||0);
         if(!isOwner){
-            sendData({type:'quality_feedback',loss:Number(localLoss.toFixed(3)),fps:Number(localFps.toFixed(1)),dropped:r.framesDropped||0,rtt:d.candidatePair?.currentRoundTripTime?Math.round(d.candidatePair.currentRoundTripTime*1000):null,at:Date.now()});
+            sendData({type:'quality_feedback',loss:Number(loss.toFixed(3)),fps:Number(fps.toFixed(1)),dropped,rtt:d.candidatePair?.currentRoundTripTime?Math.round(d.candidatePair.currentRoundTripTime*1000):null,at:Date.now()});
             return;
         }
-        if(dataConn&&dataConn.open){
-            const fb=latestViewerFeedback;
-            const loss=fb&&Number.isFinite(fb.loss)?fb.loss:localLoss;
-            const fps=fb&&Number.isFinite(fb.fps)?fb.fps:localFps;
-            let target=preferredBitrate;
-            if(loss>4||fps<52)target=Math.max(10000000,Math.floor(target*.82));
-            else if(loss>2||fps<56)target=Math.max(10000000,Math.floor(target*.90));
-            else if(loss<.5&&fps>=59)target=Math.min(viewerMaxBitrate,Math.floor(target*1.04));
-            target=Math.min(target,viewerMaxBitrate);
-            if(Math.abs(target-preferredBitrate)>=500000){preferredBitrate=target;applySenderBitrate(preferredBitrate);}
+        const severe=loss>3.5||fps<52||dropped>12;
+        const mild=loss>1.5||fps<57||dropped>5;
+        const excellent=loss<0.35&&fps>=59&&dropped<=2;
+        if(severe){
+            streamBadTicks++;streamStableTicks=0;
+            // React fast: reduce 15%, but never below the tuned floor.
+            const target=Math.max(ULTRA_STREAM.minBitrate,Math.floor(preferredBitrate*0.85));
+            if(target<preferredBitrate){preferredBitrate=target;applySenderBitrate(target);requestFastKeyframe();}
+        }else if(mild){
+            streamBadTicks++;streamStableTicks=0;
+            if(streamBadTicks>=2){
+                const target=Math.max(ULTRA_STREAM.minBitrate,Math.floor(preferredBitrate*0.92));
+                if(target<preferredBitrate){preferredBitrate=target;applySenderBitrate(target);}
+                streamBadTicks=0;
+            }
+        }else if(excellent){
+            streamStableTicks++;streamBadTicks=0;
+            // Ramp slowly to avoid congestion oscillation and latency spikes.
+            if(streamStableTicks>=4){
+                const target=Math.min(streamTargetMax,Math.floor(preferredBitrate*1.04));
+                if(target>preferredBitrate){preferredBitrate=target;applySenderBitrate(target);}
+                streamStableTicks=0;
+            }
+        }else{
+            streamStableTicks=0;streamBadTicks=0;
         }
-    },2500);
+        const rtt=fb?.rtt||null;
+        if(rtt!=null && rtt>120 && preferredBitrate>ULTRA_STREAM.minBitrate){
+            preferredBitrate=Math.max(ULTRA_STREAM.minBitrate,Math.floor(preferredBitrate*0.9));
+            applySenderBitrate(preferredBitrate);
+        }
+    },1000);
 }
 function toggleGameMode(){
     gameMode=!gameMode;document.body.classList.toggle('game-mode',gameMode);const b=document.getElementById('game-mode-btn');if(b)b.textContent=gameMode?'🛑 Exit Game Mode':'🎮 Game Mode';if(gameMode)switchTab('stream');
@@ -2327,10 +2487,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const b=remember?(localStorage.getItem('pomme-friend-name')||''):'';
     const ai=document.getElementById('my-name-input'),bi=document.getElementById('friend-name-input'),ri=document.getElementById('remember-names');
     if(ai)ai.value=a;if(bi)bi.value=b;if(ri)ri.checked=remember;
-    const saved=Number(localStorage.getItem('pomme-bitrate')||28000000);
-    viewerMaxBitrate=Math.max(10000000,Math.min(28000000,saved));
-    preferredBitrate=viewerMaxBitrate;
+    const saved=Number(localStorage.getItem('pomme-bitrate')||20000000);
+    viewerMaxBitrate=Math.max(8000000,Math.min(24000000,saved));
+    preferredBitrate=Math.min(16000000,viewerMaxBitrate);
     const vb=document.getElementById('viewer-bitrate');if(vb)vb.value=String(preferredBitrate);
+    const qs=document.getElementById('stream-quality');if(qs){qs.value=localStorage.getItem('pomme-stream-quality')||'1080p60';if(!['1080p60','1440p60','1080p30'].includes(qs.value))qs.value='1080p60';preferredQuality=qs.value;}
     updateConnectionUI();
     updatePresenceUI();
     setLobbyUI();
